@@ -1,0 +1,4 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+    com.yy.common.security.service.TokenService,\
+  com.yy.common.security.handle.GlobalExceptionHandler,\
+  com.yy.common.security.config.WebMvcConfig

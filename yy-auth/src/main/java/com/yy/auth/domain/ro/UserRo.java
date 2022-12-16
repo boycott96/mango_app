@@ -1,0 +1,54 @@
+package com.yy.auth.domain.ro;
+
+import com.yy.common.core.constant.ExceptionConstants;
+import com.yy.common.core.constant.RegexpConstants;
+import lombok.Data;
+
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+
+/**
+ * @author sunruiguang
+ * @date 2022-11-14
+ */
+@Data
+public class UserRo {
+
+    /**
+     * 邮箱地址
+     */
+    @Email(message = ExceptionConstants.EMAIL_INVALID)
+    private String email;
+
+    /**
+     * 用户名
+     */
+    @NotBlank(message = ExceptionConstants.USERNAME_INVALID)
+    @Size(min = 1, max = 50, message = ExceptionConstants.USERNAME_LENGTH_INVALID)
+    private String username;
+
+    /**
+     * 手机号
+     */
+    @Pattern(regexp = RegexpConstants.PHONE_REGEXP, message = ExceptionConstants.PHONE_INVALID)
+    private String phoneNumber;
+
+    /**
+     * 密码
+     */
+    @NotBlank(message = ExceptionConstants.PWD_INVALID)
+    @Size(min = 1, max = 50, message = ExceptionConstants.PWD_LENGTH_INVALID)
+    private String password;
+
+    /**
+     * 头像地址
+     */
+    private String avatarUrl;
+
+    /**
+     * 验证码
+     */
+    private String authCode;
+}
