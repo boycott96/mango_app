@@ -19,6 +19,7 @@ public class ExceptionConstants {
     public final static String USERNAME_NOT_UNIQUE = "用户名已被使用,请更换";
     public final static String PHONE_NOT_UNIQUE = "手机号已被使用,请更换";
     public final static String ENUM_VALID = "参数异常问题";
+    public final static String AUTH_CODE_INVALID = "验证码无效";
 
     /**
      * 系统相应问题

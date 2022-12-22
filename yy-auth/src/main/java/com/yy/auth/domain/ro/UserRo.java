@@ -50,5 +50,6 @@ public class UserRo {
     /**
      * 验证码
      */
+    @NotBlank(message = ExceptionConstants.AUTH_CODE_INVALID)
     private String authCode;
 }

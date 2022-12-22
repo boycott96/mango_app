@@ -11,6 +11,7 @@ import com.yy.auth.service.PasswordService;
 import com.yy.auth.service.YyUserService;
 import com.yy.common.core.constant.ExceptionConstants;
 import com.yy.common.core.exception.ServiceException;
+import com.yy.common.redis.service.RedisService;
 import com.yy.common.security.utils.SecurityUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -27,10 +28,12 @@ public class YyUserServiceImpl extends ServiceImpl<YyUserMapper, YyUser> impleme
 
     private final YyUserMapper yyUserMapper;
     private final PasswordService passwordService;
+    private final RedisService redisService;
 
-    public YyUserServiceImpl(YyUserMapper yyUserMapper, PasswordService passwordService) {
+    public YyUserServiceImpl(YyUserMapper yyUserMapper, PasswordService passwordService, RedisService redisService) {
         this.yyUserMapper = yyUserMapper;
         this.passwordService = passwordService;
+        this.redisService = redisService;
     }
 
     @Override
@@ -38,12 +41,13 @@ public class YyUserServiceImpl extends ServiceImpl<YyUserMapper, YyUser> impleme
         // 校验邮箱，用户名，和手机号码是否唯一
         LambdaQueryWrapper<YyUser> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(YyUser::getEmail, userRo.getEmail());
-        YyUser emailUniqueBean = yyUserMapper.selectOne(queryWrapper);
-        ServiceException.isTrue(Objects.nonNull(emailUniqueBean), ExceptionConstants.EMAIL_NOT_UNIQUE);
-        queryWrapper.clear();
-        queryWrapper.eq(YyUser::getUsername, userRo.getUsername());
-        YyUser usernameUniqueBean = yyUserMapper.selectOne(queryWrapper);
-        ServiceException.isTrue(Objects.nonNull(usernameUniqueBean), ExceptionConstants.USERNAME_NOT_UNIQUE);
+        queryWrapper.or().eq(YyUser::getUsername, userRo.getUsername());
+        YyUser bean = yyUserMapper.selectOne(queryWrapper);
+        ServiceException.isTrue(Objects.nonNull(bean), ExceptionConstants.ACCOUNT_NOT_UNIQUE);
+
+        // 校验验证码是否符合规定
+        String cacheAuthCode = redisService.getCacheObject(userRo.getEmail());
+        ServiceException.isTrue(!cacheAuthCode.equals(userRo.getAuthCode()), ExceptionConstants.AUTH_CODE_INVALID);
 
         YyUser yyUser = new YyUser();
         BeanUtils.copyProperties(userRo, yyUser);
