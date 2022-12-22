@@ -2,6 +2,8 @@ package com.yy.auth.service.impl;
 
 import com.yy.auth.domain.EmailDetails;
 import com.yy.auth.service.EmailService;
+import com.yy.common.core.exception.ServiceException;
+import com.yy.common.core.utils.StringUtils;
 import freemarker.template.Configuration;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -62,13 +64,14 @@ public class EmailServiceImpl implements EmailService {
             mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
             mimeMessageHelper.setFrom(sender);
             mimeMessageHelper.setTo(details.getRecipient());
-            mimeMessageHelper.setText(details.getMsgBody());
+            mimeMessageHelper.setText(details.getMsgBody(), true);
             mimeMessageHelper.setSubject(details.getSubject());
 
             // adding the attachment
-            FileSystemResource file = new FileSystemResource(new File(details.getAttachment()));
-
-            mimeMessageHelper.addAttachment(Objects.requireNonNull(file.getFilename()), file);
+            if (StringUtils.isNotEmpty(details.getAttachment())) {
+                FileSystemResource file = new FileSystemResource(new File(details.getAttachment()));
+                mimeMessageHelper.addAttachment(Objects.requireNonNull(file.getFilename()), file);
+            }
 
             // sending
             javaMailSender.send(mimeMessage);
@@ -82,9 +85,10 @@ public class EmailServiceImpl implements EmailService {
     public String getContentFromTemplate(Map<String, Object> model) {
         StringBuilder content = new StringBuilder();
         try {
-            content.append(FreeMarkerTemplateUtils.processTemplateIntoString(configuration.getTemplate("email-template.flth"), model));
+            content.append(FreeMarkerTemplateUtils.processTemplateIntoString(configuration.getTemplate("email-template.ftl"), model));
         } catch (Exception e) {
             log.error("获取邮件模版失败..., {}", e.getMessage());
+            throw new ServiceException("获取邮件模版失败");
         }
         return content.toString();
     }

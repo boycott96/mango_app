@@ -57,11 +57,11 @@ public class AuthController {
         return R.ok();
     }
 
-    @PostMapping(value = "/sendCode")
+    @PostMapping(value = "/send/code")
     public R<?> sendCode(@RequestParam(name = "email") String email) {
         int i = RandomUtils.nextInt(100000, 999999);
         Map<String, Object> model = new HashMap<>();
-        model.put("verificationCode", i);
+        model.put("verificationCode", String.valueOf(i));
 
         EmailDetails emailDetails = new EmailDetails();
         emailDetails.setRecipient(email);
