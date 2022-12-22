@@ -16,6 +16,7 @@ import com.yy.common.core.constant.ExceptionConstants;
 import com.yy.common.core.domain.R;
 import com.yy.common.core.exception.ServiceException;
 import com.yy.common.core.utils.StringUtils;
+import com.yy.common.redis.service.RedisService;
 import com.yy.common.security.auth.AuthUtil;
 import com.yy.common.security.utils.SecurityUtils;
 import org.apache.commons.lang3.RandomUtils;
@@ -26,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author sunruiguang
@@ -38,11 +40,13 @@ public class AuthController {
     private final YyUserService yyUserService;
     private final TokenService tokenService;
     private final EmailService emailService;
+    private final RedisService redisService;
 
-    public AuthController(YyUserService yyUserService, TokenService tokenService, EmailService emailService) {
+    public AuthController(YyUserService yyUserService, TokenService tokenService, EmailService emailService, RedisService redisService) {
         this.yyUserService = yyUserService;
         this.tokenService = tokenService;
         this.emailService = emailService;
+        this.redisService = redisService;
     }
 
     /**
@@ -59,7 +63,17 @@ public class AuthController {
 
     @PostMapping(value = "/send/code")
     public R<?> sendCode(@RequestParam(name = "email") String email) {
+        // 判断email是否已经注册
+        LambdaQueryWrapper<YyUser> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(YyUser::getEmail, email);
+        YyUser one = yyUserService.getOne(queryWrapper);
+
+        ServiceException.isTrue(Objects.nonNull(one), ExceptionConstants.EMAIL_NOT_UNIQUE);
+
         int i = RandomUtils.nextInt(100000, 999999);
+        // 设置缓存
+        redisService.setCacheObject(email, String.valueOf(i), 30L, TimeUnit.MINUTES);
+
         Map<String, Object> model = new HashMap<>();
         model.put("verificationCode", String.valueOf(i));
 
