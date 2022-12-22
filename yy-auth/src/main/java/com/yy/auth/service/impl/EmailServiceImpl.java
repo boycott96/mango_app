@@ -50,7 +50,6 @@ public class EmailServiceImpl implements EmailService {
 
             // sending the email;
             javaMailSender.send(mailMessage);
-            log.info("邮件发送成功...");
         } catch (Exception e) {
             log.error("邮件发送失败..., {}", e.getMessage());
         }
@@ -75,7 +74,6 @@ public class EmailServiceImpl implements EmailService {
 
             // sending
             javaMailSender.send(mimeMessage);
-            log.info("邮件发送成功...");
         } catch (MessagingException e) {
             log.error("邮件发送失败..., {}", e.getMessage());
         }
