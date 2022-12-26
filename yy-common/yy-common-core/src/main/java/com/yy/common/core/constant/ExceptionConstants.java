@@ -20,6 +20,7 @@ public class ExceptionConstants {
     public final static String PHONE_NOT_UNIQUE = "手机号已被使用,请更换";
     public final static String ENUM_VALID = "参数异常问题";
     public final static String AUTH_CODE_INVALID = "验证码无效";
+    public final static String REGISTER_INFO_INVALID = "注册信息失效,请重新注册";
 
     /**
      * 系统相应问题

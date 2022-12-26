@@ -44,6 +44,7 @@ public class YyUserServiceImpl extends ServiceImpl<YyUserMapper, YyUser> impleme
         yyUser.setPassword(SecurityUtils.encryptPassword(userRo.getPassword()));
         yyUser.setCreateTime(new Date());
         yyUserMapper.insert(yyUser);
+        redisService.deleteObject(userRo.getEmail());
     }
 
     @Override

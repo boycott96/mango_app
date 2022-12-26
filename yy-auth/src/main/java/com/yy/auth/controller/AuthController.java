@@ -63,20 +63,7 @@ public class AuthController {
         queryWrapper.or().eq(YyUser::getUsername, userRo.getUsername());
         YyUser bean = yyUserService.getOne(queryWrapper);
         ServiceException.isTrue(Objects.nonNull(bean), ExceptionConstants.ACCOUNT_NOT_UNIQUE);
-
-        int code = RandomUtils.nextInt(100000, 999999);
-        userRo.setVerifyCode(String.valueOf(code));
-        // 设置缓存
-        redisService.setCacheObject(userRo.getEmail(), userRo, 30L, TimeUnit.MINUTES);
-
-        Map<String, Object> model = new HashMap<>();
-        model.put("verificationCode", userRo.getVerifyCode());
-
-        EmailDetails emailDetails = new EmailDetails();
-        emailDetails.setRecipient(userRo.getEmail());
-        emailDetails.setMsgBody(emailService.getContentFromTemplate(model));
-        emailDetails.setSubject("感谢注册椰羊空间，您的验证码是：" + userRo.getVerifyCode());
-        emailService.sendMailWithAttachment(emailDetails);
+        this.sendVerifyCode(userRo);
         return R.ok();
     }
 
@@ -86,6 +73,14 @@ public class AuthController {
         UserRo userRo = redisService.getCacheObject(verifyRo.getEmail());
         ServiceException.isTrue(Objects.isNull(userRo) || !verifyRo.getVerifyCode().equals(userRo.getVerifyCode()), ExceptionConstants.AUTH_CODE_INVALID);
         yyUserService.register(userRo);
+        return R.ok();
+    }
+
+    @PostMapping(value = "/resend")
+    public R<?> resend(@RequestBody VerifyRo verifyRo) {
+        UserRo userRo = redisService.getCacheObject(verifyRo.getEmail());
+        ServiceException.isTrue(Objects.isNull(userRo), ExceptionConstants.REGISTER_INFO_INVALID);
+        this.sendVerifyCode(userRo);
         return R.ok();
     }
 
@@ -133,5 +128,20 @@ public class AuthController {
         YyUser one = yyUserService.getOne(queryWrapper);
         UserVo userVo = new UserVo(one.getEmail(), one.getUsername(), one.getAvatarUrl(), one.getPhoneNumber());
         return R.ok(userVo);
+    }
+
+    private void sendVerifyCode(UserRo userRo) {
+        int code = RandomUtils.nextInt(100000, 999999);
+        userRo.setVerifyCode(String.valueOf(code));
+        // 设置缓存
+        redisService.setCacheObject(userRo.getEmail(), userRo, 10L, TimeUnit.MINUTES);
+        Map<String, Object> model = new HashMap<>();
+        model.put("verificationCode", userRo.getVerifyCode());
+
+        EmailDetails emailDetails = new EmailDetails();
+        emailDetails.setRecipient(userRo.getEmail());
+        emailDetails.setMsgBody(emailService.getContentFromTemplate(model));
+        emailDetails.setSubject("感谢注册椰羊空间，您的验证码是：" + userRo.getVerifyCode());
+        emailService.sendMailWithAttachment(emailDetails);
     }
 }
