@@ -1,12 +1,10 @@
 package com.yy.auth.domain.ro;
 
 import com.yy.common.core.constant.ExceptionConstants;
-import com.yy.common.core.constant.RegexpConstants;
 import lombok.Data;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 /**
@@ -30,26 +28,11 @@ public class UserRo {
     private String username;
 
     /**
-     * 手机号
-     */
-    @Pattern(regexp = RegexpConstants.PHONE_REGEXP, message = ExceptionConstants.PHONE_INVALID)
-    private String phoneNumber;
-
-    /**
      * 密码
      */
     @NotBlank(message = ExceptionConstants.PWD_INVALID)
     @Size(min = 1, max = 50, message = ExceptionConstants.PWD_LENGTH_INVALID)
     private String password;
 
-    /**
-     * 头像地址
-     */
-    private String avatarUrl;
-
-    /**
-     * 验证码
-     */
-    @NotBlank(message = ExceptionConstants.AUTH_CODE_INVALID)
-    private String authCode;
+    private String verifyCode;
 }

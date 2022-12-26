@@ -1,13 +1,12 @@
 package com.yy.auth.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.yy.api.domain.YyUser;
 import com.yy.api.model.LoginUser;
 import com.yy.auth.domain.EmailDetails;
-import com.yy.auth.domain.enums.CheckUniqueTypeEnum;
 import com.yy.auth.domain.ro.LoginBody;
 import com.yy.auth.domain.ro.UserRo;
+import com.yy.auth.domain.ro.VerifyRo;
 import com.yy.auth.domain.vo.UserVo;
 import com.yy.auth.service.EmailService;
 import com.yy.auth.service.TokenService;
@@ -57,31 +56,36 @@ public class AuthController {
      */
     @PostMapping(value = "/register")
     public R<?> register(@RequestBody @Validated UserRo userRo) {
-        yyUserService.register(userRo);
+
+        // 校验邮箱，用户名，和手机号码是否唯一
+        LambdaQueryWrapper<YyUser> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(YyUser::getEmail, userRo.getEmail());
+        queryWrapper.or().eq(YyUser::getUsername, userRo.getUsername());
+        YyUser bean = yyUserService.getOne(queryWrapper);
+        ServiceException.isTrue(Objects.nonNull(bean), ExceptionConstants.ACCOUNT_NOT_UNIQUE);
+
+        int code = RandomUtils.nextInt(100000, 999999);
+        userRo.setVerifyCode(String.valueOf(code));
+        // 设置缓存
+        redisService.setCacheObject(userRo.getEmail(), userRo, 30L, TimeUnit.MINUTES);
+
+        Map<String, Object> model = new HashMap<>();
+        model.put("verificationCode", userRo.getVerifyCode());
+
+        EmailDetails emailDetails = new EmailDetails();
+        emailDetails.setRecipient(userRo.getEmail());
+        emailDetails.setMsgBody(emailService.getContentFromTemplate(model));
+        emailDetails.setSubject("感谢注册椰羊空间，您的验证码是：" + userRo.getVerifyCode());
+        emailService.sendMailWithAttachment(emailDetails);
         return R.ok();
     }
 
-    @PostMapping(value = "/send/code")
-    public R<?> sendCode(@RequestParam(name = "email") String email) {
-        // 判断email是否已经注册
-        LambdaQueryWrapper<YyUser> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(YyUser::getEmail, email);
-        YyUser one = yyUserService.getOne(queryWrapper);
-
-        ServiceException.isTrue(Objects.nonNull(one), ExceptionConstants.EMAIL_NOT_UNIQUE);
-
-        int i = RandomUtils.nextInt(100000, 999999);
-        // 设置缓存
-        redisService.setCacheObject(email, String.valueOf(i), 30L, TimeUnit.MINUTES);
-
-        Map<String, Object> model = new HashMap<>();
-        model.put("verificationCode", String.valueOf(i));
-
-        EmailDetails emailDetails = new EmailDetails();
-        emailDetails.setRecipient(email);
-        emailDetails.setMsgBody(emailService.getContentFromTemplate(model));
-        emailDetails.setSubject("感谢注册椰羊空间，您的验证码是：" + i);
-        emailService.sendMailWithAttachment(emailDetails);
+    @PostMapping(value = "/verify")
+    public R<?> verify(@RequestBody VerifyRo verifyRo) {
+        // 校验验证码是否符合规定
+        UserRo userRo = redisService.getCacheObject(verifyRo.getEmail());
+        ServiceException.isTrue(Objects.isNull(userRo) || !verifyRo.getVerifyCode().equals(userRo.getVerifyCode()), ExceptionConstants.AUTH_CODE_INVALID);
+        yyUserService.register(userRo);
         return R.ok();
     }
 
@@ -111,26 +115,6 @@ public class AuthController {
         if (StringUtils.isNotEmpty(token)) {
             AuthUtil.logoutByToken(token);
         }
-        return R.ok();
-    }
-
-    /**
-     * 判断当前值是否唯一
-     *
-     * @param code  校验参数类型
-     * @param value 校验值
-     * @return com.yy.common.core.domain.R<?>
-     * @author sunruiguang
-     * @since 2022/11/29
-     */
-    @GetMapping(value = "/check/unique")
-    public R<?> checkUnique(@RequestParam("code") int code, @RequestParam("value") String value) {
-        CheckUniqueTypeEnum checkUniqueTypeEnum = CheckUniqueTypeEnum.ofCode(code);
-        ServiceException.isTrue(Objects.isNull(checkUniqueTypeEnum), ExceptionConstants.ENUM_VALID);
-        QueryWrapper<YyUser> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq(checkUniqueTypeEnum.getFieldName(), value);
-        YyUser one = yyUserService.getOne(queryWrapper);
-        ServiceException.isTrue(Objects.nonNull(one), checkUniqueTypeEnum.getMsg());
         return R.ok();
     }
 

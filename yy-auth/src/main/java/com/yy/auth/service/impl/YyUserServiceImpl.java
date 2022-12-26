@@ -38,17 +38,6 @@ public class YyUserServiceImpl extends ServiceImpl<YyUserMapper, YyUser> impleme
 
     @Override
     public void register(UserRo userRo) {
-        // 校验邮箱，用户名，和手机号码是否唯一
-        LambdaQueryWrapper<YyUser> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(YyUser::getEmail, userRo.getEmail());
-        queryWrapper.or().eq(YyUser::getUsername, userRo.getUsername());
-        YyUser bean = yyUserMapper.selectOne(queryWrapper);
-        ServiceException.isTrue(Objects.nonNull(bean), ExceptionConstants.ACCOUNT_NOT_UNIQUE);
-
-        // 校验验证码是否符合规定
-        String cacheAuthCode = redisService.getCacheObject(userRo.getEmail());
-        ServiceException.isTrue(!cacheAuthCode.equals(userRo.getAuthCode()), ExceptionConstants.AUTH_CODE_INVALID);
-
         YyUser yyUser = new YyUser();
         BeanUtils.copyProperties(userRo, yyUser);
         // 设置密码加密
