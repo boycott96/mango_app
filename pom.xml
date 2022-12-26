@@ -32,6 +32,7 @@
         <ehcache.version>2.10.9.2</ehcache.version>
         <mybatis-plus.version>3.5.2</mybatis-plus.version>
         <jaxb-api.version>2.3.1</jaxb-api.version>
+        <jaxb-core.version>4.0.1</jaxb-core.version>
         <activation.version>1.1.1</activation.version>
         <java.version>17</java.version>
         <freemarker.version>2.3.31</freemarker.version>
@@ -172,6 +173,16 @@
                 <groupId>javax.xml.bind</groupId>
                 <artifactId>jaxb-api</artifactId>
                 <version>${jaxb-api.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sun.xml.bind</groupId>
+                <artifactId>jaxb-impl</artifactId>
+                <version>${jaxb-core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sun.xml.bind</groupId>
+                <artifactId>jaxb-core</artifactId>
+                <version>${jaxb-core.version}</version>
             </dependency>
             <dependency>
                 <groupId>javax.activation</groupId>
