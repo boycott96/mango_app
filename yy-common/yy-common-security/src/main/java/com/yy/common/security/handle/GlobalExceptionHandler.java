@@ -51,7 +51,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(ServiceException.class)
     public void handleServiceException(ServiceException e, HttpServletResponse response) {
-        log.error(e.getMessage(), e);
+        log.error(e.getMessage());
         this.setResponse(response, HttpStatus.PRECONDITION_FAILED, e.getMessage());
     }
 
