@@ -2,6 +2,7 @@ package com.yy.auth.service;
 
 import com.yy.api.model.LoginUser;
 import com.yy.auth.domain.ro.TokenRo;
+import com.yy.auth.domain.vo.UserVo;
 import com.yy.common.core.constant.CacheConstants;
 import com.yy.common.core.constant.SecurityConstants;
 import com.yy.common.core.utils.IdUtils;
@@ -66,7 +67,7 @@ public class TokenService {
         claimsMap.put(SecurityConstants.EXPIRE_TIME, new Date().getTime() + expireTime * MILLIS_MINUTE);
 
         // 接口返回信息
-        return new TokenRo(JwtUtils.createToken(claimsMap), expireTime);
+        return new TokenRo(JwtUtils.createToken(claimsMap), new UserVo(email, username, loginUser.getYyUser().getAvatarUrl(), loginUser.getYyUser().getPhoneNumber()));
     }
 
     /**

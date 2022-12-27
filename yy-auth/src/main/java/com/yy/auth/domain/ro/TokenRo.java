@@ -1,5 +1,6 @@
 package com.yy.auth.domain.ro;
 
+import com.yy.auth.domain.vo.UserVo;
 import lombok.*;
 
 /**
@@ -20,5 +21,5 @@ public class TokenRo {
     /**
      * 过期时间
      */
-    private long expiresIn;
+    private UserVo user;
 }
