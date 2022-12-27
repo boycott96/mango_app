@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -62,7 +63,7 @@ public class TokenService {
         claimsMap.put(SecurityConstants.DETAILS_USER_ID, userId);
         claimsMap.put(SecurityConstants.DETAILS_EMAIL, email);
         claimsMap.put(SecurityConstants.DETAILS_USERNAME, username);
-        claimsMap.put(SecurityConstants.EXPIRE_TIME, expireTime);
+        claimsMap.put(SecurityConstants.EXPIRE_TIME, new Date().getTime() + expireTime * MILLIS_MINUTE);
 
         // 接口返回信息
         return new TokenRo(JwtUtils.createToken(claimsMap), expireTime);
