@@ -45,4 +45,6 @@ public class SecurityConstants {
      * 登录用户
      */
     public static final String LOGIN_USER = "login_user";
+
+    public static final String EXPIRE_TIME = "exp";
 }

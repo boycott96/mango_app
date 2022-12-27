@@ -62,6 +62,7 @@ public class TokenService {
         claimsMap.put(SecurityConstants.DETAILS_USER_ID, userId);
         claimsMap.put(SecurityConstants.DETAILS_EMAIL, email);
         claimsMap.put(SecurityConstants.DETAILS_USERNAME, username);
+        claimsMap.put(SecurityConstants.EXPIRE_TIME, expireTime);
 
         // 接口返回信息
         return new TokenRo(JwtUtils.createToken(claimsMap), expireTime);
