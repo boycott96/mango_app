@@ -53,7 +53,7 @@ public class YyUserServiceImpl extends ServiceImpl<YyUserMapper, YyUser> impleme
         LambdaQueryWrapper<YyUser> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(YyUser::getEmail, loginBody.getEmail());
         YyUser yyUser = yyUserMapper.selectOne(wrapper);
-        ServiceException.isTrue(Objects.isNull(yyUser), ExceptionConstants.EMAIL_USERNAME_INVALID);
+        ServiceException.isTrue(Objects.isNull(yyUser), ExceptionConstants.EMAIL_NO_EXIST);
         ServiceException.isTrue(!SecurityUtils.matchesPassword(loginBody.getPassword(), yyUser.getPassword()), ExceptionConstants.PWD_ERROR);
         LoginUser loginUser = new LoginUser();
         loginUser.setYyUser(yyUser);
