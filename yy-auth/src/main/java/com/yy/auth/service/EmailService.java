@@ -1,6 +1,6 @@
 package com.yy.auth.service;
 
-import com.yy.auth.domain.EmailDetails;
+import com.yy.auth.entity.EmailDetails;
 
 import java.util.Map;
 

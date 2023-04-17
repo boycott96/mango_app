@@ -6,10 +6,15 @@ package com.yy.common.core.constant;
  */
 public class ExceptionConstants {
 
-    public final static String EMAIL_INVALID = "邮箱格式不正确";
+    /**
+     * 字段验证
+     */
+    // common
+    public final static String PARAM_INVALID = "参数异常";
+    public final static String PARAM_LENGTH_INVALID = "参数长度超出限制";
+    public final static String ACCOUNT_LENGTH_INVALID = "长度超出限制";
     public final static String USERNAME_INVALID = "用户名不能为空";
     public final static String USERNAME_LENGTH_INVALID = "用户名长度超出限制";
-    public final static String PHONE_INVALID = "手机格式不正确";
     public final static String PWD_INVALID = "密码不能为空";
     public final static String PWD_LENGTH_INVALID = "密码长度超出限制";
     public final static String EMAIL_NO_EXIST = "邮箱不存在";

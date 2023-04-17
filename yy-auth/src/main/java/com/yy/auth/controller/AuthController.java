@@ -1,16 +1,16 @@
 package com.yy.auth.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.yy.api.domain.YyUser;
+import com.yy.api.entity.AuthUser;
 import com.yy.api.model.LoginUser;
-import com.yy.auth.domain.EmailDetails;
-import com.yy.auth.domain.ro.LoginBody;
-import com.yy.auth.domain.ro.UserRo;
-import com.yy.auth.domain.ro.VerifyRo;
-import com.yy.auth.domain.vo.UserVo;
+import com.yy.auth.entity.EmailDetails;
+import com.yy.auth.entity.ro.LoginBody;
+import com.yy.auth.entity.ro.UserRo;
+import com.yy.auth.entity.ro.VerifyRo;
+import com.yy.auth.entity.vo.UserVo;
 import com.yy.auth.service.EmailService;
 import com.yy.auth.service.TokenService;
-import com.yy.auth.service.YyUserService;
+import com.yy.auth.service.AuthUserService;
 import com.yy.common.core.constant.ExceptionConstants;
 import com.yy.common.core.domain.R;
 import com.yy.common.core.exception.ServiceException;
@@ -36,13 +36,16 @@ import java.util.concurrent.TimeUnit;
 @RequestMapping()
 public class AuthController {
 
-    private final YyUserService yyUserService;
+    private final AuthUserService authUserService;
     private final TokenService tokenService;
     private final EmailService emailService;
     private final RedisService redisService;
 
-    public AuthController(YyUserService yyUserService, TokenService tokenService, EmailService emailService, RedisService redisService) {
-        this.yyUserService = yyUserService;
+    public AuthController(AuthUserService authUserService,
+                          TokenService tokenService,
+                          EmailService emailService,
+                          RedisService redisService) {
+        this.authUserService = authUserService;
         this.tokenService = tokenService;
         this.emailService = emailService;
         this.redisService = redisService;
@@ -57,11 +60,11 @@ public class AuthController {
     @PostMapping(value = "/register")
     public R<?> register(@RequestBody @Validated UserRo userRo) {
 
-        // 校验邮箱，用户名，和手机号码是否唯一
-        LambdaQueryWrapper<YyUser> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(YyUser::getEmail, userRo.getEmail());
-        queryWrapper.or().eq(YyUser::getUsername, userRo.getUsername());
-        YyUser bean = yyUserService.getOne(queryWrapper);
+        // 校验邮箱，用户名是否唯一
+        LambdaQueryWrapper<AuthUser> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(AuthUser::getEmail, userRo.getEmail());
+        queryWrapper.or().eq(AuthUser::getAccount, userRo.getAccount());
+        AuthUser bean = authUserService.getOne(queryWrapper);
         ServiceException.isTrue(Objects.nonNull(bean), ExceptionConstants.ACCOUNT_NOT_UNIQUE);
         this.sendVerifyCode(userRo);
         return R.ok();
@@ -72,7 +75,7 @@ public class AuthController {
         // 校验验证码是否符合规定
         UserRo userRo = redisService.getCacheObject(verifyRo.getEmail());
         ServiceException.isTrue(Objects.isNull(userRo) || !verifyRo.getVerifyCode().equals(userRo.getVerifyCode()), ExceptionConstants.AUTH_CODE_INVALID);
-        yyUserService.register(userRo);
+        authUserService.register(userRo);
         return R.ok();
     }
 
@@ -92,7 +95,7 @@ public class AuthController {
      */
     @PostMapping(value = "/login")
     public R<?> login(@RequestBody @Validated LoginBody loginBody) {
-        LoginUser login = yyUserService.login(loginBody);
+        LoginUser login = authUserService.login(loginBody);
         return R.ok(tokenService.createToken(login));
     }
 
@@ -123,10 +126,10 @@ public class AuthController {
     @GetMapping(value = "/user/info")
     public R<UserVo> getUserInfo() {
         Long userId = SecurityUtils.getUserId();
-        LambdaQueryWrapper<YyUser> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(YyUser::getId, userId);
-        YyUser one = yyUserService.getOne(queryWrapper);
-        UserVo userVo = new UserVo(one.getEmail(), one.getUsername(), one.getAvatarUrl(), one.getPhoneNumber());
+        LambdaQueryWrapper<AuthUser> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(AuthUser::getId, userId);
+        AuthUser one = authUserService.getOne(queryWrapper);
+        UserVo userVo = new UserVo(one.getEmail(), one.getUsername(), one.getAccount(), one.getAvatarUrl());
         return R.ok(userVo);
     }
 

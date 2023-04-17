@@ -1,4 +1,4 @@
-package com.yy.auth.domain;
+package com.yy.auth.entity;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

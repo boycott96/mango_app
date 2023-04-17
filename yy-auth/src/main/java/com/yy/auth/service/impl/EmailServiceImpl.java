@@ -1,6 +1,6 @@
 package com.yy.auth.service.impl;
 
-import com.yy.auth.domain.EmailDetails;
+import com.yy.auth.entity.EmailDetails;
 import com.yy.auth.service.EmailService;
 import com.yy.common.core.exception.ServiceException;
 import com.yy.common.core.utils.StringUtils;

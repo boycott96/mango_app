@@ -1,4 +1,4 @@
-package com.yy.auth.domain.ro;
+package com.yy.auth.entity.ro;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

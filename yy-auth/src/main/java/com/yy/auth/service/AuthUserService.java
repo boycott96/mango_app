@@ -1,16 +1,16 @@
 package com.yy.auth.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.yy.api.domain.YyUser;
+import com.yy.api.entity.AuthUser;
 import com.yy.api.model.LoginUser;
-import com.yy.auth.domain.ro.LoginBody;
-import com.yy.auth.domain.ro.UserRo;
+import com.yy.auth.entity.ro.LoginBody;
+import com.yy.auth.entity.ro.UserRo;
 
 /**
  * @author sunruiguang
  * @date 2022-11-14
  */
-public interface YyUserService extends IService<YyUser> {
+public interface AuthUserService extends IService<AuthUser> {
 
     /**
      * 注册实现

@@ -1,9 +1,10 @@
-package com.yy.api.domain;
+package com.yy.api.entity;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 import java.util.Date;
 
@@ -12,14 +13,13 @@ import java.util.Date;
  *
  * @author sunruiguang
  */
-@Getter
-@Setter
-public class YyUser {
+@Data
+public class AuthUser {
 
     /**
      * 主键id
      */
-    @TableId(value = "id", type = IdType.AUTO)
+    @TableId(type = IdType.ASSIGN_ID)
     private Long id;
 
     /**
@@ -28,14 +28,14 @@ public class YyUser {
     private String email;
 
     /**
+     * 账户名
+     */
+    private String account;
+
+    /**
      * 用户名
      */
     private String username;
-
-    /**
-     * 手机号
-     */
-    private String phoneNumber;
 
     /**
      * 密码
@@ -50,25 +50,12 @@ public class YyUser {
     /**
      * 创建时间
      */
+    @TableField(fill = FieldFill.INSERT)
     private Date createTime;
 
     /**
      * 更新时间
      */
+    @TableField(fill = FieldFill.INSERT_UPDATE)
     private Date updateTime;
-
-    /**
-     * 登录时间
-     */
-    private Date loginTime;
-
-    /**
-     * 登录IP
-     */
-    private String loginIp;
-
-    /**
-     * 登录系统
-     */
-    private String loginOs;
 }

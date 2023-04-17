@@ -1,6 +1,6 @@
-package com.yy.auth.domain.ro;
+package com.yy.auth.entity.ro;
 
-import com.yy.auth.domain.vo.UserVo;
+import com.yy.auth.entity.vo.UserVo;
 import lombok.*;
 
 /**

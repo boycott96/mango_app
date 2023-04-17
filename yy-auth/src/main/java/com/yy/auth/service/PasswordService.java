@@ -1,6 +1,6 @@
 package com.yy.auth.service;
 
-import com.yy.api.domain.YyUser;
+import com.yy.api.entity.AuthUser;
 import com.yy.common.core.constant.CacheConstants;
 import com.yy.common.core.exception.ServiceException;
 import com.yy.common.redis.service.RedisService;
@@ -33,7 +33,7 @@ public class PasswordService {
         return CacheConstants.PWD_ERR_CNT_KEY + username;
     }
 
-    public void validate(YyUser user, String password) {
+    public void validate(AuthUser user, String password) {
         String username = user.getUsername();
 
         Integer retryCount = redisService.getCacheObject(getCacheKey(username));
@@ -58,7 +58,7 @@ public class PasswordService {
         }
     }
 
-    public boolean matches(YyUser user, String rawPassword) {
+    public boolean matches(AuthUser user, String rawPassword) {
         return SecurityUtils.matchesPassword(rawPassword, user.getPassword());
     }
 

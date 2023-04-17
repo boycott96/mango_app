@@ -1,4 +1,4 @@
-package com.yy.auth.domain.enums;
+package com.yy.auth.entity.enums;
 
 import com.yy.common.core.constant.ExceptionConstants;
 import lombok.AllArgsConstructor;
@@ -16,9 +16,8 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Getter
 public enum CheckUniqueTypeEnum {
-    PHONE_CHECK(1, "phone_number", ExceptionConstants.PHONE_NOT_UNIQUE),
-    EMAIL_CHECK(2, "email", ExceptionConstants.EMAIL_NOT_UNIQUE),
-    USERNAME_CHECK(3, "username", ExceptionConstants.USERNAME_NOT_UNIQUE);
+    EMAIL_CHECK(1, "email", ExceptionConstants.EMAIL_NOT_UNIQUE),
+    USERNAME_CHECK(2, "username", ExceptionConstants.USERNAME_NOT_UNIQUE);
     private final int code;
 
     private final String fieldName;

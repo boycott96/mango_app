@@ -1,8 +1,8 @@
 package com.yy.auth.service;
 
 import com.yy.api.model.LoginUser;
-import com.yy.auth.domain.ro.TokenRo;
-import com.yy.auth.domain.vo.UserVo;
+import com.yy.auth.entity.ro.TokenRo;
+import com.yy.auth.entity.vo.UserVo;
 import com.yy.common.core.constant.CacheConstants;
 import com.yy.common.core.constant.SecurityConstants;
 import com.yy.common.core.utils.IdUtils;
@@ -49,11 +49,12 @@ public class TokenService {
      */
     public TokenRo createToken(LoginUser loginUser) {
         String token = IdUtils.fastUUID();
-        Long userId = loginUser.getYyUser().getId();
+        Long userId = loginUser.getAuthUser().getId();
         loginUser.setToken(token);
         loginUser.setId(userId);
-        String email = loginUser.getYyUser().getEmail();
-        String username = loginUser.getYyUser().getUsername();
+        String email = loginUser.getAuthUser().getEmail();
+        String account = loginUser.getAuthUser().getAccount();
+        String username = loginUser.getAuthUser().getUsername();
         loginUser.setUsername(username);
         loginUser.setEmail(email);
         refreshToken(loginUser);
@@ -63,11 +64,12 @@ public class TokenService {
         claimsMap.put(SecurityConstants.USER_KEY, token);
         claimsMap.put(SecurityConstants.DETAILS_USER_ID, userId);
         claimsMap.put(SecurityConstants.DETAILS_EMAIL, email);
+        claimsMap.put(SecurityConstants.DETAILS_ACCOUNT, account);
         claimsMap.put(SecurityConstants.DETAILS_USERNAME, username);
         claimsMap.put(SecurityConstants.EXPIRE_TIME, new Date().getTime() + expireTime * MILLIS_MINUTE);
 
         // 接口返回信息
-        return new TokenRo(JwtUtils.createToken(claimsMap), new UserVo(email, username, loginUser.getYyUser().getAvatarUrl(), loginUser.getYyUser().getPhoneNumber()));
+        return new TokenRo(JwtUtils.createToken(claimsMap), new UserVo(email, username, account, loginUser.getAuthUser().getAvatarUrl()));
     }
 
     /**

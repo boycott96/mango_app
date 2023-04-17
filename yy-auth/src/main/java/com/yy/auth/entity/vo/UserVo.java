@@ -1,4 +1,4 @@
-package com.yy.auth.domain.vo;
+package com.yy.auth.entity.vo;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,7 +17,7 @@ public class UserVo {
 
     private String username;
 
-    private String avatarUrl;
+    private String account;
 
-    private String phoneNumber;
+    private String avatarUrl;
 }

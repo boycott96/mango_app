@@ -1,6 +1,6 @@
 package com.yy.api.model;
 
-import com.yy.api.domain.YyUser;
+import com.yy.api.entity.AuthUser;
 import lombok.Data;
 
 import java.io.Serial;
@@ -33,6 +33,11 @@ public class LoginUser implements Serializable {
     private String email;
 
     /**
+     * 账户名
+     */
+    private String account;
+
+    /**
      * 用户名
      */
     private String username;
@@ -50,5 +55,5 @@ public class LoginUser implements Serializable {
     /**
      * 用户信息
      */
-    private YyUser yyUser;
+    private AuthUser authUser;
 }
