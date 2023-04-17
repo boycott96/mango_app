@@ -12,9 +12,14 @@ public class SecurityConstants {
     public static final String DETAILS_USER_ID = "user_id";
 
     /**
-     * 邮箱是否被使用
+     * 邮箱
      */
     public static final String DETAILS_EMAIL = "email";
+
+    /**
+     * 账户名
+     */
+    public static final String DETAILS_ACCOUNT = "account";
 
     /**
      * 用户名字段
