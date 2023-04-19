@@ -35,12 +35,12 @@ public class LoginUser implements Serializable {
     /**
      * 账户名
      */
-    private String account;
+    private String username;
 
     /**
      * 用户名
      */
-    private String username;
+    private String stageName;
 
     /**
      * 登录时间

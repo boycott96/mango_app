@@ -4,7 +4,6 @@ import com.yy.api.entity.AuthUser;
 import com.yy.common.core.constant.CacheConstants;
 import com.yy.common.core.exception.ServiceException;
 import com.yy.common.redis.service.RedisService;
-import com.yy.common.security.utils.SecurityUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.TimeUnit;
@@ -59,7 +58,7 @@ public class PasswordService {
     }
 
     public boolean matches(AuthUser user, String rawPassword) {
-        return SecurityUtils.matchesPassword(rawPassword, user.getPassword());
+        return user.getPassword().equals(rawPassword);
     }
 
     public void clearLoginRecordCache(String loginName) {

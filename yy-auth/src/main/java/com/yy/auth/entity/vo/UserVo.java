@@ -17,7 +17,7 @@ public class UserVo {
 
     private String username;
 
-    private String account;
+    private String stageName;
 
     private String avatarUrl;
 }

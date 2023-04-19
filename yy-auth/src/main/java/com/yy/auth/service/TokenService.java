@@ -53,7 +53,7 @@ public class TokenService {
         loginUser.setToken(token);
         loginUser.setId(userId);
         String email = loginUser.getAuthUser().getEmail();
-        String account = loginUser.getAuthUser().getAccount();
+        String stageName = loginUser.getAuthUser().getStageName();
         String username = loginUser.getAuthUser().getUsername();
         loginUser.setUsername(username);
         loginUser.setEmail(email);
@@ -64,12 +64,12 @@ public class TokenService {
         claimsMap.put(SecurityConstants.USER_KEY, token);
         claimsMap.put(SecurityConstants.DETAILS_USER_ID, userId);
         claimsMap.put(SecurityConstants.DETAILS_EMAIL, email);
-        claimsMap.put(SecurityConstants.DETAILS_ACCOUNT, account);
+        claimsMap.put(SecurityConstants.DETAILS_STAGE_NAME, stageName);
         claimsMap.put(SecurityConstants.DETAILS_USERNAME, username);
         claimsMap.put(SecurityConstants.EXPIRE_TIME, new Date().getTime() + expireTime * MILLIS_MINUTE);
 
         // 接口返回信息
-        return new TokenRo(JwtUtils.createToken(claimsMap), new UserVo(email, username, account, loginUser.getAuthUser().getAvatarUrl()));
+        return new TokenRo(JwtUtils.createToken(claimsMap), new UserVo(email, username, stageName, loginUser.getAuthUser().getAvatarUrl()));
     }
 
     /**

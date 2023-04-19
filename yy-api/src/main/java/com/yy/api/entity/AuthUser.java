@@ -30,12 +30,12 @@ public class AuthUser {
     /**
      * 账户名
      */
-    private String account;
+    private String username;
 
     /**
      * 用户名
      */
-    private String username;
+    private String stageName;
 
     /**
      * 密码

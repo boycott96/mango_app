@@ -19,7 +19,7 @@ public class SecurityConstants {
     /**
      * 账户名
      */
-    public static final String DETAILS_ACCOUNT = "account";
+    public static final String DETAILS_STAGE_NAME = "stageName";
 
     /**
      * 用户名字段

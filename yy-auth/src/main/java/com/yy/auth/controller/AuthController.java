@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.yy.api.entity.AuthUser;
 import com.yy.api.model.LoginUser;
 import com.yy.auth.entity.EmailDetails;
+import com.yy.auth.entity.enums.CheckUniqueTypeEnum;
 import com.yy.auth.entity.ro.LoginBody;
 import com.yy.auth.entity.ro.UserRo;
 import com.yy.auth.entity.ro.VerifyRo;
@@ -59,14 +60,34 @@ public class AuthController {
      */
     @PostMapping(value = "/register")
     public R<?> register(@RequestBody @Validated UserRo userRo) {
-
         // 校验邮箱，用户名是否唯一
         LambdaQueryWrapper<AuthUser> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(AuthUser::getEmail, userRo.getEmail());
-        queryWrapper.or().eq(AuthUser::getAccount, userRo.getAccount());
+        queryWrapper.or().eq(AuthUser::getUsername, userRo.getUsername());
         AuthUser bean = authUserService.getOne(queryWrapper);
-        ServiceException.isTrue(Objects.nonNull(bean), ExceptionConstants.ACCOUNT_NOT_UNIQUE);
+        ServiceException.isTrue(Objects.nonNull(bean), ExceptionConstants.PARAM_INVALID);
         this.sendVerifyCode(userRo);
+        return R.ok();
+    }
+
+    /**
+     * @param type CheckUniqueTypeEnum 1: email, 2: username
+     * @return com.yy.common.core.domain.R<?>
+     * @author sunruiguang
+     * @since 2023/4/18
+     */
+    @GetMapping(value = "/check/unique")
+    public R<?> verifyEmail(@RequestParam("value") String value, @RequestParam("type") int type) {
+        LambdaQueryWrapper<AuthUser> queryWrapper = new LambdaQueryWrapper<>();
+        if (type == CheckUniqueTypeEnum.EMAIL_CHECK.getCode()) {
+            queryWrapper.eq(AuthUser::getEmail, value);
+        } else {
+            queryWrapper.eq(AuthUser::getUsername, value);
+        }
+        AuthUser bean = authUserService.getOne(queryWrapper);
+        ServiceException.isTrue(Objects.nonNull(bean),
+                type == CheckUniqueTypeEnum.EMAIL_CHECK.getCode() ?
+                        ExceptionConstants.EMAIL_NOT_UNIQUE : ExceptionConstants.USERNAME_NOT_UNIQUE);
         return R.ok();
     }
 
@@ -129,7 +150,7 @@ public class AuthController {
         LambdaQueryWrapper<AuthUser> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(AuthUser::getId, userId);
         AuthUser one = authUserService.getOne(queryWrapper);
-        UserVo userVo = new UserVo(one.getEmail(), one.getUsername(), one.getAccount(), one.getAvatarUrl());
+        UserVo userVo = new UserVo(one.getEmail(), one.getUsername(), one.getStageName(), one.getAvatarUrl());
         return R.ok(userVo);
     }
 

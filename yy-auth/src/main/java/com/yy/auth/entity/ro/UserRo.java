@@ -26,20 +26,20 @@ public class UserRo {
      */
     @NotBlank(message = ExceptionConstants.PARAM_INVALID)
     @Size(min = 3, max = 20, message = ExceptionConstants.PARAM_LENGTH_INVALID)
-    private String account;
+    private String username;
 
     /**
      * 姓名
      */
     @NotBlank(message = ExceptionConstants.PARAM_INVALID)
     @Size(min = 1, max = 50, message = ExceptionConstants.PARAM_LENGTH_INVALID)
-    private String username;
+    private String stageName;
 
     /**
      * 密码
      */
     @NotBlank(message = ExceptionConstants.PARAM_INVALID)
-    @Size(min = 1, max = 50, message = ExceptionConstants.PARAM_LENGTH_INVALID)
+    @Size(min = 5, max = 50, message = ExceptionConstants.PARAM_LENGTH_INVALID)
     private String password;
 
     /**

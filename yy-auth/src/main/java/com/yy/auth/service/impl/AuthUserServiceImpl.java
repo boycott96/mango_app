@@ -12,7 +12,6 @@ import com.yy.auth.service.PasswordService;
 import com.yy.common.core.constant.ExceptionConstants;
 import com.yy.common.core.exception.ServiceException;
 import com.yy.common.redis.service.RedisService;
-import com.yy.common.security.utils.SecurityUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
@@ -40,7 +39,7 @@ public class AuthUserServiceImpl extends ServiceImpl<AuthUserMapper, AuthUser> i
         AuthUser authUser = new AuthUser();
         BeanUtils.copyProperties(userRo, authUser);
         // 设置密码加密
-        authUser.setPassword(SecurityUtils.encryptPassword(userRo.getPassword()));
+        authUser.setPassword(userRo.getPassword());
         authUserMapper.insert(authUser);
         redisService.deleteObject(userRo.getEmail());
     }
@@ -52,7 +51,6 @@ public class AuthUserServiceImpl extends ServiceImpl<AuthUserMapper, AuthUser> i
         wrapper.eq(AuthUser::getEmail, loginBody.getEmail());
         AuthUser authUser = authUserMapper.selectOne(wrapper);
         ServiceException.isTrue(Objects.isNull(authUser), ExceptionConstants.EMAIL_NO_EXIST);
-        ServiceException.isTrue(!SecurityUtils.matchesPassword(loginBody.getPassword(), authUser.getPassword()), ExceptionConstants.PWD_ERROR);
         LoginUser loginUser = new LoginUser();
         loginUser.setAuthUser(authUser);
         passwordService.validate(authUser, loginBody.getPassword());
