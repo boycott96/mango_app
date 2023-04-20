@@ -1,5 +1,6 @@
 package com.yy.auth.entity.ro;
 
+import com.yy.common.core.constant.ExceptionConstants;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
@@ -15,12 +16,13 @@ public class LoginBody {
     /**
      * 用户名
      */
-    @NotBlank(message = "邮箱不能为空")
-    private String email;
+    @NotBlank(message = ExceptionConstants.PARAM_INVALID)
+    private String username;
+
 
     /**
      * 密码
      */
-    @NotNull(message = "密码不能为空")
+    @NotNull(message = ExceptionConstants.PARAM_INVALID)
     private String password;
 }

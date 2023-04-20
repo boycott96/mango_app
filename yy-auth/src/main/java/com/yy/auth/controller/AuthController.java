@@ -92,7 +92,7 @@ public class AuthController {
     }
 
     @PostMapping(value = "/verify")
-    public R<?> verify(@RequestBody VerifyRo verifyRo) {
+    public R<?> verify(@Validated @RequestBody VerifyRo verifyRo) {
         // 校验验证码是否符合规定
         UserRo userRo = redisService.getCacheObject(verifyRo.getEmail());
         ServiceException.isTrue(Objects.isNull(userRo) || !verifyRo.getVerifyCode().equals(userRo.getVerifyCode()), ExceptionConstants.AUTH_CODE_INVALID);
@@ -100,9 +100,9 @@ public class AuthController {
         return R.ok();
     }
 
-    @PostMapping(value = "/resend")
-    public R<?> resend(@RequestBody VerifyRo verifyRo) {
-        UserRo userRo = redisService.getCacheObject(verifyRo.getEmail());
+    @GetMapping(value = "/resend")
+    public R<?> resend(@RequestParam String email) {
+        UserRo userRo = redisService.getCacheObject(email);
         ServiceException.isTrue(Objects.isNull(userRo), ExceptionConstants.REGISTER_INFO_INVALID);
         this.sendVerifyCode(userRo);
         return R.ok();

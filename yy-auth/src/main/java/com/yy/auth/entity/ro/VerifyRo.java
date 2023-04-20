@@ -1,8 +1,11 @@
 package com.yy.auth.entity.ro;
 
+import com.yy.common.core.constant.ExceptionConstants;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import javax.validation.constraints.NotBlank;
 
 /**
  * @author sunruiguang
@@ -13,7 +16,9 @@ import lombok.Setter;
 @NoArgsConstructor
 public class VerifyRo {
 
+    @NotBlank(message = ExceptionConstants.PARAM_INVALID)
     private String email;
 
+    @NotBlank(message = ExceptionConstants.PARAM_INVALID)
     private String verifyCode;
 }

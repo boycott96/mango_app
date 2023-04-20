@@ -15,6 +15,7 @@ import com.yy.common.redis.service.RedisService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.Objects;
 
 /**
@@ -40,6 +41,7 @@ public class AuthUserServiceImpl extends ServiceImpl<AuthUserMapper, AuthUser> i
         BeanUtils.copyProperties(userRo, authUser);
         // 设置密码加密
         authUser.setPassword(userRo.getPassword());
+        authUser.setCreateTime(new Date());
         authUserMapper.insert(authUser);
         redisService.deleteObject(userRo.getEmail());
     }
@@ -48,7 +50,8 @@ public class AuthUserServiceImpl extends ServiceImpl<AuthUserMapper, AuthUser> i
     public LoginUser login(LoginBody loginBody) {
         // 查询
         LambdaQueryWrapper<AuthUser> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(AuthUser::getEmail, loginBody.getEmail());
+        wrapper.eq(AuthUser::getEmail, loginBody.getUsername());
+        wrapper.or().eq(AuthUser::getUsername, loginBody.getUsername());
         AuthUser authUser = authUserMapper.selectOne(wrapper);
         ServiceException.isTrue(Objects.isNull(authUser), ExceptionConstants.EMAIL_NO_EXIST);
         LoginUser loginUser = new LoginUser();

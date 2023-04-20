@@ -2,6 +2,7 @@ package com.yy.auth.service;
 
 import com.yy.api.entity.AuthUser;
 import com.yy.common.core.constant.CacheConstants;
+import com.yy.common.core.constant.ExceptionConstants;
 import com.yy.common.core.exception.ServiceException;
 import com.yy.common.redis.service.RedisService;
 import org.springframework.stereotype.Service;
@@ -51,7 +52,7 @@ public class PasswordService {
         if (!matches(user, password)) {
             retryCount = retryCount + 1;
             redisService.setCacheObject(getCacheKey(username), retryCount, lockTime, TimeUnit.MINUTES);
-            throw new ServiceException("用户不存在/密码错误");
+            throw new ServiceException(ExceptionConstants.PWD_ERROR);
         } else {
             clearLoginRecordCache(username);
         }
