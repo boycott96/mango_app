@@ -43,7 +43,7 @@
         <module>yy-common</module>
         <module>yy-api</module>
         <module>yy-auth</module>
-        <module>yy-space</module>
+        <module>yy-bookmark</module>
     </modules>
 
     <dependencyManagement>

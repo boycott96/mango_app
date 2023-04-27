@@ -17,4 +17,9 @@ public class ExceptionConstants {
     public final static String USERNAME_NOT_UNIQUE = "用户名已被使用,请更换";
     public final static String AUTH_CODE_INVALID = "验证码无效";
     public final static String REGISTER_INFO_INVALID = "注册信息失效,请重新注册";
+
+    /**
+     * 数据不存在
+     */
+    public final static String NOT_FOUND_DATA = "数据不存在";
 }
