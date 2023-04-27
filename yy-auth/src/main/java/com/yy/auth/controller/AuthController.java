@@ -117,7 +117,7 @@ public class AuthController {
     @PostMapping(value = "/login")
     public R<?> login(@RequestBody @Validated LoginBody loginBody) {
         LoginUser login = authUserService.login(loginBody);
-        return R.ok(tokenService.createToken(login));
+        return R.ok(tokenService.createToken(login, loginBody.isRemember()));
     }
 
     /**
@@ -146,11 +146,13 @@ public class AuthController {
      */
     @GetMapping(value = "/user/info")
     public R<UserVo> getUserInfo() {
-        Long userId = SecurityUtils.getUserId();
+        LoginUser loginUser = SecurityUtils.getLoginUser();
         LambdaQueryWrapper<AuthUser> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(AuthUser::getId, userId);
+        queryWrapper.eq(AuthUser::getId, loginUser.getId());
         AuthUser one = authUserService.getOne(queryWrapper);
         UserVo userVo = new UserVo(one.getEmail(), one.getUsername(), one.getStageName(), one.getAvatarUrl());
+        // 对token进行校验，若token 还剩两小时即将失效，则进行刷新token
+        tokenService.verifyToken(loginUser);
         return R.ok(userVo);
     }
 

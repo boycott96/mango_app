@@ -12,6 +12,11 @@ public class CacheConstants {
     public final static long EXPIRATION = 720;
 
     /**
+     * 保持登录15天，
+     */
+    public final static long REMEMBER_EXPIRATION = 21600;
+
+    /**
      * 缓存刷新时间，默认120（分钟）
      */
     public final static long REFRESH_TIME = 120;

@@ -25,4 +25,9 @@ public class LoginBody {
      */
     @NotNull(message = ExceptionConstants.PARAM_INVALID)
     private String password;
+
+    /**
+     * 是否保持15天内免登录
+     */
+    private boolean remember;
 }

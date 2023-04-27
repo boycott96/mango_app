@@ -47,7 +47,7 @@ public class TokenService {
     /**
      * 创建令牌
      */
-    public TokenRo createToken(LoginUser loginUser) {
+    public TokenRo createToken(LoginUser loginUser, boolean remember) {
         String token = IdUtils.fastUUID();
         Long userId = loginUser.getAuthUser().getId();
         loginUser.setToken(token);
@@ -66,7 +66,11 @@ public class TokenService {
         claimsMap.put(SecurityConstants.DETAILS_EMAIL, email);
         claimsMap.put(SecurityConstants.DETAILS_STAGE_NAME, stageName);
         claimsMap.put(SecurityConstants.DETAILS_USERNAME, username);
-        claimsMap.put(SecurityConstants.EXPIRE_TIME, new Date().getTime() + expireTime * MILLIS_MINUTE);
+        if (remember) {
+            claimsMap.put(SecurityConstants.EXPIRE_TIME, new Date().getTime() + CacheConstants.REMEMBER_EXPIRATION * MILLIS_MINUTE);
+        } else {
+            claimsMap.put(SecurityConstants.EXPIRE_TIME, new Date().getTime() + expireTime * MILLIS_MINUTE);
+        }
 
         // 接口返回信息
         return new TokenRo(JwtUtils.createToken(claimsMap), new UserVo(email, username, stageName, loginUser.getAuthUser().getAvatarUrl()));
