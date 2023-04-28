@@ -22,4 +22,10 @@ public class ExceptionConstants {
      * 数据不存在
      */
     public final static String NOT_FOUND_DATA = "数据不存在";
+    public final static String NOT_DATA_EMPTY = "数据不能为空";
+
+    /**
+     * 无权限
+     */
+    public final static String NOT_DATA_AUTH = "无权限";
 }

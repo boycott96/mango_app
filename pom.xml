@@ -44,6 +44,7 @@
         <module>yy-api</module>
         <module>yy-auth</module>
         <module>yy-bookmark</module>
+        <module>yy-action</module>
     </modules>
 
     <dependencyManagement>

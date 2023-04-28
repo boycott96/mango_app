@@ -3,6 +3,7 @@ package com.yy.bookmark.controller;
 import com.yy.api.model.LoginUser;
 import com.yy.bookmark.entity.po.BookmarkFolder;
 import com.yy.bookmark.entity.ro.FolderRo;
+import com.yy.bookmark.entity.ro.FolderUrlRo;
 import com.yy.bookmark.service.FolderService;
 import com.yy.common.core.constant.ExceptionConstants;
 import com.yy.common.core.domain.R;
@@ -11,7 +12,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 /**
  * 文件夹接口
@@ -59,6 +62,36 @@ public class FolderController {
     public R<?> updateFolder(@Validated @RequestBody FolderRo folderRo) {
         BookmarkFolder bookmarkFolder = new BookmarkFolder(folderRo.getId(), folderRo.getName());
         folderService.updateFolder(bookmarkFolder);
+        return R.ok();
+    }
+
+    /**
+     * 删除文件夹数据
+     *
+     * @param folderId 文件夹ID
+     * @return com.yy.common.core.domain.R<?>
+     * @author sunruiguang
+     * @since 2023/4/28
+     */
+    @DeleteMapping("/delete/{folderId}")
+    public R<?> deleteById(@PathVariable("folderId") Long folderId) {
+        LoginUser loginUser = SecurityUtils.getLoginUser();
+        folderService.deleteById(loginUser.getId(), folderId);
+        return R.ok();
+    }
+
+    /**
+     * 批量导入文件夹和书签的数据
+     *
+     * @param folderUrlRos 文件夹和书签的数据
+     * @return com.yy.common.core.domain.R<?>
+     * @author sunruiguang
+     * @since 2023/4/28
+     */
+    @PostMapping("/batch/add")
+    public R<?> batchAdd(@Validated @NotEmpty(message = ExceptionConstants.NOT_DATA_EMPTY) @RequestBody List<FolderUrlRo> folderUrlRos) {
+        LoginUser loginUser = SecurityUtils.getLoginUser();
+        folderService.batchAdd(loginUser.getId(), folderUrlRos);
         return R.ok();
     }
 }
