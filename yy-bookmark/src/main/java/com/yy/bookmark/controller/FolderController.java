@@ -4,7 +4,7 @@ import com.yy.api.model.LoginUser;
 import com.yy.bookmark.entity.po.BookmarkFolder;
 import com.yy.bookmark.entity.ro.FolderRo;
 import com.yy.bookmark.entity.ro.FolderUrlRo;
-import com.yy.bookmark.service.FolderService;
+import com.yy.bookmark.service.BookmarkFolderService;
 import com.yy.common.core.constant.ExceptionConstants;
 import com.yy.common.core.domain.R;
 import com.yy.common.security.utils.SecurityUtils;
@@ -26,10 +26,10 @@ import java.util.List;
 @RestController
 public class FolderController {
 
-    private final FolderService folderService;
+    private final BookmarkFolderService bookmarkFolderService;
 
-    public FolderController(FolderService folderService) {
-        this.folderService = folderService;
+    public FolderController(BookmarkFolderService bookmarkFolderService) {
+        this.bookmarkFolderService = bookmarkFolderService;
     }
 
     /**
@@ -46,7 +46,7 @@ public class FolderController {
                           @Size(max = 12, message = ExceptionConstants.PARAM_LENGTH_INVALID)
                           @NotBlank(message = ExceptionConstants.PARAM_INVALID) String name) {
         LoginUser loginUser = SecurityUtils.getLoginUser();
-        folderService.createFolder(loginUser.getId(), name);
+        bookmarkFolderService.createFolder(loginUser.getId(), name);
         return R.ok();
     }
 
@@ -61,7 +61,7 @@ public class FolderController {
     @PutMapping("/update")
     public R<?> updateFolder(@Validated @RequestBody FolderRo folderRo) {
         BookmarkFolder bookmarkFolder = new BookmarkFolder(folderRo.getId(), folderRo.getName());
-        folderService.updateFolder(bookmarkFolder);
+        bookmarkFolderService.updateFolder(bookmarkFolder);
         return R.ok();
     }
 
@@ -76,7 +76,7 @@ public class FolderController {
     @DeleteMapping("/delete/{folderId}")
     public R<?> deleteById(@PathVariable("folderId") Long folderId) {
         LoginUser loginUser = SecurityUtils.getLoginUser();
-        folderService.deleteById(loginUser.getId(), folderId);
+        bookmarkFolderService.deleteById(loginUser.getId(), folderId);
         return R.ok();
     }
 
@@ -91,7 +91,7 @@ public class FolderController {
     @PostMapping("/batch/add")
     public R<?> batchAdd(@Validated @NotEmpty(message = ExceptionConstants.NOT_DATA_EMPTY) @RequestBody List<FolderUrlRo> folderUrlRos) {
         LoginUser loginUser = SecurityUtils.getLoginUser();
-        folderService.batchAdd(loginUser.getId(), folderUrlRos);
+        bookmarkFolderService.batchAdd(loginUser.getId(), folderUrlRos);
         return R.ok();
     }
 }
