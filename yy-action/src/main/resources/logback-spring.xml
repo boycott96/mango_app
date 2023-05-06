@@ -3,7 +3,7 @@
 
     <contextName>logback</contextName>
     <!--日志文件的本地磁盘路径,文件夹不存在会自动创建-->
-    <property name="log.path" value="./logs/yy-auth"/>
+    <property name="log.path" value="./logs/yy-action"/>
 
     <!--控制台日志格式：彩色日志-->
     <!-- magenta:洋红 -->

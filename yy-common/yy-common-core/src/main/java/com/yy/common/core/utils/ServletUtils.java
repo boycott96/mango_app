@@ -75,6 +75,8 @@ public class ServletUtils {
 
     /**
      * 获取request
+     *
+     * @return
      */
     public static HttpServletRequest getRequest() {
         return Objects.requireNonNull(getRequestAttributes()).getRequest();

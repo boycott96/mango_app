@@ -8,6 +8,5 @@ import org.springframework.stereotype.Service;
  * @author sunruiguang
  * @date 2023-04-28
  */
-@Service
 public interface BookmarkFolderService extends IService<BookmarkFolder> {
 }

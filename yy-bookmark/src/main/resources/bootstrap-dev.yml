@@ -18,4 +18,6 @@ spring:
           - data-id: mysql.yml
             group: DEFAULT_GROUP
             refresh: false
+          - data-id: redis.yml
+            group: DEFAULT_GROUP
 

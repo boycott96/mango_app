@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author admin
  */
 public class HeaderInterceptor implements AsyncHandlerInterceptor {
-    
+
     @Override
     public boolean preHandle(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler) {
         if (!(handler instanceof HandlerMethod)) {

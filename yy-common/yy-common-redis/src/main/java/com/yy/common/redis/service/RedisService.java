@@ -194,8 +194,8 @@ public class RedisService {
     /**
      * 获得缓存的Map
      *
-     * @param key
-     * @return
+     * @param key 值
+     * @return Map
      */
     public <T> Map<String, T> getCacheMap(final String key) {
         return redisTemplate.opsForHash().entries(key);

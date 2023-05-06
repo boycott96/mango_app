@@ -2,6 +2,7 @@ package com.yy.bookmark.service.impl;
 
 import com.alibaba.nacos.common.utils.ThreadFactoryBuilder;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.yy.api.RemoteLogService;
 import com.yy.bookmark.entity.po.BookmarkFolder;
 import com.yy.bookmark.entity.po.BookmarkFolderUser;
 import com.yy.bookmark.entity.ro.FolderUrlRo;
@@ -10,10 +11,13 @@ import com.yy.bookmark.service.BookmarkFolderUserService;
 import com.yy.bookmark.service.FolderService;
 import com.yy.common.core.constant.ExceptionConstants;
 import com.yy.common.core.exception.ServiceException;
+import com.yy.common.core.utils.ApiUtils;
+import com.yy.common.redis.service.RedisService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -31,15 +35,22 @@ public class FolderServiceImpl implements FolderService {
 
     private final BookmarkFolderService bookmarkFolderService;
     private final BookmarkFolderUserService bookmarkFolderUserService;
+    private final RedisService redisService;
+    private final RemoteLogService remoteLogService;
+
     // 多线程进行处理常驻3个线程，最大线程为10个，60s的存活时间，过期自动销毁线程
     private final ExecutorService es = new ThreadPoolExecutor(3, 10, 60L,
             TimeUnit.SECONDS, new LinkedBlockingDeque<>(), new ThreadFactoryBuilder().build());
 
 
     public FolderServiceImpl(BookmarkFolderService bookmarkFolderService,
-                             BookmarkFolderUserService bookmarkFolderUserService) {
+                             BookmarkFolderUserService bookmarkFolderUserService,
+                             RedisService redisService,
+                             RemoteLogService remoteLogService) {
         this.bookmarkFolderService = bookmarkFolderService;
         this.bookmarkFolderUserService = bookmarkFolderUserService;
+        this.redisService = redisService;
+        this.remoteLogService = remoteLogService;
     }
 
     @Override
@@ -88,11 +99,11 @@ public class FolderServiceImpl implements FolderService {
 
     @Override
     public void batchAdd(Long userId, List<FolderUrlRo> folderUrlRos) {
-        es.submit(() -> {
-            folderUrlRos.forEach(folder -> {
-                syncAddFolderAndUrl(folder, userId);
-            });
-        });
+        // 进行导入的任务处理
+        Long logId = ApiUtils.getData(() -> remoteLogService.addLog(String.valueOf(System.currentTimeMillis()), userId));
+        // 对任务进行redis绑定key
+        redisService.setCacheObject(logId.toString(), BigDecimal.ZERO);
+        es.submit(() -> folderUrlRos.forEach(folder -> syncAddFolderAndUrl(folder, userId)));
 
     }
 

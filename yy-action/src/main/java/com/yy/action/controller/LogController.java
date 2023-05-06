@@ -28,7 +28,7 @@ public class LogController {
      * @since 2023/4/28
      */
     @PostMapping("/add")
-    public R<?> addLogData(@RequestParam("fileName") String fileName, @RequestParam("userId") Long userId) {
+    public R<Long> addLogData(@RequestParam("fileName") String fileName, @RequestParam("userId") Long userId) {
         return R.ok(logService.add(fileName, userId));
     }
 

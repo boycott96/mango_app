@@ -12,15 +12,10 @@ import lombok.Getter;
 public interface CacheDef {
 
     String REDIS_CACHE_MANAGER = "redisCacheManager";
-    String EHCACHE_MANAGER = "ehcacheManager";
-
-    String EHCACHE_NAME_30s = "gd:ehcache:30s";
-    String EHCACHE_NAME_300s = "gd:ehcache:300s";
-    String EHCACHE_NAME_600s = "gd:ehcache:600s";
-    String R_CACHE_NAME_10MIN = "gd:redis:cache:10min";
-    String R_CACHE_NAME_30MIN = "gd:redis:cache:30min";
-    String R_CACHE_NAME_60MIN = "gd:redis:cache:60min";
-    String R_CACHE_NAME_120MIN = "gd:redis:cache:120min";
+    String R_CACHE_NAME_10MIN = "yy:redis:cache:10min";
+    String R_CACHE_NAME_30MIN = "yy:redis:cache:30min";
+    String R_CACHE_NAME_60MIN = "yy:redis:cache:60min";
+    String R_CACHE_NAME_120MIN = "yy:redis:cache:120min";
 
     @AllArgsConstructor
     @Getter
