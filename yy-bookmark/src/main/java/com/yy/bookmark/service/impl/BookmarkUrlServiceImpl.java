@@ -3,12 +3,15 @@ package com.yy.bookmark.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yy.bookmark.entity.po.BookmarkFolderUrl;
+import com.yy.bookmark.entity.po.BookmarkFolderUser;
 import com.yy.bookmark.entity.po.BookmarkLightningUrl;
 import com.yy.bookmark.entity.po.BookmarkUrl;
 import com.yy.bookmark.entity.ro.BookmarkUrlRo;
+import com.yy.bookmark.entity.ro.CollectUrlRo;
 import com.yy.bookmark.entity.ro.EditFolderUrlRo;
 import com.yy.bookmark.mapper.BookmarkUrlMapper;
 import com.yy.bookmark.service.BookmarkFolderUrlService;
+import com.yy.bookmark.service.BookmarkFolderUserService;
 import com.yy.bookmark.service.BookmarkLightningUrlService;
 import com.yy.bookmark.service.BookmarkUrlService;
 import com.yy.common.core.constant.ExceptionConstants;
@@ -33,11 +36,14 @@ public class BookmarkUrlServiceImpl extends ServiceImpl<BookmarkUrlMapper, Bookm
 
     private final BookmarkFolderUrlService bookmarkFolderUrlService;
     private final BookmarkLightningUrlService bookmarkLightningUrlService;
+    private final BookmarkFolderUserService bookmarkFolderUserService;
 
     public BookmarkUrlServiceImpl(BookmarkFolderUrlService bookmarkFolderUrlService,
-                                  BookmarkLightningUrlService bookmarkLightningUrlService) {
+                                  BookmarkLightningUrlService bookmarkLightningUrlService,
+                                  BookmarkFolderUserService bookmarkFolderUserService) {
         this.bookmarkFolderUrlService = bookmarkFolderUrlService;
         this.bookmarkLightningUrlService = bookmarkLightningUrlService;
+        this.bookmarkFolderUserService = bookmarkFolderUserService;
     }
 
     @Override
@@ -153,5 +159,23 @@ public class BookmarkUrlServiceImpl extends ServiceImpl<BookmarkUrlMapper, Bookm
         // 先查询对应的URL数据，是否存在
         BookmarkUrl bookmarkUrl = this.getById(urlId);
         ServiceException.isTrue(Objects.isNull(bookmarkUrl), ExceptionConstants.NOT_FOUND_DATA);
+    }
+
+    @Override
+    public void collect(Long userId, CollectUrlRo urlRo) {
+        // 根据参数信息，添加新的关联信息
+        if (Objects.nonNull(urlRo.getFolderId())) {
+            // 文件夹ID 查询文件夹ID是否归属于当前登录用户
+            LambdaQueryWrapper<BookmarkFolderUser> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.eq(BookmarkFolderUser::getFolderId, urlRo.getFolderId())
+                    .eq(BookmarkFolderUser::getUserId, userId);
+            BookmarkFolderUser folderUser = bookmarkFolderUserService.getOne(queryWrapper);
+            ServiceException.isTrue(Objects.isNull(folderUser), ExceptionConstants.NOT_FOUND_DATA);
+        }
+        BookmarkUrlRo urlRo1 = new BookmarkUrlRo();
+        BeanUtils.copyProperties(urlRo, urlRo1);
+
+        // 新增书签链接
+        addBookmarkUrl(userId, urlRo1);
     }
 }
