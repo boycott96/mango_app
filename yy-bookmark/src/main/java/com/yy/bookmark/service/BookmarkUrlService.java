@@ -26,4 +26,14 @@ public interface BookmarkUrlService extends IService<BookmarkUrl> {
      * @since 2023/5/6
      */
     void updateBookmarkUrl(Long userId, EditFolderUrlRo urlRo);
+
+    /**
+     * 删除书签
+     *
+     * @param userId 用户ID
+     * @param urlId  urlID
+     * @author sunruiguang
+     * @since 2023/5/9
+     */
+    void deleteBookmarkUrl(Long userId, Long urlId);
 }

@@ -28,4 +28,9 @@ public class ExceptionConstants {
      * 无权限
      */
     public final static String NOT_DATA_AUTH = "无权限";
+
+    /**
+     * 格式错误
+     */
+    public final static String URL_VALID = "网址无效";
 }

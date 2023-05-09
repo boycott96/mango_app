@@ -23,6 +23,14 @@ public class UrlController {
         this.bookmarkUrlService = bookmarkUrlService;
     }
 
+    /**
+     * 添加书签
+     *
+     * @param urlRo 书签的参数
+     * @return com.yy.common.core.domain.R<?>
+     * @author sunruiguang
+     * @since 2023/5/9
+     */
     @PostMapping("/add")
     public R<?> addBookmarkUrl(@Validated @RequestBody BookmarkUrlRo urlRo) {
         LoginUser loginUser = SecurityUtils.getLoginUser();
@@ -30,6 +38,14 @@ public class UrlController {
         return R.ok();
     }
 
+    /**
+     * 修改书签
+     *
+     * @param urlRo 书签的参数
+     * @return com.yy.common.core.domain.R<?>
+     * @author sunruiguang
+     * @since 2023/5/9
+     */
     @PutMapping("/update")
     public R<?> updateBookmarkUrl(@Validated @RequestBody EditFolderUrlRo urlRo) {
         LoginUser loginUser = SecurityUtils.getLoginUser();
