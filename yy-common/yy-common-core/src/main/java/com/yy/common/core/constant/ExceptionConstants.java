@@ -33,4 +33,10 @@ public class ExceptionConstants {
      * 格式错误
      */
     public final static String URL_VALID = "网址无效";
+
+
+    /**
+     * 日志错误
+     */
+    public final static String LOG_URL_ERROR = "获取网址信息异常";
 }

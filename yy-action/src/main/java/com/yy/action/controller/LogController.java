@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
  * @author sunruiguang
  * @date 2023-04-28
  */
-@RestController()
+@RestController
 @RequestMapping("/log")
 public class LogController {
 
