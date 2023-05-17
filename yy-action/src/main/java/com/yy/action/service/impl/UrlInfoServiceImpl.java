@@ -7,6 +7,7 @@ import com.yy.common.core.constant.ExceptionConstants;
 import com.yy.common.core.utils.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MimeTypeUtils;
 
@@ -25,6 +26,8 @@ public class UrlInfoServiceImpl implements UrlInfoService {
     private final FileService fileService;
     private final WebDriver driver;
 
+    @Value("${folder.temp}")
+    private String tempFolder;
     private final static String PNG_APPEND = ".png";
 
     public UrlInfoServiceImpl(FileService fileService, WebDriver driver) {
@@ -46,7 +49,7 @@ public class UrlInfoServiceImpl implements UrlInfoService {
             File screenshotFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
             BufferedImage screenshotImage = ImageIO.read(screenshotFile);
             // 保存截图
-            File screenshotOutputFile = new File("/Users/sun/Downloads/temp/screen/" + id + PNG_APPEND);
+            File screenshotOutputFile = new File(tempFolder + id + PNG_APPEND);
             ImageIO.write(screenshotImage, MimeTypeUtils.IMAGE_PNG.getSubtype(), screenshotOutputFile);
 
             // 网页截图上传到minio中
