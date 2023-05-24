@@ -14,6 +14,7 @@ import java.util.Objects;
 public class DateUtils {
 
     public static final String VIRGULE_YYYY_MM_DD = "yyyy/MM/dd";
+    public static final String CHINESE_YYYY_MM_DD = "yyyy年MM月dd日";
 
     /**
      * 获取当前时间

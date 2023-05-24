@@ -1,9 +1,11 @@
 package com.yy.bookmark.controller;
 
+import com.yy.api.RemoteAuthUserService;
 import com.yy.api.model.LoginUser;
 import com.yy.bookmark.entity.po.BookmarkFolder;
 import com.yy.bookmark.entity.ro.FolderRo;
 import com.yy.bookmark.entity.ro.FolderUrlRo;
+import com.yy.bookmark.entity.vo.FolderListVo;
 import com.yy.bookmark.service.BookmarkFolderService;
 import com.yy.common.core.constant.ExceptionConstants;
 import com.yy.common.core.domain.R;
@@ -27,9 +29,12 @@ import java.util.List;
 public class FolderController {
 
     private final BookmarkFolderService bookmarkFolderService;
+    private final RemoteAuthUserService remoteAuthUserService;
 
-    public FolderController(BookmarkFolderService bookmarkFolderService) {
+    public FolderController(BookmarkFolderService bookmarkFolderService,
+                            RemoteAuthUserService remoteAuthUserService) {
         this.bookmarkFolderService = bookmarkFolderService;
+        this.remoteAuthUserService = remoteAuthUserService;
     }
 
     /**
@@ -93,5 +98,18 @@ public class FolderController {
         LoginUser loginUser = SecurityUtils.getLoginUser();
         bookmarkFolderService.batchAdd(loginUser.getId(), folderUrlRos);
         return R.ok();
+    }
+
+    /**
+     * 查询文件夹信息
+     *
+     * @return com.yy.common.core.domain.R<java.util.List < com.yy.bookmark.entity.vo.FolderListVo>>
+     * @author sunruiguang
+     * @since 2023/5/23
+     */
+    @GetMapping("/list")
+    public R<List<FolderListVo>> listFolder() {
+        LoginUser loginUser = SecurityUtils.getLoginUser();
+        return R.ok(bookmarkFolderService.queryByUserId(loginUser.getId()));
     }
 }

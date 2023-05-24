@@ -8,7 +8,13 @@ package com.yy.common.core.constant;
 public class ServiceNameConstants {
 
     /**
-     * 行为模块的service id
+     * 操作模块的service id
      */
     public static final String ACTION_SERVICE = "yy-action";
+
+    /**
+     * 权限服务
+     */
+    public static final String AUTH_SERVICE = "yy-auth";
+
 }
