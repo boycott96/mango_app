@@ -1,6 +1,5 @@
 package com.yy.bookmark.controller;
 
-import com.yy.api.RemoteAuthUserService;
 import com.yy.api.model.LoginUser;
 import com.yy.bookmark.entity.po.BookmarkFolder;
 import com.yy.bookmark.entity.ro.FolderRo;
@@ -29,12 +28,9 @@ import java.util.List;
 public class FolderController {
 
     private final BookmarkFolderService bookmarkFolderService;
-    private final RemoteAuthUserService remoteAuthUserService;
 
-    public FolderController(BookmarkFolderService bookmarkFolderService,
-                            RemoteAuthUserService remoteAuthUserService) {
+    public FolderController(BookmarkFolderService bookmarkFolderService) {
         this.bookmarkFolderService = bookmarkFolderService;
-        this.remoteAuthUserService = remoteAuthUserService;
     }
 
     /**
