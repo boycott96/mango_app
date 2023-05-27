@@ -29,7 +29,7 @@ public class AuthLottoController {
 
     private final AuthLottoService authLottoService;
 
-    private final ExecutorService es = new ThreadPoolExecutor(3, 10, 60L,
+    private final ExecutorService es = new ThreadPoolExecutor(12, 24, 60L,
             TimeUnit.SECONDS, new LinkedBlockingDeque<>(), new ThreadFactoryBuilder().build());
 
     public AuthLottoController(AuthLottoService authLottoService) {
@@ -37,28 +37,24 @@ public class AuthLottoController {
     }
 
     @GetMapping("/generate")
-    public R<?> generate(@RequestParam("pour") Integer pour) {
-        ServiceException.isTrue(Objects.isNull(pour) || pour > 200000000, "数字过大");
-        int a = pour / 10;
-        if (a > 0) {
-            for (int b = 0; b < 10; b++) {
-                es.submit(() -> {
-                    // 每个线程处理2000万条数据
-                    for (int i = 0; i < a; i++) {
-                        List<AuthLotto> authLottos = new ArrayList<>();
-                        for (int j = 0; j < 1000; j++) {
-                            List<Integer> list = new ArrayList<>();
-                            randomNumber(list, 6, 34);
-                            Collections.sort(list);
-                            randomNumber(list, 1, 17);
-                            authLottos.add(new AuthLotto(list.stream().map(String::valueOf).collect(Collectors.joining(", "))));
-                        }
-                        authLottoService.saveBatch(authLottos);
-                        log.info("插入完成1000条数据");
+    public R<?> generate() {
+        for (int b = 0; b < 20; b++) {
+            int finalB = b;
+            es.submit(() -> {
+                // 每个线程处理2000万条数据
+                for (int i = 0; i < 1000; i++) {
+                    List<AuthLotto> authLottos = new ArrayList<>(10000);
+                    for (int j = 0; j < 10000; j++) {
+                        List<Integer> list = new ArrayList<>();
+                        randomNumber(list, 6, 34);
+                        Collections.sort(list);
+                        randomNumber(list, 1, 17);
+                        authLottos.add(new AuthLotto(list.stream().map(String::valueOf).collect(Collectors.joining(", "))));
                     }
-                    log.info("插入完成2000万条数据");
-                });
-            }
+                    authLottoService.saveBatch(authLottos);
+                    log.info("线程{}, 处理第{}批, 插入完成10000条数据", finalB, i);
+                }
+            });
         }
 
         return R.ok();
