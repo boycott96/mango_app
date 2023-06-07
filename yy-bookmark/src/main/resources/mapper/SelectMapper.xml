@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yy.bookmark.mapper.SelectMapper">
+    <select id="getDataByTableAndColumn" resultType="com.yy.bookmark.entity.vo.SelectVo">
+        select ${valueColumn} as value, ${labelColumn} as label
+        from ${tableName}
+        <where>
+            <if test="searchValue != null and searchValue != ''">
+                ${labelColumn} like concat('%', #{searchValue}, '%')
+            </if>
+        </where>
+    </select>
+</mapper>

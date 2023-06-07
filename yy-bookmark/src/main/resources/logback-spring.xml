@@ -114,6 +114,9 @@
     <!--开发环境-->
     <springProfile name="dev">
         <!--可以灵活设置此处，从而控制日志的输出-->
+        <!--nacos info日志太多，这里限制一下级别-->
+        <logger name="com.alibaba.nacos" level="ERROR"/>
+        <logger name="com.yy" level="DEBUG"/>
         <root level="INFO">
             <appender-ref ref="CONSOLE"/>
             <appender-ref ref="INFO_FILE"/>

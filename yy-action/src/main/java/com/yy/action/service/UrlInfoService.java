@@ -13,4 +13,14 @@ public interface UrlInfoService {
      * @since 2023/5/16
      */
     UrlInfoVo getUrlInfo(String url);
+
+    /**
+     * 获取网址的标题信息
+     *
+     * @param url 网址url
+     * @return java.lang.String
+     * @author sunruiguang
+     * @since 2023/6/7
+     */
+    String getUrlTitle(String url);
 }

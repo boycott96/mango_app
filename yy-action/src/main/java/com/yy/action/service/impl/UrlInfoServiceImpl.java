@@ -6,6 +6,8 @@ import com.yy.action.service.UrlInfoService;
 import com.yy.common.core.constant.ExceptionConstants;
 import com.yy.common.core.utils.UUID;
 import lombok.extern.slf4j.Slf4j;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.openqa.selenium.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -13,7 +15,11 @@ import org.springframework.util.MimeTypeUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URL;
 
 /**
@@ -65,5 +71,30 @@ public class UrlInfoServiceImpl implements UrlInfoService {
             log.error(ExceptionConstants.LOG_URL_ERROR, e);
         }
         return urlInfoVo;
+    }
+
+    @Override
+    public String getUrlTitle(String address) {
+        try {
+            URL url = new URL(address);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            // 发送GET请求
+            connection.setRequestMethod("GET");
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            String line;
+            StringBuilder response = new StringBuilder();
+            while ((line = reader.readLine()) != null) {
+                response.append(line);
+            }
+            reader.close();
+            connection.disconnect();
+            if (!response.isEmpty()) {
+                Document document = Jsoup.parse(response.toString());
+                return document.title();
+            }
+        } catch (IOException ignored) {
+        }
+        return null;
     }
 }

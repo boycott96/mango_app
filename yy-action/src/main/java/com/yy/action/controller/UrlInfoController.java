@@ -1,5 +1,6 @@
 package com.yy.action.controller;
 
+import com.yy.action.entity.vo.UrlInfoVo;
 import com.yy.action.service.UrlInfoService;
 import com.yy.common.core.domain.R;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,7 +25,12 @@ public class UrlInfoController {
     }
 
     @GetMapping("/info")
-    public R<?> getUrlInfo(@RequestParam("url") String url) {
+    public R<UrlInfoVo> getUrlInfo(@RequestParam("url") String url) {
         return R.ok(urlInfoService.getUrlInfo(url));
+    }
+
+    @GetMapping("/title")
+    public R<String> getUrlTitle(@RequestParam("url") String url) {
+        return R.ok(urlInfoService.getUrlTitle(url));
     }
 }
