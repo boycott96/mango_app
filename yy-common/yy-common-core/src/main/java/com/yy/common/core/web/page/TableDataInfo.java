@@ -1,5 +1,6 @@
 package com.yy.common.core.web.page;
 
+import com.github.pagehelper.PageInfo;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -42,6 +43,17 @@ public class TableDataInfo implements Serializable {
      * 表格数据对象
      */
     public TableDataInfo() {
+    }
+
+    /**
+     * 分页
+     *
+     * @param list  列表数据
+     */
+    public <T> TableDataInfo(List<T> list) {
+        PageInfo<T> pageInfo = new PageInfo<>(list);
+        this.rows = list;
+        this.total = pageInfo.getTotal();
     }
 
     /**

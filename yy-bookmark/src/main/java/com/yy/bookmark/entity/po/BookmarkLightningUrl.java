@@ -1,7 +1,5 @@
 package com.yy.bookmark.entity.po;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,33 +8,27 @@ import java.util.Date;
 
 /**
  * @author sunruiguang
- * @date 2023-05-06
+ * @date 2023-05-09
  */
 @Getter
 @Setter
 @NoArgsConstructor
-public class BookmarkFolderUrl {
+public class BookmarkLightningUrl {
 
     /**
      * 关联ID
      */
-    @TableId(type = IdType.ASSIGN_ID)
     private Long id;
 
     /**
-     * 文件夹ID
-     */
-    private Long folderId;
-
-    /**
-     * 书签URLID
+     * URL ID
      */
     private Long urlId;
 
     /**
-     * 创建人
+     * 用户ID
      */
-    private Long createBy;
+    private Long userId;
 
     /**
      * 创建时间
@@ -44,17 +36,7 @@ public class BookmarkFolderUrl {
     private Date createTime;
 
     /**
-     * 更新人
-     */
-    private Long updateBy;
-
-    /**
-     * 更新时间
-     */
-    private Date updateTime;
-
-    /**
-     * 别名网址
+     * 别名地址
      */
     private String aliasAddress;
 
@@ -69,12 +51,18 @@ public class BookmarkFolderUrl {
     private String description;
 
     /**
+     * 更新时间
+     */
+    private Date updateTime;
+
+    /**
      * 链接名称
      */
     private String urlName;
 
-    public BookmarkFolderUrl(Long folderId, Long urlId) {
-        this.folderId = folderId;
+    public BookmarkLightningUrl(Long urlId, Long userId, Date createTime) {
         this.urlId = urlId;
+        this.userId = userId;
+        this.createTime = createTime;
     }
 }

@@ -3,6 +3,7 @@ package com.yy.bookmark.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.yy.bookmark.entity.po.BookmarkUrl;
 import com.yy.bookmark.entity.ro.BookmarkUrlRo;
+import com.yy.bookmark.entity.ro.CollectUrlRo;
 import com.yy.bookmark.entity.ro.EditFolderUrlRo;
 
 public interface BookmarkUrlService extends IService<BookmarkUrl> {
@@ -26,4 +27,23 @@ public interface BookmarkUrlService extends IService<BookmarkUrl> {
      * @since 2023/5/6
      */
     void updateBookmarkUrl(Long userId, EditFolderUrlRo urlRo);
+
+    /**
+     * 删除书签
+     *
+     * @param userId 用户ID
+     * @param urlId  urlID
+     * @author sunruiguang
+     * @since 2023/5/9
+     */
+    void deleteBookmarkUrl(Long userId, Long urlId);
+
+    /**
+     * 收藏书签到文件夹/快速访问
+     *
+     * @param urlRo 链接收藏请求参数
+     * @author sunruiguang
+     * @since 2023/5/9
+     */
+    void collect(Long id, CollectUrlRo urlRo);
 }

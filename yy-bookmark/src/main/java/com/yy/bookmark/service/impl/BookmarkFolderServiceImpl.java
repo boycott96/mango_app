@@ -1,12 +1,14 @@
 package com.yy.bookmark.service.impl;
 
-import com.alibaba.nacos.common.utils.ThreadFactoryBuilder;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.yy.api.RemoteAuthUserService;
 import com.yy.api.RemoteLogService;
+import com.yy.api.entity.AuthUser;
 import com.yy.bookmark.entity.po.BookmarkFolder;
 import com.yy.bookmark.entity.po.BookmarkFolderUser;
 import com.yy.bookmark.entity.ro.FolderUrlRo;
+import com.yy.bookmark.entity.vo.FolderListVo;
 import com.yy.bookmark.mapper.BookmarkFolderMapper;
 import com.yy.bookmark.service.BookmarkFolderService;
 import com.yy.bookmark.service.BookmarkFolderUserService;
@@ -14,18 +16,14 @@ import com.yy.common.core.constant.ExceptionConstants;
 import com.yy.common.core.exception.ServiceException;
 import com.yy.common.core.utils.ApiUtils;
 import com.yy.common.redis.service.RedisService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author sunruiguang
@@ -38,18 +36,16 @@ public class BookmarkFolderServiceImpl extends ServiceImpl<BookmarkFolderMapper,
     private final BookmarkFolderUserService bookmarkFolderUserService;
     private final RedisService redisService;
     private final RemoteLogService remoteLogService;
-
-    // 多线程进行处理常驻3个线程，最大线程为10个，60s的存活时间，过期自动销毁线程
-    private final ExecutorService es = new ThreadPoolExecutor(3, 10, 60L,
-            TimeUnit.SECONDS, new LinkedBlockingDeque<>(), new ThreadFactoryBuilder().build());
-
+    private final RemoteAuthUserService remoteAuthUserService;
 
     public BookmarkFolderServiceImpl(BookmarkFolderUserService bookmarkFolderUserService,
                                      RedisService redisService,
-                                     RemoteLogService remoteLogService) {
+                                     RemoteLogService remoteLogService,
+                                     RemoteAuthUserService remoteAuthUserService) {
         this.bookmarkFolderUserService = bookmarkFolderUserService;
         this.redisService = redisService;
         this.remoteLogService = remoteLogService;
+        this.remoteAuthUserService = remoteAuthUserService;
     }
 
     @Override
@@ -64,9 +60,10 @@ public class BookmarkFolderServiceImpl extends ServiceImpl<BookmarkFolderMapper,
         this.save(bookmarkFolder);
         // 插入关联表
         BookmarkFolderUser bookmarkFolderUser = new BookmarkFolderUser();
-        bookmarkFolderUser.setFolderId(bookmarkFolderUser.getFolderId());
+        bookmarkFolderUser.setFolderId(bookmarkFolder.getId());
         bookmarkFolderUser.setUserId(id);
         bookmarkFolderUser.setType(false);
+        bookmarkFolderUser.setFolderSort(bookmarkFolderUserService.getMaxSortByUserId(id) + 1);
         bookmarkFolderUser.setCreateTime(date);
         bookmarkFolderUserService.save(bookmarkFolderUser);
     }
@@ -97,16 +94,15 @@ public class BookmarkFolderServiceImpl extends ServiceImpl<BookmarkFolderMapper,
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void batchAdd(Long userId, List<FolderUrlRo> folderUrlRos) {
         // 进行导入的任务处理
         Long logId = ApiUtils.getData(() -> remoteLogService.addLog(String.valueOf(System.currentTimeMillis()), userId));
         // 对任务进行redis绑定key
         redisService.setCacheObject(logId.toString(), BigDecimal.ZERO);
-        es.submit(() -> folderUrlRos.forEach(folder -> syncAddFolderAndUrl(folder, userId)));
-
+        folderUrlRos.forEach(folder -> syncAddFolderAndUrl(folder, userId));
     }
 
-    @Transactional(rollbackFor = Exception.class)
     public void syncAddFolderAndUrl(FolderUrlRo folder, Long userId) {
         // 循环对文件夹进行插入
         BookmarkFolder bookmarkFolder = new BookmarkFolder();
@@ -126,5 +122,28 @@ public class BookmarkFolderServiceImpl extends ServiceImpl<BookmarkFolderMapper,
             }).toList();
             bookmarkFolderUserService.saveBatch(collect);
         }
+    }
+
+    @Override
+    public List<FolderListVo> queryByUserId(Long userId) {
+        // 查询关联表数据
+        LambdaQueryWrapper<BookmarkFolderUser> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(BookmarkFolderUser::getUserId, userId);
+        List<BookmarkFolderUser> bookmarkFolderUserList = bookmarkFolderUserService.list(queryWrapper);
+        Map<Long, Long> folderUserMap = bookmarkFolderUserList.stream().collect(Collectors.toMap(BookmarkFolderUser::getFolderId, BookmarkFolderUser::getFolderSort));
+        List<Long> folderIds = bookmarkFolderUserList.stream().map(BookmarkFolderUser::getFolderId).distinct().toList();
+        List<BookmarkFolder> bookmarkFolderList = this.listByIds(folderIds);
+        // 查询创建人数据
+        List<Long> createByIds = bookmarkFolderList.stream().map(BookmarkFolder::getCreateBy).distinct().toList();
+        List<AuthUser> listData = ApiUtils.getListData(() -> remoteAuthUserService.getUserByIds(createByIds));
+        Map<Long, String> createByMap = listData.stream().collect(Collectors.toMap(AuthUser::getId, AuthUser::getStageName));
+
+        return bookmarkFolderList.stream().map(item -> {
+            FolderListVo vo = new FolderListVo();
+            BeanUtils.copyProperties(item, vo);
+            vo.setFolderSort(folderUserMap.get(item.getId()));
+            vo.setCreateByName(createByMap.get(item.getCreateBy()));
+            return vo;
+        }).sorted(Comparator.comparing(FolderListVo::getFolderSort)).toList();
     }
 }

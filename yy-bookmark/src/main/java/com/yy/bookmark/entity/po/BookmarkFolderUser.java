@@ -38,5 +38,13 @@ public class BookmarkFolderUser {
      */
     private boolean type;
 
+    /**
+     * 排序
+     */
+    private Long folderSort;
+
+    /**
+     * 关联时间
+     */
     private Date createTime;
 }

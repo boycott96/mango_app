@@ -38,7 +38,7 @@ public class ApiUtils {
     public static <E> List<E> getListData(boolean throwE, Supplier<R<List<E>>> supplier) {
         R<List<E>> result = supplier.get();
         if (throwE) {
-            ServiceException.isTrue(result.getCode() == R.SUCCESS, ERR_MSG + result.getMessage());
+            ServiceException.isTrue(result.getCode() != R.SUCCESS, ERR_MSG + result.getMessage());
         }
         if (CollectionUtils.isEmpty(result.getData())) {
             return Collections.emptyList();

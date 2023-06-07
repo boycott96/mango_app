@@ -34,16 +34,6 @@ public class BookmarkUrl {
     private String address;
 
     /**
-     * 书签描述
-     */
-    private String description;
-
-    /**
-     * 书签图标
-     */
-    private String favicon;
-
-    /**
      * 查看数
      */
     private Long viewNum;

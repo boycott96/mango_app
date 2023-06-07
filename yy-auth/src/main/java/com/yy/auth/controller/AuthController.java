@@ -156,6 +156,13 @@ public class AuthController {
         return R.ok(userVo);
     }
 
+    /**
+     * 通过邮箱，发送验证码
+     *
+     * @param userRo 请求参数
+     * @author sunruiguang
+     * @since 2023/5/23
+     */
     private void sendVerifyCode(UserRo userRo) {
         int code = RandomUtils.nextInt(100000, 999999);
         userRo.setVerifyCode(String.valueOf(code));
