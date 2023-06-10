@@ -4,7 +4,7 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 import lombok.Getter;
 import lombok.Setter;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,13 +17,13 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "config")
 @Getter
 @Setter
-public class ChromeDriverConfig {
+public class FireFoxDriverConfig {
 
     private String driver;
 
     @Bean
-    public WebDriver chromeDriver() {
-        WebDriverManager.chromedriver().setup();
-        return new ChromeDriver();
+    public WebDriver firefoxDriver() {
+        WebDriverManager.firefoxdriver().setup();
+        return new FirefoxDriver();
     }
 }

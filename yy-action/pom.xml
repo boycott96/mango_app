@@ -91,7 +91,7 @@
         </dependency>
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-chrome-driver</artifactId>
+            <artifactId>selenium-firefox-driver</artifactId>
             <version>4.9.1</version>
         </dependency>
         <dependency>
