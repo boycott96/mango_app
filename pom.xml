@@ -2,18 +2,18 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.yy</groupId>
-    <artifactId>yy-app</artifactId>
+    <groupId>com.mango</groupId>
+    <artifactId>mango-app</artifactId>
     <version>1.0</version>
     <packaging>pom</packaging>
 
-    <name>yy-app</name>
-    <description>椰羊微服务系统</description>
+    <name>mango-app</name>
+    <description>微服务系统</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEnconding>UTF-8</project.reporting.outputEnconding>
-        <yy.version>1.0</yy.version>
+        <mango.version>1.0</mango.version>
         <spring-cloud.version>2021.0.4</spring-cloud.version>
         <spring-cloud-alibaba.version>2021.1</spring-cloud-alibaba.version>
         <spring-boot.version>2.7.5</spring-boot.version>
@@ -38,12 +38,12 @@
     </properties>
 
     <modules>
-        <module>yy-gateway</module>
-        <module>yy-common</module>
-        <module>yy-api</module>
-        <module>yy-auth</module>
-        <module>yy-bookmark</module>
-        <module>yy-action</module>
+        <module>mango-gateway</module>
+        <module>mango-common</module>
+        <module>mango-api</module>
+        <module>mango-auth</module>
+        <module>mango-word</module>
+        <module>mango-action</module>
     </modules>
 
     <dependencyManagement>
@@ -88,19 +88,19 @@
 
             <!-- 项目-->
             <dependency>
-                <groupId>com.yy</groupId>
-                <artifactId>yy-common-core</artifactId>
-                <version>${yy.version}</version>
+                <groupId>com.mango</groupId>
+                <artifactId>mango-common-core</artifactId>
+                <version>${mango.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.yy</groupId>
-                <artifactId>yy-common-redis</artifactId>
-                <version>${yy.version}</version>
+                <groupId>com.mango</groupId>
+                <artifactId>mango-common-redis</artifactId>
+                <version>${mango.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.yy</groupId>
-                <artifactId>yy-common-security</artifactId>
-                <version>${yy.version}</version>
+                <groupId>com.mango</groupId>
+                <artifactId>mango-common-security</artifactId>
+                <version>${mango.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.projectlombok</groupId>
