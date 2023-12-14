@@ -26,7 +26,7 @@ public class Word implements Serializable {
     /**
     * 单词内容
     */
-    private String word;
+    private String wordHead;
     /**
     * 单词音标
     */
