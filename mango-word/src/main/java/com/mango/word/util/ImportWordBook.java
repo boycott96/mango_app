@@ -24,6 +24,8 @@ public class ImportWordBook {
     private final WordSynonymsService wordSynonymsService;
     private final WordSynonymsWordService wordSynonymsWordService;
     private final WordPhraseService wordPhraseService;
+    private final WordSameRootService wordSameRootService;
+    private final WordTranslationService wordTranslationService;
 
     /**
      * 替换音标中的法语
@@ -73,12 +75,37 @@ public class ImportWordBook {
 
                 saveWordPhrase(contentObject, word);
                 saveWordSameRoot(contentObject, word);
+                saveTranslation(contentObject, word);
             }
         } catch (IOException ignore) {
         }
     }
 
+    private void saveTranslation(JSONObject object, Word word) {
+        JSONArray trans = object.getJSONArray("trans");
+        Assert.notNull(trans);
+        List<WordTranslation> collect = trans.stream().map(item -> {
+            JSONObject jsonObject = JSONObject.parseObject(item.toString());
+            return new WordTranslation(word.getId(), jsonObject.getString("tranCn"), jsonObject.getString("pos")
+                    , jsonObject.getString("tranOther"));
+        }).toList();
+        wordTranslationService.saveBatch(collect);
+    }
+
     private void saveWordSameRoot(JSONObject object, Word word) {
+        JSONObject relWord = object.getJSONObject("relWord");
+        Assert.notNull(relWord);
+        JSONArray rels = relWord.getJSONArray("rels");
+        List<WordSameRoot> collect = rels.stream().flatMap(item -> {
+            JSONObject jsonObject = JSONObject.parseObject(item.toString());
+            JSONArray words = jsonObject.getJSONArray("words");
+            String pos = jsonObject.getString("pos");
+            return words.stream().map(o -> {
+                JSONObject jsonObject1 = JSONObject.parseObject(o.toString());
+                return new WordSameRoot(word.getId(), pos, jsonObject1.getString("hwd"), jsonObject1.getString("tran"));
+            });
+        }).toList();
+        wordSameRootService.saveBatch(collect);
     }
 
     private void saveWordPhrase(JSONObject object, Word word) {

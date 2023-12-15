@@ -32,4 +32,13 @@ public class WordSameRoot implements Serializable {
      * 单词扩展
      */
     private String expandWord;
+
+    private String zhContent;
+
+    public WordSameRoot(Long wordId, String expandWordType, String expandWord, String zhContent) {
+        this.wordId = wordId;
+        this.expandWordType = expandWordType;
+        this.expandWord = expandWord;
+        this.zhContent = zhContent;
+    }
 }

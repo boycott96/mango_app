@@ -36,4 +36,11 @@ public class WordTranslation implements Serializable {
      * 英文翻译
      */
     private String enTranslation;
+
+    public WordTranslation(Long wordId, String zhTranslation, String wordType, String enTranslation) {
+        this.wordId = wordId;
+        this.zhTranslation = zhTranslation;
+        this.wordType = wordType;
+        this.enTranslation = enTranslation;
+    }
 }
