@@ -31,4 +31,10 @@ public class WordPhrase implements Serializable {
     * 短语翻译
     */
     private String zhContent;
+
+    public WordPhrase(Long wordId, String commonPhrase, String zhContent) {
+        this.wordId = wordId;
+        this.commonPhrase = commonPhrase;
+        this.zhContent = zhContent;
+    }
 }

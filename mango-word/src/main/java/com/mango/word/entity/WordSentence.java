@@ -31,4 +31,10 @@ public class WordSentence implements Serializable {
     * 中文翻译内容
     */
     private String zhContent;
+
+    public WordSentence(Long wordId, String enContent, String zhContent) {
+        this.wordId = wordId;
+        this.enContent = enContent;
+        this.zhContent = zhContent;
+    }
 }

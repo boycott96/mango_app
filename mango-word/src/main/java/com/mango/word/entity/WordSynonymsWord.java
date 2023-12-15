@@ -22,9 +22,14 @@ public class WordSynonymsWord implements Serializable {
     /**
     * 单词详情ID
     */
-    private Long wordInfoId;
+    private Long synonymsWordId;
     /**
     * 近义词
     */
     private String enContent;
+
+    public WordSynonymsWord(Long synonymsWordId, String enContent) {
+        this.synonymsWordId = synonymsWordId;
+        this.enContent = enContent;
+    }
 }
