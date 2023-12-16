@@ -1,5 +1,6 @@
 package com.mango.word.util;
 
+import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.mango.word.entity.*;
@@ -29,6 +30,7 @@ public class ImportWordBook {
     private final WordPhraseService wordPhraseService;
     private final WordSameRootService wordSameRootService;
     private final WordTranslationService wordTranslationService;
+    private final WordAntonymService wordAntonymService;
 
     /**
      * 替换音标中的法语
@@ -48,6 +50,26 @@ public class ImportWordBook {
             input = input.replace(pair[0], pair[1]);
         }
         return input;
+    }
+
+    public String getLastProperties(WordBook wordBook) {
+        int size = 0;
+        String res = null;
+        try (BufferedReader br = new BufferedReader(new FileReader(wordBook.getOriginUrl()))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                JSONObject object = JSONObject.parse(line);
+                JSONObject content = object.getJSONObject("content");
+                JSONObject wordObject = content.getJSONObject("word");
+                JSONObject contentObject = wordObject.getJSONObject("content");
+                if (contentObject.size() > size) {
+                    size = contentObject.size();
+                    res = JSON.toJSONString(contentObject);
+                }
+            }
+        } catch (IOException ignore) {
+        }
+        return res;
     }
 
     /**
@@ -73,12 +95,25 @@ public class ImportWordBook {
                 Word word = saveWord(contentObject, object.getString("headWord"), wordBook.getId());
                 saveWordSentence(contentObject, word);
                 saveWordSynonyms(contentObject, word);
+                saveWordAntonym(contentObject, word);
 
                 saveWordPhrase(contentObject, word);
                 saveWordSameRoot(contentObject, word);
                 saveTranslation(contentObject, word);
             }
         } catch (IOException ignore) {
+        }
+    }
+
+    private void saveWordAntonym(JSONObject object, Word word) {
+        JSONObject antos = object.getJSONObject("antos");
+        if (Objects.nonNull(antos)) {
+            JSONArray anto = antos.getJSONArray("anto");
+            List<WordAntonym> hwd = anto.stream().map(item -> {
+                JSONObject jsonObject = JSONObject.parseObject(item.toString());
+                return new WordAntonym(word.getId(), jsonObject.getString("hwd"));
+            }).toList();
+            wordAntonymService.saveBatch(hwd);
         }
     }
 

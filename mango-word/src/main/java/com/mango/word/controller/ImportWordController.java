@@ -25,4 +25,9 @@ public class ImportWordController {
         thread.start();
         return R.ok();
     }
+
+    @PostMapping("/last")
+    public R<?> getLastJson(@RequestBody WordBook wordBook) {
+        return R.ok(importWordBook.getLastProperties(wordBook));
+    }
 }

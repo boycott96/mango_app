@@ -9,9 +9,22 @@ Content-Type: application/json
   "originUrl": "E:/Projects/mango-app/json/IELTSluan_2.json"
 }
 
-<> 2023-12-16T142252.500.json
-<> 2023-12-16T141925.500.json
-<> 2023-12-16T141849.500.json
-<> 2023-12-16T141717.500.json
-
 ###
+
+POST http://192.168.2.116:9100/word/import/last
+Content-Type: application/json
+
+{
+  "bookName": "雅思词汇",
+  "description": "IELTSluan_2",
+  "workNumber": 3427,
+  "titlePage": "https://camo.githubusercontent.com/6a1850ebcecf1e9e6986982e3a499fcc639df061e90b3ca7d43aaca246e6f9c9/68747470733a2f2f6e6f732e6e6574656173652e636f6d2f79647363686f6f6c2d6f6e6c696e652f796f7564616f5f49454c54535f322e6a7067",
+  "originUrl": "E:/Projects/mango-app/json/IELTSluan_2.json"
+}
+//{
+//  "bookName": "专四核心词汇",
+//  "description": "Level4luan_2",
+//  "workNumber": 4025,
+//  "titlePage": "https://camo.githubusercontent.com/8f98e8da0b3c81379103e0c8296b20fa15cdcce06fe8f6357ebaa1c2d6b31356/68747470733a2f2f6e6f732e6e6574656173652e636f6d2f79647363686f6f6c2d6f6e6c696e652f796f7564616f5f4c6576656c345f322e6a7067",
+//  "originUrl": "E:/Projects/mango-app/json/Level4luan_2.json"
+//}
