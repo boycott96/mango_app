@@ -1,4 +1,4 @@
-package com.mango.bookmark;
+package com.mango.word;
 
 import com.mango.common.security.feign.FeignAutoConfiguration;
 import org.springframework.boot.SpringApplication;
@@ -15,6 +15,6 @@ import org.springframework.context.annotation.Import;
 @Import({FeignAutoConfiguration.class})
 public class WordApp {
     public static void main(String[] args) {
-        SpringApplication.run(com.mango.bookmark.WordApp.class);
+        SpringApplication.run(WordApp.class);
     }
 }

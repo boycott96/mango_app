@@ -8,13 +8,15 @@ import io.jsonwebtoken.lang.Assert;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Component
+@Service
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class ImportWordBook {
 
@@ -53,12 +55,11 @@ public class ImportWordBook {
      * @param wordBook 书籍信息
      */
     @Transactional(rollbackFor = Exception.class)
-    public void importBook(WordBook wordBook) {
-
+    public void importBook(WordBook wordBook, MultipartFile file) {
         wordBookService.save(wordBook);
 
         // 读取文件路径
-        try (BufferedReader br = new BufferedReader(new FileReader(wordBook.getOriginUrl()))) {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String str = replaceFran(line);
