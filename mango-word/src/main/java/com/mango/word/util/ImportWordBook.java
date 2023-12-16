@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -55,11 +56,10 @@ public class ImportWordBook {
      * @param wordBook 书籍信息
      */
     @Transactional(rollbackFor = Exception.class)
-    public void importBook(WordBook wordBook, MultipartFile file) {
+    public void importBook(WordBook wordBook) {
         wordBookService.save(wordBook);
-
         // 读取文件路径
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(wordBook.getOriginUrl()))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String str = replaceFran(line);
@@ -70,7 +70,7 @@ public class ImportWordBook {
                 JSONObject wordObject = content.getJSONObject("word");
                 JSONObject contentObject = wordObject.getJSONObject("content");
 
-                Word word = saveWord(contentObject, object.getString("wordHead"));
+                Word word = saveWord(contentObject, object.getString("headWord"), wordBook.getId());
                 saveWordSentence(contentObject, word);
                 saveWordSynonyms(contentObject, word);
 
@@ -95,73 +95,77 @@ public class ImportWordBook {
 
     private void saveWordSameRoot(JSONObject object, Word word) {
         JSONObject relWord = object.getJSONObject("relWord");
-        Assert.notNull(relWord);
-        JSONArray rels = relWord.getJSONArray("rels");
-        List<WordSameRoot> collect = rels.stream().flatMap(item -> {
-            JSONObject jsonObject = JSONObject.parseObject(item.toString());
-            JSONArray words = jsonObject.getJSONArray("words");
-            String pos = jsonObject.getString("pos");
-            return words.stream().map(o -> {
-                JSONObject jsonObject1 = JSONObject.parseObject(o.toString());
-                return new WordSameRoot(word.getId(), pos, jsonObject1.getString("hwd"), jsonObject1.getString("tran"));
-            });
-        }).toList();
-        wordSameRootService.saveBatch(collect);
+        if (Objects.nonNull(relWord)) {
+            JSONArray rels = relWord.getJSONArray("rels");
+            List<WordSameRoot> collect = rels.stream().flatMap(item -> {
+                JSONObject jsonObject = JSONObject.parseObject(item.toString());
+                JSONArray words = jsonObject.getJSONArray("words");
+                String pos = jsonObject.getString("pos");
+                return words.stream().map(o -> {
+                    JSONObject jsonObject1 = JSONObject.parseObject(o.toString());
+                    return new WordSameRoot(word.getId(), pos, jsonObject1.getString("hwd"), jsonObject1.getString("tran"));
+                });
+            }).toList();
+            wordSameRootService.saveBatch(collect);
+        }
     }
 
     private void saveWordPhrase(JSONObject object, Word word) {
         JSONObject phrase = object.getJSONObject("phrase");
-        Assert.notNull(phrase);
-        JSONArray phrasees = phrase.getJSONArray("phrasees");
-        Assert.notEmpty(phrasees);
-        List<WordPhrase> collect = phrasees.stream().map(item -> {
-            JSONObject jsonObject = JSONObject.parseObject(item.toString());
-            return new WordPhrase(word.getId(), jsonObject.getString("pContent"), jsonObject.getString("pCn"));
-        }).collect(Collectors.toList());
-        wordPhraseService.saveBatch(collect);
+        if(Objects.nonNull(phrase)) {
+            JSONArray phrases = phrase.getJSONArray("phrases");
+            Assert.notEmpty(phrases);
+            List<WordPhrase> collect = phrases.stream().map(item -> {
+                JSONObject jsonObject = JSONObject.parseObject(item.toString());
+                return new WordPhrase(word.getId(), jsonObject.getString("pContent"), jsonObject.getString("pCn"));
+            }).collect(Collectors.toList());
+            wordPhraseService.saveBatch(collect);
+        }
     }
 
     private void saveWordSynonyms(JSONObject object, Word word) {
         JSONObject syno = object.getJSONObject("syno");
-        Assert.notNull(syno);
-        JSONArray synos = syno.getJSONArray("synos");
-        Assert.notEmpty(synos);
-        for (Object o : synos) {
-            JSONObject jsonObject = JSONObject.parseObject(o.toString());
-            WordSynonyms wordSynonyms = new WordSynonyms();
-            wordSynonyms.setWordId(word.getId());
-            wordSynonyms.setWordType(jsonObject.getString("pos"));
-            wordSynonyms.setZhContent(jsonObject.getString("tran"));
+        if (Objects.nonNull(syno)) {
+            JSONArray synos = syno.getJSONArray("synos");
+            Assert.notEmpty(synos);
+            for (Object o : synos) {
+                JSONObject jsonObject = JSONObject.parseObject(o.toString());
+                WordSynonyms wordSynonyms = new WordSynonyms();
+                wordSynonyms.setWordId(word.getId());
+                wordSynonyms.setWordType(jsonObject.getString("pos"));
+                wordSynonyms.setZhContent(jsonObject.getString("tran"));
 
-            wordSynonymsService.save(wordSynonyms);
+                wordSynonymsService.save(wordSynonyms);
 
-            // 插入关联的单词
-            JSONArray hwds = jsonObject.getJSONArray("hwds");
-            Assert.notEmpty(hwds);
-            List<WordSynonymsWord> w = hwds.stream().map(item -> {
-                JSONObject jsonObject1 = JSONObject.parseObject(item.toString());
-                return new WordSynonymsWord(wordSynonyms.getId(), jsonObject1.getString("w"));
-            }).collect(Collectors.toList());
-            wordSynonymsWordService.saveBatch(w);
+                // 插入关联的单词
+                JSONArray hwds = jsonObject.getJSONArray("hwds");
+                Assert.notEmpty(hwds);
+                List<WordSynonymsWord> w = hwds.stream().map(item -> {
+                    JSONObject jsonObject1 = JSONObject.parseObject(item.toString());
+                    return new WordSynonymsWord(wordSynonyms.getId(), jsonObject1.getString("w"));
+                }).collect(Collectors.toList());
+                wordSynonymsWordService.saveBatch(w);
+            }
         }
     }
 
     private void saveWordSentence(JSONObject object, Word word) {
         JSONObject sentence = object.getJSONObject("sentence");
-        Assert.notNull(sentence);
-
-        JSONArray sentences = sentence.getJSONArray("sentences");
-        Assert.notEmpty(sentences);
-        List<WordSentence> collect = sentences.stream().map(item -> {
-            JSONObject jsonObject = JSONObject.parseObject(item.toString());
-            return new WordSentence(word.getId(), jsonObject.getString("sContent"), jsonObject.getString("sCn"));
-        }).collect(Collectors.toList());
-        wordSentenceService.saveBatch(collect);
+        if (Objects.nonNull(sentence)) {
+            JSONArray sentences = sentence.getJSONArray("sentences");
+            Assert.notEmpty(sentences);
+            List<WordSentence> collect = sentences.stream().map(item -> {
+                JSONObject jsonObject = JSONObject.parseObject(item.toString());
+                return new WordSentence(word.getId(), jsonObject.getString("sContent"), jsonObject.getString("sCn"));
+            }).collect(Collectors.toList());
+            wordSentenceService.saveBatch(collect);
+        }
     }
 
-    private Word saveWord(JSONObject object, String wordHead) {
+    private Word saveWord(JSONObject object, String wordHead, Long bookId) {
         Word word = new Word();
         word.setWordHead(wordHead);
+        word.setBookId(bookId);
         word.setUsPhone(object.getString("usphone"));
         word.setUkPhone(object.getString("ukphone"));
         word.setUsSpeech(object.getString("usspeech"));
@@ -171,8 +175,9 @@ public class ImportWordBook {
         word.setPhone(object.getString("phone"));
         word.setPhone(object.getString("speech"));
         JSONObject remMethod = object.getJSONObject("remMethod");
-        Assert.notNull(remMethod);
-        word.setRemMethod(remMethod.getString("val"));
+        if (Objects.nonNull(remMethod)) {
+            word.setRemMethod(remMethod.getString("val"));
+        }
         wordService.save(word);
         return word;
     }

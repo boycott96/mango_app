@@ -18,9 +18,11 @@ public class ImportWordController {
 
     private final ImportWordBook importWordBook;
 
+
     @PostMapping("/word")
-    public R<?> importWordJson(@RequestBody WordBook wordBook, MultipartFile file) {
-        importWordBook.importBook(wordBook, file);
+    public R<?> importWordJson(@RequestBody WordBook wordBook) {
+        Thread thread = new Thread(() -> importWordBook.importBook(wordBook));
+        thread.start();
         return R.ok();
     }
 }

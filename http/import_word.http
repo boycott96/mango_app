@@ -1,0 +1,17 @@
+POST http://192.168.2.116:9100/word/import/word
+Content-Type: application/json
+
+{
+  "bookName": "雅思词汇",
+  "description": "IELTSluan_2",
+  "workNumber": 3427,
+  "titlePage": "https://camo.githubusercontent.com/6a1850ebcecf1e9e6986982e3a499fcc639df061e90b3ca7d43aaca246e6f9c9/68747470733a2f2f6e6f732e6e6574656173652e636f6d2f79647363686f6f6c2d6f6e6c696e652f796f7564616f5f49454c54535f322e6a7067",
+  "originUrl": "E:/Projects/mango-app/json/IELTSluan_2.json"
+}
+
+<> 2023-12-16T142252.500.json
+<> 2023-12-16T141925.500.json
+<> 2023-12-16T141849.500.json
+<> 2023-12-16T141717.500.json
+
+###
