@@ -11,15 +11,7 @@ public class SecurityConstants {
      */
     public static final String DETAILS_USER_ID = "user_id";
 
-    /**
-     * 邮箱
-     */
-    public static final String DETAILS_EMAIL = "email";
-
-    /**
-     * 账户名
-     */
-    public static final String DETAILS_STAGE_NAME = "stageName";
+    public static final String DETAILS_OPEN_ID = "open_id";
 
     /**
      * 用户名字段

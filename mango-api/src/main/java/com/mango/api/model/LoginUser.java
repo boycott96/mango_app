@@ -28,11 +28,6 @@ public class LoginUser implements Serializable {
     private Long id;
 
     /**
-     * 邮箱
-     */
-    private String email;
-
-    /**
      * 账户名
      */
     private String username;
@@ -40,7 +35,7 @@ public class LoginUser implements Serializable {
     /**
      * 用户名
      */
-    private String stageName;
+    private String openId;
 
     /**
      * 登录时间

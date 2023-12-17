@@ -208,7 +208,7 @@ public class ImportWordBook {
         // url = https://dict.youdao.com/dictvoice?audio=sensible&type=1  mp3file
         word.setUkSpeech(object.getString("ukspeech"));
         word.setPhone(object.getString("phone"));
-        word.setPhone(object.getString("speech"));
+        word.setSpeech(object.getString("speech"));
         JSONObject remMethod = object.getJSONObject("remMethod");
         if (Objects.nonNull(remMethod)) {
             word.setRemMethod(remMethod.getString("val"));

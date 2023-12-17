@@ -19,13 +19,9 @@ public class AuthUser {
     /**
      * 主键id
      */
-    @TableId(type = IdType.ASSIGN_ID)
+    @TableId(type = IdType.AUTO)
     private Long id;
 
-    /**
-     * 邮箱
-     */
-    private String email;
 
     /**
      * 账户名
@@ -35,12 +31,8 @@ public class AuthUser {
     /**
      * 用户名
      */
-    private String stageName;
+    private String openId;
 
-    /**
-     * 密码
-     */
-    private String password;
 
     /**
      * 头像

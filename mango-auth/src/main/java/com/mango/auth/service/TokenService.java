@@ -47,33 +47,26 @@ public class TokenService {
     /**
      * 创建令牌
      */
-    public TokenRo createToken(LoginUser loginUser, boolean remember) {
+    public TokenRo createToken(LoginUser loginUser) {
         String token = IdUtils.fastUUID();
         Long userId = loginUser.getAuthUser().getId();
         loginUser.setToken(token);
         loginUser.setId(userId);
-        String email = loginUser.getAuthUser().getEmail();
-        String stageName = loginUser.getAuthUser().getStageName();
+        String openId = loginUser.getAuthUser().getOpenId();
         String username = loginUser.getAuthUser().getUsername();
         loginUser.setUsername(username);
-        loginUser.setEmail(email);
         refreshToken(loginUser);
 
         // Jwt存储信息
         Map<String, Object> claimsMap = new HashMap<>();
         claimsMap.put(SecurityConstants.USER_KEY, token);
         claimsMap.put(SecurityConstants.DETAILS_USER_ID, userId);
-        claimsMap.put(SecurityConstants.DETAILS_EMAIL, email);
-        claimsMap.put(SecurityConstants.DETAILS_STAGE_NAME, stageName);
+        claimsMap.put(SecurityConstants.DETAILS_OPEN_ID, openId);
         claimsMap.put(SecurityConstants.DETAILS_USERNAME, username);
-        if (remember) {
-            claimsMap.put(SecurityConstants.EXPIRE_TIME, new Date().getTime() + CacheConstants.REMEMBER_EXPIRATION * MILLIS_MINUTE);
-        } else {
-            claimsMap.put(SecurityConstants.EXPIRE_TIME, new Date().getTime() + expireTime * MILLIS_MINUTE);
-        }
+        claimsMap.put(SecurityConstants.EXPIRE_TIME, new Date().getTime() + expireTime * MILLIS_MINUTE);
 
         // 接口返回信息
-        return new TokenRo(JwtUtils.createToken(claimsMap), new UserVo(email, username, stageName, loginUser.getAuthUser().getAvatarUrl()));
+        return new TokenRo(JwtUtils.createToken(claimsMap), new UserVo(openId, username, loginUser.getAuthUser().getAvatarUrl()));
     }
 
     /**

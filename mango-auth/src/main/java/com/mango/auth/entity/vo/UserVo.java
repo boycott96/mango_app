@@ -13,11 +13,9 @@ import lombok.Setter;
 @AllArgsConstructor
 public class UserVo {
 
-    private String email;
+    private String openId;
 
     private String username;
-
-    private String stageName;
 
     private String avatarUrl;
 }
