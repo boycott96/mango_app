@@ -76,4 +76,16 @@ public class AuthController {
         loginUser.setAuthUser(one);
         return R.ok(tokenService.createToken(loginUser));
     }
+
+    @PutMapping("/wechat")
+    public R<?> wechat(@RequestBody AuthUser authUser) {
+        Assert.isTrue(StringUtils.isNotBlank(authUser.getUsername()));
+        LoginUser loginUser = SecurityUtils.getLoginUser();
+        AuthUser one = authUserService.getById(loginUser.getId());
+        one.setUsername(authUser.getUsername());
+        one.setAvatarUrl(authUser.getAvatarUrl());
+        authUserService.updateById(one);
+        return R.ok();
+    }
+
 }
