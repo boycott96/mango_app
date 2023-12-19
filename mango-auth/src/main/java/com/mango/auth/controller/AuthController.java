@@ -88,4 +88,12 @@ public class AuthController {
         return R.ok();
     }
 
+    @GetMapping("/info")
+    public R<?> getInfo() {
+        LoginUser loginUser = SecurityUtils.getLoginUser();
+        AuthUser user = authUserService.getById(loginUser.getId());
+        Assert.isNull(user, "账号不存在, 请重新登录");
+        return R.ok(user);
+    }
+
 }
