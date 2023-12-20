@@ -89,10 +89,10 @@ public class AuthController {
     }
 
     @GetMapping("/info")
-    public R<?> getInfo() {
+    public R<AuthUser> getInfo() {
         LoginUser loginUser = SecurityUtils.getLoginUser();
         AuthUser user = authUserService.getById(loginUser.getId());
-        Assert.isNull(user, "账号不存在, 请重新登录");
+        Assert.notNull(user, "账号不存在, 请重新登录");
         return R.ok(user);
     }
 
