@@ -1,16 +1,16 @@
 package com.mango.api.bbc.dto;
 
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
-@NoArgsConstructor
+import java.util.List;
+
+@Data
 public class NewsDto {
 
     private String status;
 
     private int totalResults;
+
+    private List<NewsArticle> articles;
 }
