@@ -37,8 +37,8 @@ public class NewsTask {
                     newsData.setSourceName(item.getSource().getName());
                 }
                 if (Objects.nonNull(item.getPublishedAt())) {
-                    newsData.setPublishedAt(DateUtil.parse(item.getPublishedAt()));
-                    newsData.setDateTimeStr(DateUtil.formatDate(newsData.getPublishedAt()));
+                    newsData.setPublishedTime(DateUtil.parse(item.getPublishedAt()));
+                    newsData.setDateTimeStr(DateUtil.formatDate(newsData.getPublishedTime()));
                 }
                 newsData.setCreateTime(new Date());
                 return newsData;

@@ -53,7 +53,9 @@ public class NewsData implements Serializable {
     /**
      * 文章发表时间
      */
-    private Date publishedAt;
+    private String publishedAt;
+
+    private Date publishedTime;
 
     /**
      * 文章内容
