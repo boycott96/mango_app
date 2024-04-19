@@ -1,3 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.mango.common.redis.configure.RedisConfig,\
-  com.mango.common.redis.service.RedisService
