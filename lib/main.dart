@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:mango_app/home/home.dart';
+import 'package:mango_app/setting/setting.dart';
 
 void main() {
   runApp(const MyApp());
@@ -32,7 +34,47 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MainPage(),
+    );
+  }
+}
+
+class MainPage extends StatefulWidget {
+  MainPage({Key? key}) : super(key: key);
+
+  @override
+  _MainPageState createState() => _MainPageState();
+}
+
+class _MainPageState extends State<MainPage> {
+  var pages = [HomePage(), SettingPage()];
+  var currentIndex = 0;
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("底部导航"),
+      ),
+      body: pages[currentIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: currentIndex,
+        type: BottomNavigationBarType.fixed,
+        onTap: (index) {
+          setState(() {
+            currentIndex = index;
+          });
+        },
+        items: [
+          BottomNavigationBarItem(
+              backgroundColor: Colors.pink,
+              icon: Icon(Icons.home),
+              label: "首页"),
+          BottomNavigationBarItem(
+              backgroundColor: Colors.orange,
+              icon: Icon(Icons.person),
+              label: "我的"),
+        ],
+      ),
     );
   }
 }
