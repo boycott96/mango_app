@@ -1,0 +1,12 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Flutter (2312DRA50C)",
+            "program": "lib/main.dart",
+            "deviceId": "55aefa8b",
+            "request": "launch",
+            "type": "dart"
+        }
+    ]
+}
