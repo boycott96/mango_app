@@ -1,16 +1,19 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_application_test/reset_screen.dart';
+import 'package:flutter_application_test/signup_screen.dart';
 
-class Singup extends StatefulWidget {
-  const Singup({super.key});
+class Signin extends StatefulWidget {
+  const Signin({super.key});
 
   @override
-  State<Singup> createState() => _SignUpState();
+  State<Signin> createState() => _SigninState();
 }
 
-class _SignUpState extends State<Singup> with SingleTickerProviderStateMixin {
-  final TextEditingController _textController = TextEditingController();
+class _SigninState extends State<Signin> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
+  final TextEditingController _textController = TextEditingController();
   String _inputValue = '';
 
   @override
@@ -29,7 +32,7 @@ class _SignUpState extends State<Singup> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Welcome Sign up"),
+        title: const Text("Login"),
       ),
       body: Center(
         child: Column(
@@ -46,33 +49,7 @@ class _SignUpState extends State<Singup> with SingleTickerProviderStateMixin {
                   ),
                   child: TextField(
                     decoration: const InputDecoration(
-                        hintText: 'Invitation Code',
-                        border: InputBorder.none, // 设置外边框为none
-                        contentPadding: EdgeInsets.symmetric(horizontal: 23)),
-                    controller: _textController,
-                    onChanged: (value) {
-                      setState(() {
-                        _inputValue = value;
-                      });
-                      print(_inputValue);
-                    },
-                  ),
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 21, vertical: 10),
-              child: SizedBox(
-                height: 56,
-                child: Container(
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: const Color.fromRGBO(246, 247, 249, 1),
-                    borderRadius: BorderRadius.circular(30.0),
-                  ),
-                  child: TextField(
-                    decoration: const InputDecoration(
-                        hintText: 'Email',
+                        hintText: 'Email address',
                         border: InputBorder.none, // 设置外边框为none
                         contentPadding: EdgeInsets.symmetric(horizontal: 23)),
                     controller: _textController,
@@ -113,71 +90,22 @@ class _SignUpState extends State<Singup> with SingleTickerProviderStateMixin {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 21, vertical: 10),
-              child: SizedBox(
-                height: 56,
-                child: Container(
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: const Color.fromRGBO(246, 247, 249, 1),
-                    borderRadius: BorderRadius.circular(30.0),
-                  ),
-                  child: TextField(
-                    decoration: const InputDecoration(
-                        hintText: 'Repet Password',
-                        border: InputBorder.none, // 设置外边框为none
-                        contentPadding: EdgeInsets.symmetric(horizontal: 23)),
-                    controller: _textController,
-                    onChanged: (value) {
-                      setState(() {
-                        _inputValue = value;
-                      });
-                      print(_inputValue);
-                    },
-                  ),
-                ),
-              ),
-            ),
-            Padding(
               padding: const EdgeInsets.fromLTRB(20, 90, 20, 4),
               child: RichText(
                 text: TextSpan(
                   children: [
-                    const TextSpan(
-                      text:
-                          "By creating an account,you are confirming that you are at least 18 years old and agree to our ",
-                      style: TextStyle(
-                        color: Color.fromRGBO(173, 181, 189, 1),
-                        fontSize: 14,
-                      ),
-                    ),
                     TextSpan(
-                      text: "Terms of Service",
+                      text: "Forgot password?",
                       style: const TextStyle(
                         color: Color.fromRGBO(255, 93, 151, 1),
                         fontSize: 14,
                       ),
                       recognizer: TapGestureRecognizer()
                         ..onTap = () {
-                          print("Terms of Service.");
-                        },
-                    ),
-                    const TextSpan(
-                      text: " and ",
-                      style: TextStyle(
-                        color: Color.fromRGBO(173, 181, 189, 1),
-                        fontSize: 14,
-                      ),
-                    ),
-                    TextSpan(
-                      text: "Privacy Policy.",
-                      style: const TextStyle(
-                        color: Color.fromRGBO(255, 93, 151, 1),
-                        fontSize: 14,
-                      ),
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = () {
-                          print("Privacy Policy.");
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const ResetPage()));
                         },
                     ),
                   ],
@@ -203,6 +131,40 @@ class _SignUpState extends State<Singup> with SingleTickerProviderStateMixin {
                     style: TextStyle(color: Colors.white, fontSize: 16),
                   ),
                 ),
+              ),
+            ),
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  RichText(
+                    text: const TextSpan(
+                      text: "Don't have account?",
+                      style: TextStyle(
+                        color: Color.fromRGBO(171, 173, 189, 1),
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                  RichText(
+                    text: TextSpan(
+                      text: "Sign up Now",
+                      style: const TextStyle(
+                        color: Color.fromRGBO(255, 93, 151, 1),
+                        fontSize: 14,
+                      ),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const Singup()));
+                        },
+                    ),
+                  ),
+                ],
               ),
             ),
           ],

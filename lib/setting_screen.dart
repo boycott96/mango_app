@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter_application_test/signin_screen.dart';
 import 'package:flutter_application_test/signup_screen.dart';
 
 class SettingScreen extends StatefulWidget {
@@ -98,7 +98,7 @@ class _NoneSettingState extends State<NoneSetting>
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(10, 156, 10, 10),
+                  padding: EdgeInsets.fromLTRB(10, 96, 10, 10),
                   child: TextButton(
                     style: const ButtonStyle(
                       backgroundColor: MaterialStatePropertyAll(
@@ -111,7 +111,7 @@ class _NoneSettingState extends State<NoneSetting>
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const SignUp()));
+                              builder: (context) => const Singup()));
                     },
                     child: const Text(
                       "Feedback question",
@@ -133,7 +133,7 @@ class _NoneSettingState extends State<NoneSetting>
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const SignUp()));
+                              builder: (context) => const Singup()));
                     },
                     child: const Text(
                       "Sign up",
@@ -155,7 +155,7 @@ class _NoneSettingState extends State<NoneSetting>
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const SignUp()));
+                              builder: (context) => const Signin()));
                     },
                     child: const Text(
                       "Login",
