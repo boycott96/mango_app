@@ -37,9 +37,9 @@ class _MainScreenState extends State<MainScreen>
         children: tabViews,
       ),
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: const Color.fromARGB(255, 247, 247, 247),
-        fixedColor: const Color.fromARGB(255, 41, 45, 50),
-        unselectedItemColor: const Color.fromARGB(255, 168, 168, 168),
+        backgroundColor: const Color.fromRGBO(255, 255, 255, 1),
+        fixedColor: const Color.fromRGBO(41, 45, 50, 1),
+        unselectedItemColor: const Color.fromRGBO(168, 168, 168, 1),
         // 底部导
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(

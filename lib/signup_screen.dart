@@ -41,7 +41,7 @@ class _SignUpState extends State<SignUp> with SingleTickerProviderStateMixin {
                 child: Container(
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 246, 247, 249),
+                    color: const Color.fromRGBO(246, 247, 249, 1),
                     borderRadius: BorderRadius.circular(30.0),
                   ),
                   child: TextField(
@@ -67,7 +67,7 @@ class _SignUpState extends State<SignUp> with SingleTickerProviderStateMixin {
                 child: Container(
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 246, 247, 249),
+                    color: const Color.fromRGBO(246, 247, 249, 1),
                     borderRadius: BorderRadius.circular(30.0),
                   ),
                   child: TextField(
@@ -93,7 +93,7 @@ class _SignUpState extends State<SignUp> with SingleTickerProviderStateMixin {
                 child: Container(
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 246, 247, 249),
+                    color: const Color.fromRGBO(246, 247, 249, 1),
                     borderRadius: BorderRadius.circular(30.0),
                   ),
                   child: TextField(
@@ -119,7 +119,7 @@ class _SignUpState extends State<SignUp> with SingleTickerProviderStateMixin {
                 child: Container(
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 246, 247, 249),
+                    color: const Color.fromRGBO(246, 247, 249, 1),
                     borderRadius: BorderRadius.circular(30.0),
                   ),
                   child: TextField(
@@ -147,14 +147,14 @@ class _SignUpState extends State<SignUp> with SingleTickerProviderStateMixin {
                       text:
                           "By creating an account,you are confirming that you are at least 18 years old and agree to our ",
                       style: TextStyle(
-                        color: Color.fromARGB(255, 173, 181, 189),
+                        color: Color.fromRGBO(173, 181, 189, 1),
                         fontSize: 14,
                       ),
                     ),
                     TextSpan(
                       text: "Terms of Service",
                       style: const TextStyle(
-                        color: Color.fromARGB(255, 255, 93, 151),
+                        color: Color.fromRGBO(255, 93, 151, 1),
                         fontSize: 14,
                       ),
                       recognizer: TapGestureRecognizer()
@@ -165,14 +165,14 @@ class _SignUpState extends State<SignUp> with SingleTickerProviderStateMixin {
                     const TextSpan(
                       text: " and ",
                       style: TextStyle(
-                        color: Color.fromARGB(255, 173, 181, 189),
+                        color: Color.fromRGBO(173, 181, 189, 1),
                         fontSize: 14,
                       ),
                     ),
                     TextSpan(
                       text: "Privacy Policy.",
                       style: const TextStyle(
-                        color: Color.fromARGB(255, 255, 93, 151),
+                        color: Color.fromRGBO(255, 93, 151, 1),
                         fontSize: 14,
                       ),
                       recognizer: TapGestureRecognizer()
@@ -193,7 +193,7 @@ class _SignUpState extends State<SignUp> with SingleTickerProviderStateMixin {
                 child: TextButton(
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all<Color?>(
-                        const Color.fromARGB(255, 255, 93, 151)),
+                        const Color.fromRGBO(255, 93, 151, 1)),
                   ),
                   onPressed: () {
                     print("12321");

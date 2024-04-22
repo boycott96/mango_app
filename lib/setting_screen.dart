@@ -1,4 +1,7 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_application_test/signup_screen.dart';
 
 class SettingScreen extends StatefulWidget {
@@ -58,55 +61,131 @@ class _NoneSettingState extends State<NoneSetting>
   @override
   Widget build(BuildContext context) {
     return Container(
+      decoration: const BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage('assets/none_bg.png'), // 这里替换为你的图片路径
+          fit: BoxFit.cover,
+        ),
+      ),
       alignment: Alignment.bottomLeft,
-      padding: const EdgeInsets.symmetric(horizontal: 56, vertical: 16),
-      child: SizedBox(
-        width: double.infinity,
-        height: 200,
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              child: TextButton(
-                style: const ButtonStyle(
-                    backgroundColor: MaterialStatePropertyAll(
-                      Color.fromARGB(255, 255, 93, 151),
-                    ),
-                    minimumSize:
-                        MaterialStatePropertyAll(Size(double.infinity, 46))),
-                onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => const SignUp()));
-                },
-                child: const Text(
-                  "Sign up",
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              child: TextButton(
-                style: const ButtonStyle(
-                  backgroundColor: MaterialStatePropertyAll(
-                    Color.fromARGB(255, 255, 146, 185),
+      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 60),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10), // 设置模糊程度
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(25),
+            color: Colors.white.withOpacity(0.3),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 58),
+          child: Center(
+            child: Column(
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    color: const Color.fromRGBO(255, 93, 151, 1),
+                    borderRadius: BorderRadius.circular(35),
                   ),
-                  minimumSize:
-                      MaterialStatePropertyAll(Size(double.infinity, 46)),
+                  child: ClipPath(
+                    clipper: CustomClipperClass(),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 30, horizontal: 30),
+                      child: Image.asset(
+                        "assets/logo_white.png",
+                        width: 93,
+                      ),
+                    ),
+                  ),
                 ),
-                onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => const SignUp()));
-                },
-                child: const Text(
-                  "Login",
-                  style: TextStyle(color: Colors.white),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 156, 10, 10),
+                  child: TextButton(
+                    style: const ButtonStyle(
+                      backgroundColor: MaterialStatePropertyAll(
+                        Color.fromRGBO(187, 153, 255, 1),
+                      ),
+                      minimumSize:
+                          MaterialStatePropertyAll(Size(double.infinity, 46)),
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const SignUp()));
+                    },
+                    child: const Text(
+                      "Feedback question",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
                 ),
-              ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: TextButton(
+                    style: const ButtonStyle(
+                      backgroundColor: MaterialStatePropertyAll(
+                        Color.fromRGBO(255, 93, 151, 1),
+                      ),
+                      minimumSize:
+                          MaterialStatePropertyAll(Size(double.infinity, 46)),
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const SignUp()));
+                    },
+                    child: const Text(
+                      "Sign up",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: TextButton(
+                    style: const ButtonStyle(
+                      backgroundColor: MaterialStatePropertyAll(
+                        Color.fromRGBO(255, 146, 185, 1),
+                      ),
+                      minimumSize:
+                          MaterialStatePropertyAll(Size(double.infinity, 46)),
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const SignUp()));
+                    },
+                    child: const Text(
+                      "Login",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
   }
+}
+
+class CustomClipperClass extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    var path = Path();
+    path.lineTo(0, size.height - 20); // 左下角起点
+    path.quadraticBezierTo(
+        size.width / 4, size.height, size.width / 2, size.height); // 控制点和终点
+    path.quadraticBezierTo(size.width * 3 / 4, size.height, size.width,
+        size.height - 20); // 控制点和终点
+    path.lineTo(size.width, 0); // 右上角
+    path.close();
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }
