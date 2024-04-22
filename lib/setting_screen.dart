@@ -26,61 +26,86 @@ class _SettingScreenState extends State<SettingScreen>
 
   @override
   Widget build(BuildContext context) {
+    return const NoneSetting();
+  }
+}
+
+class NoneSetting extends StatefulWidget {
+  const NoneSetting({super.key});
+
+  @override
+  State<NoneSetting> createState() => _NoneSettingState();
+}
+
+// https://wp.larkdance.cn/b798404bdc934a33a58cbbc6314179df.jpg
+
+class _NoneSettingState extends State<NoneSetting>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
-      color: const Color.fromARGB(255, 245, 245, 245),
-      alignment: Alignment.topLeft,
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Card(
-                elevation: 4,
-                color: Colors.white,
-                margin: const EdgeInsets.all(20),
-                borderOnForeground: true,
-                child: Row(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16.0, vertical: 12.0),
-                      child: ClipOval(
-                        child: Image.network(
-                          fit: BoxFit.fill,
-                          "https://wp.larkdance.cn/b798404bdc934a33a58cbbc6314179df.jpg",
-                          height: 56,
-                          width: 56,
-                        ),
-                      ),
+      alignment: Alignment.bottomLeft,
+      padding: const EdgeInsets.symmetric(horizontal: 56, vertical: 16),
+      child: SizedBox(
+        width: double.infinity,
+        height: 200,
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: TextButton(
+                style: const ButtonStyle(
+                    backgroundColor: MaterialStatePropertyAll(
+                      Color.fromARGB(255, 255, 93, 151),
                     ),
-                    const Text(
-                      "Wendux",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              OutlinedButton(
-                onPressed: () {
-                  print("object");
-                },
-                child: const Text("登陆"),
-              ),
-              OutlinedButton(
+                    minimumSize:
+                        MaterialStatePropertyAll(Size(double.infinity, 46))),
                 onPressed: () {
                   Navigator.push(context,
                       MaterialPageRoute(builder: (context) => const SignUp()));
                 },
-                child: const Text("注册"),
+                child: const Text(
+                  "Sign up",
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
-            ],
-          )
-        ],
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: TextButton(
+                style: const ButtonStyle(
+                  backgroundColor: MaterialStatePropertyAll(
+                    Color.fromARGB(255, 255, 146, 185),
+                  ),
+                  minimumSize:
+                      MaterialStatePropertyAll(Size(double.infinity, 46)),
+                ),
+                onPressed: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => const SignUp()));
+                },
+                child: const Text(
+                  "Login",
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
