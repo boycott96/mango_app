@@ -161,7 +161,7 @@ class _RestPageState extends State<ResetPage>
             Column(
               children: [
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 90, 20, 4),
+                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 4),
                   child: RichText(
                     text: TextSpan(
                       children: [
