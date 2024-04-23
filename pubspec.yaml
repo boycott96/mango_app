@@ -67,6 +67,8 @@ flutter:
     - assets/default_avatar.jpg
     - assets/icon/crown.svg
     - assets/icon/location.svg
+    - assets/icon/album.svg
+    - assets/icon/music.svg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_test/profile/share_url.dart';
 import 'package:flutter_svg_provider/flutter_svg_provider.dart';
 
 class ProfileData extends StatefulWidget {
@@ -168,12 +169,84 @@ class _ProfileDataState extends State<ProfileData>
               padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 62),
               constraints: const BoxConstraints.expand(), // 设置宽度充满
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 11),
-                    child: Container(
-                      color: Colors.white,
-                      child: const Text("123456"),
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (contxt) => const ShareUrl()),
+                        );
+                      },
+                      child: Container(
+                        height: 108,
+                        width: 108,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(30),
+                          color: Colors.white,
+                        ),
+                        child: const Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image(
+                              image: Svg("assets/icon/album.svg"),
+                              width: 40,
+                              height: 40,
+                            ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(vertical: 6),
+                              child: Text(
+                                "Album url",
+                                style: TextStyle(
+                                  color: Color.fromRGBO(34, 34, 34, 1),
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 11),
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (contxt) => const ShareUrl()),
+                        );
+                      },
+                      child: Container(
+                        height: 108,
+                        width: 108,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(30),
+                          color: Colors.white,
+                        ),
+                        child: const Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image(
+                              image: Svg("assets/icon/music.svg"),
+                              width: 40,
+                              height: 40,
+                            ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(vertical: 6),
+                              child: Text(
+                                "Song url",
+                                style: TextStyle(
+                                  color: Color.fromRGBO(34, 34, 34, 1),
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                 ],
