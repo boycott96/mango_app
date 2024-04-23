@@ -1,8 +1,9 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_application_test/signin_screen.dart';
-import 'package:flutter_application_test/signup_screen.dart';
+import 'package:flutter_application_test/profile/contact_us.dart';
+import 'package:flutter_application_test/profile/signin_screen.dart';
+import 'package:flutter_application_test/profile/signup_screen.dart';
 
 class SettingScreen extends StatefulWidget {
   const SettingScreen({super.key});
@@ -98,7 +99,7 @@ class _NoneSettingState extends State<NoneSetting>
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.fromLTRB(10, 96, 10, 10),
+                  padding: const EdgeInsets.fromLTRB(10, 96, 10, 10),
                   child: TextButton(
                     style: const ButtonStyle(
                       backgroundColor: MaterialStatePropertyAll(
@@ -111,7 +112,7 @@ class _NoneSettingState extends State<NoneSetting>
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const Singup()));
+                              builder: (context) => const ContactUs()));
                     },
                     child: const Text(
                       "Feedback question",

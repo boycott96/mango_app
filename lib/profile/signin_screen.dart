@@ -1,8 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_application_test/reset_screen.dart';
-import 'package:flutter_application_test/signup_screen.dart';
+import 'package:flutter_application_test/profile/reset_screen.dart';
+import 'package:flutter_application_test/profile/signup_screen.dart';
 
 class Signin extends StatefulWidget {
   const Signin({super.key});
