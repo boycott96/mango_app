@@ -249,6 +249,45 @@ class _ProfileDataState extends State<ProfileData>
                       ),
                     ),
                   ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 11),
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (contxt) => const ShareUrl()),
+                        );
+                      },
+                      child: Container(
+                        height: 108,
+                        width: 108,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(30),
+                          color: Colors.white,
+                        ),
+                        child: const Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image(
+                              image: Svg("assets/icon/inv_code.svg"),
+                              width: 40,
+                              height: 40,
+                            ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(vertical: 6),
+                              child: Text(
+                                "Inv code",
+                                style: TextStyle(
+                                  color: Color.fromRGBO(34, 34, 34, 1),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),

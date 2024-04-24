@@ -16,7 +16,7 @@ class _SettingScreenState extends State<SettingScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
 
-  var flag = true;
+  var flag = false;
 
   @override
   void initState() {
