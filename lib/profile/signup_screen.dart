@@ -1,5 +1,9 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class Singup extends StatefulWidget {
   const Singup({super.key});
@@ -15,16 +19,16 @@ class _SignUpState extends State<Singup> with SingleTickerProviderStateMixin {
   final TextEditingController _cpwdController = TextEditingController();
 
   late AnimationController _controller;
-  final String _erroCode = "";
-  final String _errEmail = "";
-  final String _errPwd = "";
-  final String _errCpwd = "";
+  String _errCode = "";
+  String _errEmail = "";
+  String _errPwd = "";
+  String _errCpwd = "";
 
-  String? _validateInput(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'This field is required';
+  String? _validateCode(String? value) {
+    if (value == null || value == '') {
+      return 'This Code is required';
     }
-    return null;
+    return "";
   }
 
   String? _validateEmail(String? value) {
@@ -36,7 +40,7 @@ class _SignUpState extends State<Singup> with SingleTickerProviderStateMixin {
     if (!emailRegExp.hasMatch(value)) {
       return 'Enter a valid email';
     }
-    return null;
+    return "";
   }
 
   String? _validatePassword(String? value) {
@@ -46,28 +50,43 @@ class _SignUpState extends State<Singup> with SingleTickerProviderStateMixin {
     // 使用正则表达式检查密码格式
     final passwordRegExp = RegExp(r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{4,20}$');
     if (!passwordRegExp.hasMatch(value)) {
-      return 'Password must contain at least one letter and one number, and be 4-20 characters long';
+      return 'Password must have 1 letter & 1 number, 4-20 chars';
     }
-    return null;
+    return "";
   }
 
-  void _submitData() {
+  void _submitData() async {
     final String invitationCode = _codeController.text;
     final String email = _emailController.text;
     final String password = _pwdController.text;
     final String confirmPwd = _cpwdController.text;
-    var erroCode = _validateInput(invitationCode);
-    var errEmail = _validateEmail(email);
-    var errPwd = _validatePassword(password);
+    setState(() {
+      _errCode = _validateCode(invitationCode)!;
+      _errEmail = _validateEmail(email)!;
+      _errPwd = _validatePassword(password)!;
+      if (password != confirmPwd) {
+        _errCpwd = 'The two passwords are different';
+      } else {
+        _errCpwd = "";
+      }
+    });
+    if (_errCode != '' || _errEmail != '' || _errPwd != '' || _errCpwd != '') {
+      return;
+    }
+    var url = Uri.parse("http://192.168.1.235:9000/user/sign/up");
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer YourAuthToken',
+    };
+    Map<String, dynamic> data = {"email": email, "password": password};
 
-    // 在这里执行提交操作，比如发送网络请求或者保存数据到本地
+    var response =
+        await http.post(url, headers: headers, body: json.encode(data));
+    print(response);
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
 
-    print('Invitation Code: $invitationCode');
-    print('Email: $email');
-    print('Password: $password');
-    print('Repeat Password: $confirmPwd');
-
-    // 这里可以添加你的提交逻辑，比如发送网络请求等
+    print(await http.read(Uri.https('example.com', 'foobar.txt')));
   }
 
   @override
@@ -102,13 +121,19 @@ class _SignUpState extends State<Singup> with SingleTickerProviderStateMixin {
                     borderRadius: BorderRadius.circular(30.0),
                   ),
                   child: TextField(
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       hintText: 'Invitation Code',
                       border: InputBorder.none, // 设置外边框为none
-                      contentPadding: EdgeInsets.symmetric(horizontal: 23),
-                      errorText: "邀请码不能为空",
+                      contentPadding:
+                          const EdgeInsets.symmetric(horizontal: 23),
+                      errorText: _errCode,
                     ),
                     controller: _codeController,
+                    onChanged: (value) {
+                      setState(() {
+                        _errCode = _validateCode(value)!;
+                      });
+                    },
                   ),
                 ),
               ),
@@ -124,11 +149,19 @@ class _SignUpState extends State<Singup> with SingleTickerProviderStateMixin {
                     borderRadius: BorderRadius.circular(30.0),
                   ),
                   child: TextField(
-                    decoration: const InputDecoration(
-                        hintText: 'Email',
-                        border: InputBorder.none, // 设置外边框为none
-                        contentPadding: EdgeInsets.symmetric(horizontal: 23)),
+                    decoration: InputDecoration(
+                      hintText: 'Email',
+                      border: InputBorder.none, // 设置外边框为none
+                      errorText: _errEmail,
+                      contentPadding:
+                          const EdgeInsets.symmetric(horizontal: 23),
+                    ),
                     controller: _emailController,
+                    onChanged: (value) {
+                      setState(() {
+                        _errEmail = _validateEmail(value)!;
+                      });
+                    },
                   ),
                 ),
               ),
@@ -144,11 +177,19 @@ class _SignUpState extends State<Singup> with SingleTickerProviderStateMixin {
                     borderRadius: BorderRadius.circular(30.0),
                   ),
                   child: TextField(
-                    decoration: const InputDecoration(
-                        hintText: 'Password',
-                        border: InputBorder.none, // 设置外边框为none
-                        contentPadding: EdgeInsets.symmetric(horizontal: 23)),
+                    decoration: InputDecoration(
+                      hintText: 'Password',
+                      border: InputBorder.none, // 设置外边框为none
+                      contentPadding:
+                          const EdgeInsets.symmetric(horizontal: 23),
+                      errorText: _errPwd,
+                    ),
                     controller: _pwdController,
+                    onChanged: (value) {
+                      setState(() {
+                        _errPwd = _validatePassword(value)!;
+                      });
+                    },
                   ),
                 ),
               ),
@@ -164,11 +205,23 @@ class _SignUpState extends State<Singup> with SingleTickerProviderStateMixin {
                     borderRadius: BorderRadius.circular(30.0),
                   ),
                   child: TextField(
-                    decoration: const InputDecoration(
-                        hintText: 'Confirm Password',
-                        border: InputBorder.none, // 设置外边框为none
-                        contentPadding: EdgeInsets.symmetric(horizontal: 23)),
+                    decoration: InputDecoration(
+                      hintText: 'Confirm Password',
+                      border: InputBorder.none, // 设置外边框为none
+                      contentPadding:
+                          const EdgeInsets.symmetric(horizontal: 23),
+                      errorText: _errCpwd,
+                    ),
                     controller: _cpwdController,
+                    onChanged: (value) {
+                      setState(() {
+                        if (value != _cpwdController.text) {
+                          _errCpwd = 'The two passwords are different';
+                        } else {
+                          _errCpwd = "";
+                        }
+                      });
+                    },
                   ),
                 ),
               ),
