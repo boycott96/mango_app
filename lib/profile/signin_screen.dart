@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_test/profile/reset_screen.dart';
 import 'package:flutter_application_test/profile/signup_screen.dart';
+import 'package:http/http.dart' as http;
 
 class Signin extends StatefulWidget {
   const Signin({super.key});
@@ -12,8 +15,69 @@ class Signin extends StatefulWidget {
 
 class _SigninState extends State<Signin> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
-  final TextEditingController _textController = TextEditingController();
-  String _inputValue = '';
+  final TextEditingController _pwdController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+
+  String _errEmail = "";
+  String _errPwd = "";
+  String? _validateEmail(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Email is required';
+    }
+    // 使用正则表达式检查邮箱格式
+    final emailRegExp = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+    if (!emailRegExp.hasMatch(value)) {
+      return 'Enter a valid email';
+    }
+    return "";
+  }
+
+  void _submitData() async {
+    var email = _emailController.text;
+    var password = _pwdController.text;
+    _errEmail = _validateEmail(email)!;
+    if (password == "") {
+      _errPwd = "Passwrd is required";
+    }
+    if (_errEmail != '' || _errPwd != '') {
+      return;
+    }
+    var url = Uri.parse("http://192.168.1.235:9000/user/sign/in");
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer YourAuthToken',
+    };
+    Map<String, dynamic> data = {"email": email, "password": password};
+    var response =
+        await http.post(url, headers: headers, body: json.encode(data));
+    var body = utf8.decode(response.bodyBytes);
+    Map<String, dynamic> map = json.decode(body);
+    if (map['code'] != 0) {
+      _showDialog(context, map['msg']);
+    } else {
+      print(body);
+    }
+  }
+
+  void _showDialog(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Tip'),
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('done'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   void initState() {
@@ -47,16 +111,17 @@ class _SigninState extends State<Signin> with SingleTickerProviderStateMixin {
                     borderRadius: BorderRadius.circular(30.0),
                   ),
                   child: TextField(
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                         hintText: 'Email address',
+                        errorText: _errEmail,
                         border: InputBorder.none, // 设置外边框为none
-                        contentPadding: EdgeInsets.symmetric(horizontal: 23)),
-                    controller: _textController,
+                        contentPadding:
+                            const EdgeInsets.symmetric(horizontal: 23)),
+                    controller: _emailController,
                     onChanged: (value) {
                       setState(() {
-                        _inputValue = value;
+                        _errEmail = _validateEmail(value)!;
                       });
-                      print(_inputValue);
                     },
                   ),
                 ),
@@ -73,16 +138,21 @@ class _SigninState extends State<Signin> with SingleTickerProviderStateMixin {
                     borderRadius: BorderRadius.circular(30.0),
                   ),
                   child: TextField(
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                         hintText: 'Password',
+                        errorText: _errPwd,
                         border: InputBorder.none, // 设置外边框为none
-                        contentPadding: EdgeInsets.symmetric(horizontal: 23)),
-                    controller: _textController,
+                        contentPadding:
+                            const EdgeInsets.symmetric(horizontal: 23)),
+                    controller: _pwdController,
                     onChanged: (value) {
                       setState(() {
-                        _inputValue = value;
+                        if (value != "") {
+                          _errPwd = "";
+                        } else {
+                          _errPwd = "Password is required";
+                        }
                       });
-                      print(_inputValue);
                     },
                   ),
                 ),
@@ -123,7 +193,7 @@ class _SigninState extends State<Signin> with SingleTickerProviderStateMixin {
                         const Color.fromRGBO(255, 93, 151, 1)),
                   ),
                   onPressed: () {
-                    print("12321");
+                    _submitData();
                   },
                   child: const Text(
                     "Done",
