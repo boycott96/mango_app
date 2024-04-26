@@ -1,6 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_test/profile/contact_us.dart';
+import 'package:flutter/widgets.dart';
 
 class ResetPage extends StatefulWidget {
   const ResetPage({super.key});
@@ -33,7 +33,6 @@ class _RestPageState extends State<ResetPage>
         title: const Text("Reset Passage"),
       ),
       body: Container(
-        padding: const EdgeInsets.symmetric(vertical: 20),
         color: const Color.fromRGBO(249, 249, 249, 1),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -43,7 +42,7 @@ class _RestPageState extends State<ResetPage>
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(30),
               ),
-              margin: const EdgeInsets.fromLTRB(15, 0, 15, 0),
+              margin: const EdgeInsets.fromLTRB(15, 20, 15, 20),
               padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
               child: Column(
                 children: [
@@ -161,7 +160,7 @@ class _RestPageState extends State<ResetPage>
             Column(
               children: [
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 4),
+                  padding: const EdgeInsets.fromLTRB(20, 90, 20, 4),
                   child: RichText(
                     text: TextSpan(
                       children: [
@@ -180,10 +179,7 @@ class _RestPageState extends State<ResetPage>
                           ),
                           recognizer: TapGestureRecognizer()
                             ..onTap = () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => const ContactUs()));
+                              print("Privacy Policy.");
                             },
                         ),
                       ],

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_test/music/music_screen.dart';
-import 'package:flutter_application_test/profile/setting_screen.dart';
+import 'package:flutter_application_test/pages/profile/setting_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});

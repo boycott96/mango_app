@@ -1,10 +1,14 @@
-import 'dart:convert';
-
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_test/profile/reset_screen.dart';
-import 'package:flutter_application_test/profile/signup_screen.dart';
-import 'package:http/http.dart' as http;
+import 'package:flutter_application_test/api/token_manager.dart';
+import 'package:flutter_application_test/api/user.dart';
+import 'package:flutter_application_test/components/toast_manager.dart';
+import 'package:flutter_application_test/pages/main_screen.dart';
+import 'package:flutter_application_test/pages/profile/reset_screen.dart';
+import 'package:flutter_application_test/pages/profile/signup_screen.dart';
+import 'package:flutter_application_test/utils/validate.dart';
+
+import '../../api/api.dart';
 
 class Signin extends StatefulWidget {
   const Signin({super.key});
@@ -20,63 +24,25 @@ class _SigninState extends State<Signin> with SingleTickerProviderStateMixin {
 
   String _errEmail = "";
   String _errPwd = "";
-  String? _validateEmail(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Email is required';
-    }
-    // 使用正则表达式检查邮箱格式
-    final emailRegExp = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-    if (!emailRegExp.hasMatch(value)) {
-      return 'Enter a valid email';
-    }
-    return "";
-  }
 
-  void _submitData() async {
+  void _submitData(BuildContext context) async {
     var email = _emailController.text;
     var password = _pwdController.text;
-    _errEmail = _validateEmail(email)!;
-    if (password == "") {
-      _errPwd = "Passwrd is required";
-    }
+    _errEmail = validateEmail(email);
+    _errPwd = validateRequired(password);
     if (_errEmail != '' || _errPwd != '') {
       return;
     }
-    var url = Uri.parse("http://192.168.1.235:9000/user/sign/in");
-    Map<String, String> headers = {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer YourAuthToken',
-    };
-    Map<String, dynamic> data = {"email": email, "password": password};
-    var response =
-        await http.post(url, headers: headers, body: json.encode(data));
-    var body = utf8.decode(response.bodyBytes);
-    Map<String, dynamic> map = json.decode(body);
-    if (map['code'] != 0) {
-      _showDialog(context, map['msg']);
-    } else {
-      print(body);
+    if (mounted) {
+      R<Token> res =
+          await UserService().signIn({"email": email, "password": password});
+      if (res.code == 0) {
+        TokenManager.saveToken(res.data.accessToken);
+        ToastManager.showToast("login sucess!");
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) => const MainScreen()));
+      }
     }
-  }
-
-  void _showDialog(BuildContext context, String message) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Tip'),
-          content: Text(message),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('done'),
-            ),
-          ],
-        );
-      },
-    );
   }
 
   @override
@@ -120,7 +86,7 @@ class _SigninState extends State<Signin> with SingleTickerProviderStateMixin {
                     controller: _emailController,
                     onChanged: (value) {
                       setState(() {
-                        _errEmail = _validateEmail(value)!;
+                        _errEmail = validateEmail(value);
                       });
                     },
                   ),
@@ -147,11 +113,7 @@ class _SigninState extends State<Signin> with SingleTickerProviderStateMixin {
                     controller: _pwdController,
                     onChanged: (value) {
                       setState(() {
-                        if (value != "") {
-                          _errPwd = "";
-                        } else {
-                          _errPwd = "Password is required";
-                        }
+                        _errPwd = validateRequired(value);
                       });
                     },
                   ),
@@ -193,7 +155,7 @@ class _SigninState extends State<Signin> with SingleTickerProviderStateMixin {
                         const Color.fromRGBO(255, 93, 151, 1)),
                   ),
                   onPressed: () {
-                    _submitData();
+                    _submitData(context);
                   },
                   child: const Text(
                     "Done",

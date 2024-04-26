@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_test/profile/share_url.dart';
+import 'package:flutter_application_test/pages/profile/share_url.dart';
 import 'package:flutter_svg_provider/flutter_svg_provider.dart';
 
 class ProfileData extends StatefulWidget {

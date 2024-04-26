@@ -1,7 +1,5 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_application_test/profile/profile_data.dart';
+import 'package:flutter_application_test/pages/profile/profile_data.dart';
 
 import 'none_setting.dart';
 

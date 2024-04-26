@@ -1,9 +1,9 @@
-import 'dart:convert';
-import 'dart:io';
+import 'package:flutter_application_test/api/user.dart';
+
+import '/utils/validate.dart';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 
 class Singup extends StatefulWidget {
   const Singup({super.key});
@@ -24,46 +24,15 @@ class _SignUpState extends State<Singup> with SingleTickerProviderStateMixin {
   String _errPwd = "";
   String _errCpwd = "";
 
-  String? _validateCode(String? value) {
-    if (value == null || value == '') {
-      return 'This Code is required';
-    }
-    return "";
-  }
-
-  String? _validateEmail(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Email is required';
-    }
-    // 使用正则表达式检查邮箱格式
-    final emailRegExp = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-    if (!emailRegExp.hasMatch(value)) {
-      return 'Enter a valid email';
-    }
-    return "";
-  }
-
-  String? _validatePassword(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Password is required';
-    }
-    // 使用正则表达式检查密码格式
-    final passwordRegExp = RegExp(r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{4,20}$');
-    if (!passwordRegExp.hasMatch(value)) {
-      return 'Password must have 1 letter & 1 number, 4-20 chars';
-    }
-    return "";
-  }
-
   void _submitData() async {
     final String invitationCode = _codeController.text;
     final String email = _emailController.text;
     final String password = _pwdController.text;
     final String confirmPwd = _cpwdController.text;
     setState(() {
-      _errCode = _validateCode(invitationCode)!;
-      _errEmail = _validateEmail(email)!;
-      _errPwd = _validatePassword(password)!;
+      _errCode = validateRequired(invitationCode);
+      _errEmail = validateEmail(email);
+      _errPwd = validatePassword(password);
       if (password != confirmPwd) {
         _errCpwd = 'The two passwords are different';
       } else {
@@ -73,20 +42,7 @@ class _SignUpState extends State<Singup> with SingleTickerProviderStateMixin {
     if (_errCode != '' || _errEmail != '' || _errPwd != '' || _errCpwd != '') {
       return;
     }
-    var url = Uri.parse("http://192.168.1.235:9000/user/sign/up");
-    Map<String, String> headers = {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer YourAuthToken',
-    };
-    Map<String, dynamic> data = {"email": email, "password": password};
-
-    var response =
-        await http.post(url, headers: headers, body: json.encode(data));
-    print(response);
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${response.body}');
-
-    print(await http.read(Uri.https('example.com', 'foobar.txt')));
+    UserService().signUp({"email": email, "password": password});
   }
 
   @override
@@ -131,7 +87,7 @@ class _SignUpState extends State<Singup> with SingleTickerProviderStateMixin {
                     controller: _codeController,
                     onChanged: (value) {
                       setState(() {
-                        _errCode = _validateCode(value)!;
+                        _errCode = validateRequired(value);
                       });
                     },
                   ),
@@ -159,7 +115,7 @@ class _SignUpState extends State<Singup> with SingleTickerProviderStateMixin {
                     controller: _emailController,
                     onChanged: (value) {
                       setState(() {
-                        _errEmail = _validateEmail(value)!;
+                        _errEmail = validateEmail(value);
                       });
                     },
                   ),
@@ -187,7 +143,7 @@ class _SignUpState extends State<Singup> with SingleTickerProviderStateMixin {
                     controller: _pwdController,
                     onChanged: (value) {
                       setState(() {
-                        _errPwd = _validatePassword(value)!;
+                        _errPwd = validatePassword(value);
                       });
                     },
                   ),
@@ -245,10 +201,7 @@ class _SignUpState extends State<Singup> with SingleTickerProviderStateMixin {
                         color: Color.fromRGBO(255, 93, 151, 1),
                         fontSize: 14,
                       ),
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = () {
-                          print("Terms of Service.");
-                        },
+                      recognizer: TapGestureRecognizer()..onTap = () {},
                     ),
                     const TextSpan(
                       text: " and ",
@@ -263,10 +216,7 @@ class _SignUpState extends State<Singup> with SingleTickerProviderStateMixin {
                         color: Color.fromRGBO(255, 93, 151, 1),
                         fontSize: 14,
                       ),
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = () {
-                          print("Privacy Policy.");
-                        },
+                      recognizer: TapGestureRecognizer()..onTap = () {},
                     ),
                   ],
                 ),
