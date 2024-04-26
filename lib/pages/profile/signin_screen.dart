@@ -6,41 +6,50 @@ import 'package:flutter_application_test/components/toast_manager.dart';
 import 'package:flutter_application_test/pages/main_screen.dart';
 import 'package:flutter_application_test/pages/profile/reset_screen.dart';
 import 'package:flutter_application_test/pages/profile/signup_screen.dart';
+import 'package:flutter_application_test/utils/util.dart';
 import 'package:flutter_application_test/utils/validate.dart';
+import 'package:dio/dio.dart';
+import 'package:toast/toast.dart';
 
 import '../../api/api.dart';
 
-class Signin extends StatefulWidget {
-  const Signin({super.key});
+class SignIn extends StatefulWidget {
+  const SignIn({super.key});
 
   @override
-  State<Signin> createState() => _SigninState();
+  State<SignIn> createState() => _SigninState();
 }
 
-class _SigninState extends State<Signin> with SingleTickerProviderStateMixin {
+class _SigninState extends State<SignIn> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   final TextEditingController _pwdController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
 
-  String _errEmail = "";
-  String _errPwd = "";
+  String? _errEmail;
+  String? _errPwd;
+
+  bool _showPwd = true;
 
   void _submitData(BuildContext context) async {
     var email = _emailController.text;
     var password = _pwdController.text;
     _errEmail = validateEmail(email);
     _errPwd = validateRequired(password);
-    if (_errEmail != '' || _errPwd != '') {
+    if (_errEmail == '' || _errPwd == '') {
       return;
     }
     if (mounted) {
-      R<Token> res =
-          await UserService().signIn({"email": email, "password": password});
-      if (res.code == 0) {
-        TokenManager.saveToken(res.data.accessToken);
+      Response res =
+          await UserService().signIn({"email": email, "password": hashPassword(password)});
+      print("####");
+      print(res);
+      if (res.data['code'] == 0) {
+        TokenManager.saveToken(res.data['accessToken']);
         ToastManager.showToast("login sucess!");
         Navigator.pushReplacement(context,
             MaterialPageRoute(builder: (context) => const MainScreen()));
+      } else {
+        ToastManager.showToast(res.data['msg']);
       }
     }
   }
@@ -59,6 +68,7 @@ class _SigninState extends State<Signin> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    ToastContext().init(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text("Login"),
@@ -69,54 +79,60 @@ class _SigninState extends State<Signin> with SingleTickerProviderStateMixin {
             Padding(
               padding: const EdgeInsets.fromLTRB(21, 72, 21, 10),
               child: SizedBox(
-                height: 56,
-                child: Container(
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: const Color.fromRGBO(246, 247, 249, 1),
-                    borderRadius: BorderRadius.circular(30.0),
+                child: TextField(
+                  decoration: InputDecoration(
+                    hintText: 'Email address',
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide.none,
+                      borderRadius: BorderRadius.circular(30),
+                    ), // 设置外边框为none
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 23),
+                    filled: true, // 设置为 true 表示填充背景色
+                    fillColor: const Color.fromRGBO(246, 247, 249, 1),
+                    errorText: _errEmail,
                   ),
-                  child: TextField(
-                    decoration: InputDecoration(
-                        hintText: 'Email address',
-                        errorText: _errEmail,
-                        border: InputBorder.none, // 设置外边框为none
-                        contentPadding:
-                            const EdgeInsets.symmetric(horizontal: 23)),
-                    controller: _emailController,
-                    onChanged: (value) {
-                      setState(() {
-                        _errEmail = validateEmail(value);
-                      });
-                    },
-                  ),
+                  controller: _emailController,
+                  onChanged: (value) {
+                    setState(() {
+                      _errEmail = validateEmail(value);
+                    });
+                  },
                 ),
               ),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 21, vertical: 10),
               child: SizedBox(
-                height: 56,
-                child: Container(
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: const Color.fromRGBO(246, 247, 249, 1),
-                    borderRadius: BorderRadius.circular(30.0),
+                child: TextField(
+                  obscureText: _showPwd,
+                  decoration: InputDecoration(
+                    hintText: 'Password',
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide.none,
+                      borderRadius: BorderRadius.circular(30),
+                    ), // 设置外边框为none
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 23),
+                    filled: true, // 设置为 true 表示填充背景色
+                    fillColor: const Color.fromRGBO(246, 247, 249, 1),
+                    errorText: _errPwd,
+                    // 可选：设置密码可见/隐藏的图标
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                          _showPwd ? Icons.visibility_off : Icons.visibility),
+                      onPressed: () {
+                        setState(() {
+                          _showPwd = !_showPwd;
+                        });
+                      },
+                    ),
+                    // 可选：点击图标切换密码可见/隐藏状态
                   ),
-                  child: TextField(
-                    decoration: InputDecoration(
-                        hintText: 'Password',
-                        errorText: _errPwd,
-                        border: InputBorder.none, // 设置外边框为none
-                        contentPadding:
-                            const EdgeInsets.symmetric(horizontal: 23)),
-                    controller: _pwdController,
-                    onChanged: (value) {
-                      setState(() {
-                        _errPwd = validateRequired(value);
-                      });
-                    },
-                  ),
+                  controller: _pwdController,
+                  onChanged: (value) {
+                    setState(() {
+                      _errPwd = validateRequired(value);
+                    });
+                  },
                 ),
               ),
             ),

@@ -6,10 +6,6 @@ class UserService {
   }
 
   signIn(Object data) async {
-    var data = {
-      "email": "123",
-      "password": "123",
-    };
     return await ApiService().post("/user/sign/in", data);
   }
 }

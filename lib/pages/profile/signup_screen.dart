@@ -1,7 +1,10 @@
 import 'package:flutter_application_test/api/user.dart';
+import 'package:flutter_application_test/components/toast_manager.dart';
+import 'package:flutter_application_test/pages/profile/signin_screen.dart';
+import 'package:flutter_application_test/utils/util.dart';
 
 import '/utils/validate.dart';
-
+import 'package:dio/dio.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
@@ -19,10 +22,13 @@ class _SignUpState extends State<Singup> with SingleTickerProviderStateMixin {
   final TextEditingController _cpwdController = TextEditingController();
 
   late AnimationController _controller;
-  String _errCode = "";
-  String _errEmail = "";
-  String _errPwd = "";
-  String _errCpwd = "";
+  String? _errCode;
+  String? _errEmail;
+  String? _errPwd;
+  String? _errCpwd;
+
+  bool _showPwd = true;
+  bool _showCpwd = true;
 
   void _submitData() async {
     final String invitationCode = _codeController.text;
@@ -36,13 +42,26 @@ class _SignUpState extends State<Singup> with SingleTickerProviderStateMixin {
       if (password != confirmPwd) {
         _errCpwd = 'The two passwords are different';
       } else {
-        _errCpwd = "";
+        _errCpwd;
       }
     });
-    if (_errCode != '' || _errEmail != '' || _errPwd != '' || _errCpwd != '') {
+    if (_errCode == '' || _errEmail == '' || _errPwd == '' || _errCpwd == '') {
       return;
     }
-    UserService().signUp({"email": email, "password": password});
+    Response res = await UserService().signUp({
+      "code": invitationCode,
+      "email": email,
+      "password": hashPassword(password)
+    });
+    print(res.data);
+    if (res.data['code'] == 0) {
+      ToastManager.showToast("Registration success");
+      await Future.delayed(Duration.zero);
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => const SignIn()));
+    } else {
+      ToastManager.showToast(res.data['msg']);
+    }
   }
 
   @override
@@ -69,116 +88,125 @@ class _SignUpState extends State<Singup> with SingleTickerProviderStateMixin {
             Padding(
               padding: const EdgeInsets.fromLTRB(21, 72, 21, 10),
               child: SizedBox(
-                height: 56,
-                child: Container(
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: const Color.fromRGBO(246, 247, 249, 1),
-                    borderRadius: BorderRadius.circular(30.0),
+                child: TextField(
+                  decoration: InputDecoration(
+                    hintText: 'Invitation Code',
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide.none,
+                      borderRadius: BorderRadius.circular(30),
+                    ), // 设置外边框为none
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 23),
+                    filled: true, // 设置为 true 表示填充背景色
+                    fillColor: const Color.fromRGBO(246, 247, 249, 1),
+                    errorText: _errCode,
                   ),
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: 'Invitation Code',
-                      border: InputBorder.none, // 设置外边框为none
-                      contentPadding:
-                          const EdgeInsets.symmetric(horizontal: 23),
-                      errorText: _errCode,
-                    ),
-                    controller: _codeController,
-                    onChanged: (value) {
-                      setState(() {
-                        _errCode = validateRequired(value);
-                      });
-                    },
-                  ),
+                  controller: _codeController,
+                  onChanged: (value) {
+                    setState(() {
+                      _errCode = validateRequired(value);
+                    });
+                  },
                 ),
               ),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 21, vertical: 10),
               child: SizedBox(
-                height: 56,
-                child: Container(
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: const Color.fromRGBO(246, 247, 249, 1),
-                    borderRadius: BorderRadius.circular(30.0),
+                child: TextField(
+                  decoration: InputDecoration(
+                    hintText: 'Email',
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide.none,
+                      borderRadius: BorderRadius.circular(30),
+                    ), // 设置外边框为none
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 23),
+                    filled: true, // 设置为 true 表示填充背景色
+                    fillColor: const Color.fromRGBO(246, 247, 249, 1),
+                    errorText: _errEmail,
                   ),
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: 'Email',
-                      border: InputBorder.none, // 设置外边框为none
-                      errorText: _errEmail,
-                      contentPadding:
-                          const EdgeInsets.symmetric(horizontal: 23),
-                    ),
-                    controller: _emailController,
-                    onChanged: (value) {
-                      setState(() {
-                        _errEmail = validateEmail(value);
-                      });
-                    },
-                  ),
+                  controller: _emailController,
+                  onChanged: (value) {
+                    setState(() {
+                      _errEmail = validateEmail(value);
+                    });
+                  },
                 ),
               ),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 21, vertical: 10),
               child: SizedBox(
-                height: 56,
-                child: Container(
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: const Color.fromRGBO(246, 247, 249, 1),
-                    borderRadius: BorderRadius.circular(30.0),
-                  ),
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: 'Password',
-                      border: InputBorder.none, // 设置外边框为none
-                      contentPadding:
-                          const EdgeInsets.symmetric(horizontal: 23),
-                      errorText: _errPwd,
+                child: TextField(
+                  obscureText: _showPwd,
+                  decoration: InputDecoration(
+                    hintText: 'Password',
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide.none,
+                      borderRadius: BorderRadius.circular(30),
+                    ), // 设置外边框为none
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 23),
+                    filled: true, // 设置为 true 表示填充背景色
+                    fillColor:
+                        const Color.fromRGBO(246, 247, 249, 1), // 设置填充的背景色
+                    errorText: _errPwd,
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                          _showPwd ? Icons.visibility_off : Icons.visibility),
+                      onPressed: () {
+                        setState(() {
+                          _showPwd = !_showPwd;
+                        });
+                      },
                     ),
-                    controller: _pwdController,
-                    onChanged: (value) {
-                      setState(() {
-                        _errPwd = validatePassword(value);
-                      });
-                    },
                   ),
+                  controller: _pwdController,
+                  onChanged: (value) {
+                    setState(() {
+                      _errPwd = validatePassword(value);
+                      print("####");
+                      print(_errPwd);
+                    });
+                  },
                 ),
               ),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 21, vertical: 10),
               child: SizedBox(
-                height: 56,
-                child: Container(
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: const Color.fromRGBO(246, 247, 249, 1),
-                    borderRadius: BorderRadius.circular(30.0),
-                  ),
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: 'Confirm Password',
-                      border: InputBorder.none, // 设置外边框为none
-                      contentPadding:
-                          const EdgeInsets.symmetric(horizontal: 23),
-                      errorText: _errCpwd,
+                // height: 56,
+                child: TextField(
+                  obscureText: _showCpwd,
+                  decoration: InputDecoration(
+                    hintText: 'Confirm Password',
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide.none,
+                      borderRadius: BorderRadius.circular(30),
+                    ), // 设置外边框为none
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 23),
+                    errorText: _errCpwd,
+                    filled: true, // 设置为 true 表示填充背景色
+                    fillColor:
+                        const Color.fromRGBO(246, 247, 249, 1), // 设置填充的背景色
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                          _showCpwd ? Icons.visibility_off : Icons.visibility),
+                      onPressed: () {
+                        setState(() {
+                          _showCpwd = !_showCpwd;
+                        });
+                      },
                     ),
-                    controller: _cpwdController,
-                    onChanged: (value) {
-                      setState(() {
-                        if (value != _cpwdController.text) {
-                          _errCpwd = 'The two passwords are different';
-                        } else {
-                          _errCpwd = "";
-                        }
-                      });
-                    },
                   ),
+                  controller: _cpwdController,
+                  onChanged: (value) {
+                    setState(() {
+                      if (value != '' && value != _pwdController.text) {
+                        _errCpwd = 'The two passwords are different';
+                      } else {
+                        _errCpwd = null;
+                      }
+                    });
+                  },
                 ),
               ),
             ),

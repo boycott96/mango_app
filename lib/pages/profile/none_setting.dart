@@ -128,7 +128,7 @@ class _NoneSettingState extends State<NoneSetting>
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const Signin()));
+                              builder: (context) => const SignIn()));
                     },
                     child: const Text(
                       "Login",
