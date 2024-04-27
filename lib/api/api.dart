@@ -11,6 +11,7 @@ class ApiService {
   Future<dynamic> get(String url) async {
     String? token = await TokenManager.getToken();
     if (token != null) _dio.options.headers['Authorization'] = 'Bearer $token';
+    print(_dio.options.headers);
     Response response = await _dio.get(_prefix + url);
     return response;
   }

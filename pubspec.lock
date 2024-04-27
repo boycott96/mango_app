@@ -289,7 +289,7 @@ packages:
     source: hosted
     version: "2.2.2"
   shared_preferences_foundation:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: shared_preferences_foundation
       sha256: "7708d83064f38060c7b39db12aefe449cb8cdc031d6062280087bc4cdb988f5c"

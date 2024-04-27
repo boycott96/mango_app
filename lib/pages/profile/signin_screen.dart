@@ -11,8 +11,6 @@ import 'package:flutter_application_test/utils/validate.dart';
 import 'package:dio/dio.dart';
 import 'package:toast/toast.dart';
 
-import '../../api/api.dart';
-
 class SignIn extends StatefulWidget {
   const SignIn({super.key});
 
@@ -39,17 +37,21 @@ class _SigninState extends State<SignIn> with SingleTickerProviderStateMixin {
       return;
     }
     if (mounted) {
-      Response res =
-          await UserService().signIn({"email": email, "password": hashPassword(password)});
-      print("####");
-      print(res);
-      if (res.data['code'] == 0) {
-        TokenManager.saveToken(res.data['accessToken']);
-        ToastManager.showToast("login sucess!");
-        Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (context) => const MainScreen()));
-      } else {
-        ToastManager.showToast(res.data['msg']);
+      Response res = await UserService()
+          .signIn({"email": email, "password": hashPassword(password)});
+      if (res.data != null) {
+        int code = res.data['code'];
+        if (code == 0) {
+          Map<String, dynamic> data = res.data['data'];
+          String token = data['accessToken'];
+          TokenManager.saveToken(token);
+          ToastManager.showToast("login sucess!");
+          // ignore: use_build_context_synchronously
+          Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (context) => const MainScreen()));
+        } else {
+          ToastManager.showToast(res.data['msg']);
+        }
       }
     }
   }
@@ -78,62 +80,58 @@ class _SigninState extends State<SignIn> with SingleTickerProviderStateMixin {
           children: [
             Padding(
               padding: const EdgeInsets.fromLTRB(21, 72, 21, 10),
-              child: SizedBox(
-                child: TextField(
-                  decoration: InputDecoration(
-                    hintText: 'Email address',
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide.none,
-                      borderRadius: BorderRadius.circular(30),
-                    ), // 设置外边框为none
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 23),
-                    filled: true, // 设置为 true 表示填充背景色
-                    fillColor: const Color.fromRGBO(246, 247, 249, 1),
-                    errorText: _errEmail,
-                  ),
-                  controller: _emailController,
-                  onChanged: (value) {
-                    setState(() {
-                      _errEmail = validateEmail(value);
-                    });
-                  },
+              child: TextField(
+                decoration: InputDecoration(
+                  hintText: 'Email address',
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide.none,
+                    borderRadius: BorderRadius.circular(30),
+                  ), // 设置外边框为none
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 23),
+                  filled: true, // 设置为 true 表示填充背景色
+                  fillColor: const Color.fromRGBO(246, 247, 249, 1),
+                  errorText: _errEmail,
                 ),
+                controller: _emailController,
+                onChanged: (value) {
+                  setState(() {
+                    _errEmail = validateEmail(value);
+                  });
+                },
               ),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 21, vertical: 10),
-              child: SizedBox(
-                child: TextField(
-                  obscureText: _showPwd,
-                  decoration: InputDecoration(
-                    hintText: 'Password',
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide.none,
-                      borderRadius: BorderRadius.circular(30),
-                    ), // 设置外边框为none
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 23),
-                    filled: true, // 设置为 true 表示填充背景色
-                    fillColor: const Color.fromRGBO(246, 247, 249, 1),
-                    errorText: _errPwd,
-                    // 可选：设置密码可见/隐藏的图标
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                          _showPwd ? Icons.visibility_off : Icons.visibility),
-                      onPressed: () {
-                        setState(() {
-                          _showPwd = !_showPwd;
-                        });
-                      },
-                    ),
-                    // 可选：点击图标切换密码可见/隐藏状态
+              child: TextField(
+                obscureText: _showPwd,
+                decoration: InputDecoration(
+                  hintText: 'Password',
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide.none,
+                    borderRadius: BorderRadius.circular(30),
+                  ), // 设置外边框为none
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 23),
+                  filled: true, // 设置为 true 表示填充背景色
+                  fillColor: const Color.fromRGBO(246, 247, 249, 1),
+                  errorText: _errPwd,
+                  // 可选：设置密码可见/隐藏的图标
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                        _showPwd ? Icons.visibility_off : Icons.visibility),
+                    onPressed: () {
+                      setState(() {
+                        _showPwd = !_showPwd;
+                      });
+                    },
                   ),
-                  controller: _pwdController,
-                  onChanged: (value) {
-                    setState(() {
-                      _errPwd = validateRequired(value);
-                    });
-                  },
+                  // 可选：点击图标切换密码可见/隐藏状态
                 ),
+                controller: _pwdController,
+                onChanged: (value) {
+                  setState(() {
+                    _errPwd = validateRequired(value);
+                  });
+                },
               ),
             ),
             Padding(
@@ -150,9 +148,11 @@ class _SigninState extends State<SignIn> with SingleTickerProviderStateMixin {
                       recognizer: TapGestureRecognizer()
                         ..onTap = () {
                           Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const ResetPage()));
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const ResetPage(),
+                            ),
+                          );
                         },
                     ),
                   ],
@@ -190,7 +190,7 @@ class _SigninState extends State<SignIn> with SingleTickerProviderStateMixin {
                     text: const TextSpan(
                       text: "Don't have account?",
                       style: TextStyle(
-                        color: Color.fromRGBO(171, 173, 189, 1),
+                        color: Color.fromRGBO(24, 45, 206, 1),
                         fontSize: 14,
                       ),
                     ),
@@ -205,9 +205,11 @@ class _SigninState extends State<SignIn> with SingleTickerProviderStateMixin {
                       recognizer: TapGestureRecognizer()
                         ..onTap = () {
                           Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const Singup()));
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const Singup(),
+                            ),
+                          );
                         },
                     ),
                   ),
