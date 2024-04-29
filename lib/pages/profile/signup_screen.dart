@@ -2,6 +2,7 @@ import 'package:flutter_application_test/api/user.dart';
 import 'package:flutter_application_test/components/toast_manager.dart';
 import 'package:flutter_application_test/pages/profile/signin_screen.dart';
 import 'package:flutter_application_test/utils/util.dart';
+import 'package:toast/toast.dart';
 
 import '/utils/validate.dart';
 import 'package:dio/dio.dart';
@@ -30,7 +31,7 @@ class _SignUpState extends State<Singup> with SingleTickerProviderStateMixin {
   bool _showPwd = true;
   bool _showCpwd = true;
 
-  void _submitData() async {
+  void _submitData(BuildContext context) async {
     final String invitationCode = _codeController.text;
     final String email = _emailController.text;
     final String password = _pwdController.text;
@@ -50,15 +51,13 @@ class _SignUpState extends State<Singup> with SingleTickerProviderStateMixin {
     }
     Response res = await UserService().signUp({
       "code": invitationCode,
-      "email": email,
+      "username": email,
       "password": hashPassword(password)
     });
-    print(res.data);
     if (res.data['code'] == 0) {
       ToastManager.showToast("Registration success");
-      await Future.delayed(Duration.zero);
       Navigator.push(
-          context, MaterialPageRoute(builder: (context) => const SignIn()));
+          context, MaterialPageRoute(builder: (_context) => const SignIn()));
     } else {
       ToastManager.showToast(res.data['msg']);
     }
@@ -78,6 +77,7 @@ class _SignUpState extends State<Singup> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    ToastContext().init(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text("Welcome Sign up"),
@@ -262,7 +262,7 @@ class _SignUpState extends State<Singup> with SingleTickerProviderStateMixin {
                         const Color.fromRGBO(255, 93, 151, 1)),
                   ),
                   onPressed: () {
-                    _submitData();
+                    _submitData(context);
                   },
                   child: const Text(
                     "Done",

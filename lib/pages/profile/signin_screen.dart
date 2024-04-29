@@ -38,7 +38,7 @@ class _SigninState extends State<SignIn> with SingleTickerProviderStateMixin {
     }
     if (mounted) {
       Response res = await UserService()
-          .signIn({"email": email, "password": hashPassword(password)});
+          .signIn({"username": email, "password": hashPassword(password)});
       if (res.data != null) {
         int code = res.data['code'];
         if (code == 0) {
