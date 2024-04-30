@@ -1,11 +1,11 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_test/api/token_manager.dart';
 import 'package:flutter_application_test/api/user.dart';
 import 'package:flutter_application_test/components/toast_manager.dart';
 import 'package:flutter_application_test/pages/main_screen.dart';
 import 'package:flutter_application_test/pages/profile/reset_screen.dart';
 import 'package:flutter_application_test/pages/profile/signup_screen.dart';
+import 'package:flutter_application_test/store/store.dart';
 import 'package:flutter_application_test/utils/util.dart';
 import 'package:flutter_application_test/utils/validate.dart';
 import 'package:dio/dio.dart';
@@ -37,8 +37,15 @@ class _SigninState extends State<SignIn> with SingleTickerProviderStateMixin {
       return;
     }
     if (mounted) {
-      Response res = await UserService()
-          .signIn({"username": email, "password": hashPassword(password)});
+      Map<String, dynamic> deviceInfo = await DeviceInfo.getInfo();
+      var form = {
+        "username": email,
+        "password": hashPassword(password),
+        "brand": deviceInfo['brand'],
+        "manufacturer": deviceInfo['manufacturer'],
+        "model": deviceInfo['model']
+      };
+      Response res = await UserService().signIn(form);
       if (res.data != null) {
         int code = res.data['code'];
         if (code == 0) {

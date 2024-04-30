@@ -1,7 +1,13 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_test/api/share.dart';
+import 'package:flutter_application_test/components/toast_manager.dart';
+import 'package:flutter_application_test/pages/main_screen.dart';
+import 'package:toast/toast.dart';
 
 class ShareUrl extends StatefulWidget {
-  const ShareUrl({super.key});
+  final String type;
+  const ShareUrl({super.key, required this.type});
 
   @override
   State<ShareUrl> createState() => _ShareUrlState();
@@ -10,6 +16,7 @@ class ShareUrl extends StatefulWidget {
 class _ShareUrlState extends State<ShareUrl>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
+  final TextEditingController _shareUrlController = TextEditingController();
 
   @override
   void initState() {
@@ -23,8 +30,37 @@ class _ShareUrlState extends State<ShareUrl>
     super.dispose();
   }
 
+  void _submitData(BuildContext context) async {
+    String url = _shareUrlController.text;
+    if (url != '') {
+      if (widget.type == 'album') {
+        Response res = await ShareService.addAlbum({"albumUrl": url});
+        if (res.data['code'] == 0) {
+          Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (context) => const MainScreen()));
+          ToastManager.showToast("Please wait for official processing",
+              duration: 5);
+        } else {
+          ToastManager.showToast("The playlist has been processed",
+              duration: 5);
+        }
+      } else if (widget.type == 'song') {
+        Response res = await ShareService.addSong({"linkUrl": url});
+        if (res.data['code'] == 0) {
+          Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (context) => const MainScreen()));
+          ToastManager.showToast("Please wait for official processing",
+              duration: 5);
+        } else {
+          ToastManager.showToast("The song has been processed", duration: 5);
+        }
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    ToastContext().init(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text("Add Share Url"),
@@ -44,18 +80,19 @@ class _ShareUrlState extends State<ShareUrl>
                         borderRadius: BorderRadius.circular(30)),
                     padding: const EdgeInsets.symmetric(
                         horizontal: 15, vertical: 10),
-                    child: const TextField(
+                    child: TextField(
                       maxLines: 8,
-                      style: TextStyle(
+                      style: const TextStyle(
                         backgroundColor: Color.fromRGBO(249, 249, 249, 1),
                       ),
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         hintText: 'Please input yours share url...',
                         hintStyle: TextStyle(
                           color: Color.fromRGBO(135, 141, 152, 1),
                         ),
                         border: InputBorder.none,
                       ),
+                      controller: _shareUrlController,
                     ),
                   )
                 ],
@@ -73,7 +110,7 @@ class _ShareUrlState extends State<ShareUrl>
                         const Color.fromRGBO(255, 93, 151, 1)),
                   ),
                   onPressed: () {
-                    print("12321");
+                    _submitData(context);
                   },
                   child: const Text(
                     "Submit",

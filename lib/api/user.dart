@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:flutter_application_test/api/api.dart';
 
 class UserService {
@@ -11,10 +10,7 @@ class UserService {
   }
 
   getInfo() async {
-    Response res = await ApiService().get("/user/info");
-    print("###");
-    print(res.data);
-    return ;
+    return await ApiService().get("/user/info");
   }
 }
 

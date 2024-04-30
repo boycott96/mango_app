@@ -1,24 +1,22 @@
 import 'dart:core';
 
 import 'package:dio/dio.dart';
-
-import 'token_manager.dart';
+import 'package:flutter_application_test/store/store.dart';
 
 class ApiService {
   final Dio _dio = Dio();
-  final _prefix = "http://192.168.1.235:9000";
+  final _prefix = "http://192.168.110.11:9000";
 
   Future<dynamic> get(String url) async {
     String? token = await TokenManager.getToken();
-    if (token != null) _dio.options.headers['Authorization'] = 'Bearer $token';
-    print(_dio.options.headers);
+    _dio.options.headers['Authorization'] = 'Bearer $token';
     Response response = await _dio.get(_prefix + url);
     return response;
   }
 
   Future<dynamic> post(String url, Object data) async {
     String? token = await TokenManager.getToken();
-    if (token != null) _dio.options.headers['Authorization'] = 'Bearer $token';
+    _dio.options.headers['Authorization'] = 'Bearer $token';
     Response response = await _dio.post(_prefix + url, data: data);
     return response;
   }

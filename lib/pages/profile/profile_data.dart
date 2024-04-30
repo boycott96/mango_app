@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_test/pages/profile/share_url.dart';
-import 'package:flutter_svg_provider/flutter_svg_provider.dart';
+import 'package:flutter_svg/svg.dart';
 
 class ProfileData extends StatefulWidget {
-  const ProfileData({super.key});
+  final Map<String, dynamic> profile;
+
+  const ProfileData({super.key, required this.profile});
 
   @override
   State<ProfileData> createState() => _ProfileDataState();
@@ -38,12 +40,11 @@ class _ProfileDataState extends State<ProfileData>
               child: Center(
                 child: Column(
                   children: [
-                    const Padding(
-                      padding: EdgeInsets.only(top: 30, bottom: 7),
-                      child: Image(
-                        image: Svg('assets/icon/crown.svg'), // SVG文件的路径
-                      ),
-                    ),
+                    Padding(
+                        padding: const EdgeInsets.only(top: 30, bottom: 7),
+                        child: SvgPicture.asset(
+                          "assets/icon/crown.svg",
+                        )),
                     ClipRRect(
                       borderRadius: BorderRadius.circular(40),
                       child: Image.asset(
@@ -53,31 +54,33 @@ class _ProfileDataState extends State<ProfileData>
                         fit: BoxFit.contain,
                       ),
                     ),
-                    const Padding(
-                      padding: EdgeInsets.only(top: 8, bottom: 4),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8, bottom: 4),
                       child: Text(
-                        "Anne Hathaway",
-                        style: TextStyle(
+                        widget.profile['username'],
+                        style: const TextStyle(
                           fontSize: 25,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
-                    const Row(
+                    Row(
                       crossAxisAlignment:
                           CrossAxisAlignment.start, // 子组件在交叉轴上向左对齐
                       mainAxisAlignment:
                           MainAxisAlignment.center, // 子组件在主轴上居中排列
                       children: [
-                        Image(
-                          image: Svg('assets/icon/location.svg'), // SVG文件的路径
+                        SvgPicture.asset(
+                          "assets/icon/location_2.svg",
+                          width: 16,
+                          height: 16,
                         ),
                         Padding(
-                          padding: EdgeInsets.only(left: 30, right: 30),
+                          padding: const EdgeInsets.only(
+                              left: 30, right: 30, bottom: 30),
                           child: Column(
                             children: [
-                              Text("New York State"),
-                              Text("Brooklyn")
+                              Text(widget.profile['location']),
                             ],
                           ),
                         )
@@ -178,7 +181,8 @@ class _ProfileDataState extends State<ProfileData>
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (contxt) => const ShareUrl()),
+                              builder: (contxt) =>
+                                  const ShareUrl(type: "album")),
                         );
                       },
                       child: Container(
@@ -188,15 +192,15 @@ class _ProfileDataState extends State<ProfileData>
                           borderRadius: BorderRadius.circular(30),
                           color: Colors.white,
                         ),
-                        child: const Column(
+                        child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Image(
-                              image: Svg("assets/icon/album.svg"),
+                            SvgPicture.asset(
+                              "assets/icon/album.svg",
                               width: 40,
                               height: 40,
                             ),
-                            Padding(
+                            const Padding(
                               padding: EdgeInsets.symmetric(vertical: 6),
                               child: Text(
                                 "Album url",
@@ -217,7 +221,8 @@ class _ProfileDataState extends State<ProfileData>
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (contxt) => const ShareUrl()),
+                              builder: (contxt) =>
+                                  const ShareUrl(type: "song")),
                         );
                       },
                       child: Container(
@@ -227,15 +232,15 @@ class _ProfileDataState extends State<ProfileData>
                           borderRadius: BorderRadius.circular(30),
                           color: Colors.white,
                         ),
-                        child: const Column(
+                        child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Image(
-                              image: Svg("assets/icon/music.svg"),
+                            SvgPicture.asset(
+                              "assets/icon/music.svg",
                               width: 40,
                               height: 40,
                             ),
-                            Padding(
+                            const Padding(
                               padding: EdgeInsets.symmetric(vertical: 6),
                               child: Text(
                                 "Song url",
@@ -252,13 +257,7 @@ class _ProfileDataState extends State<ProfileData>
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 11),
                     child: GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (contxt) => const ShareUrl()),
-                        );
-                      },
+                      onTap: () {},
                       child: Container(
                         height: 108,
                         width: 108,
@@ -266,15 +265,15 @@ class _ProfileDataState extends State<ProfileData>
                           borderRadius: BorderRadius.circular(30),
                           color: Colors.white,
                         ),
-                        child: const Column(
+                        child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Image(
-                              image: Svg("assets/icon/inv_code.svg"),
+                            SvgPicture.asset(
+                              "assets/icon/inv_code.svg",
                               width: 40,
                               height: 40,
                             ),
-                            Padding(
+                            const Padding(
                               padding: EdgeInsets.symmetric(vertical: 6),
                               child: Text(
                                 "Inv code",

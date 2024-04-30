@@ -31,11 +31,12 @@ dependencies:
   flutter:
     sdk: flutter
   crypto: ^3.0.3
-  flutter_svg_provider: ^1.0.7
+  flutter_svg: ^2.0.10+1
   toast: ^0.3.0
   dio: ^5.4.3+1
   shared_preferences: ^2.2.3
   shared_preferences_foundation: ^2.3.5
+  device_info_plus: ^10.1.0
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -71,6 +72,7 @@ flutter:
     - assets/default_avatar.jpg
     - assets/icon/crown.svg
     - assets/icon/location.svg
+    - assets/icon/location_2.svg
     - assets/icon/album.svg
     - assets/icon/music.svg
     - assets/icon/inv_code.svg
