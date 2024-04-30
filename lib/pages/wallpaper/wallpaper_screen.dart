@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class MusicScreen extends StatefulWidget {
-  const MusicScreen({super.key});
+class WallpaperScreen extends StatefulWidget {
+  const WallpaperScreen({super.key});
 
   @override
-  State<MusicScreen> createState() => _MusicScreenState();
+  State<WallpaperScreen> createState() => _WallpaperScreenState();
 }
 
-class _MusicScreenState extends State<MusicScreen>
+class _WallpaperScreenState extends State<WallpaperScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
 
@@ -25,6 +25,6 @@ class _MusicScreenState extends State<MusicScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Center(child: const Text("music"));
+    return const Text("wallpaper");
   }
 }

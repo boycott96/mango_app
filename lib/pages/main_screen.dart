@@ -2,7 +2,9 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_application_test/pages/music/music_screen.dart';
 import 'package:flutter_application_test/pages/profile/setting_screen.dart';
+import 'package:flutter_application_test/pages/wallpaper/wallpaper_screen.dart';
 import 'package:flutter_application_test/store/store.dart';
 
 class MainScreen extends StatefulWidget {
@@ -18,7 +20,11 @@ class _MainScreenState extends State<MainScreen>
   late TabController _tabController;
   final PageController _pageController = PageController(initialPage: 0);
 
-  List<Widget> tabViews = [const SettingScreen(), const SettingScreen()];
+  List<Widget> tabViews = [
+    const WallpaperScreen(),
+    const MusicScreen(),
+    const SettingScreen()
+  ];
 
   static final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
   Map<String, dynamic> _deviceData = <String, dynamic>{};
@@ -26,7 +32,7 @@ class _MainScreenState extends State<MainScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
     _tabController.addListener(_handleTabSelection);
     initPlatformState();
   }
@@ -239,6 +245,11 @@ class _MainScreenState extends State<MainScreen>
         fixedColor: const Color.fromRGBO(41, 45, 50, 1),
         unselectedItemColor: const Color.fromRGBO(168, 168, 168, 1),
         items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.insert_photo_outlined),
+            activeIcon: Icon(Icons.insert_photo),
+            label: 'Music',
+          ),
           BottomNavigationBarItem(
             icon: Icon(Icons.music_note_outlined),
             activeIcon: Icon(Icons.music_note),

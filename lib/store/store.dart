@@ -34,6 +34,21 @@ class DeviceInfo {
 
 class PageData {
   static const String _me = 'me';
+  static const String _meInit = 'me_init';
+
+  static Future<void> saveMeInit(bool flag) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_meInit, flag);
+  }
+
+  static Future<bool> getMeInit() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool? res = prefs.getBool(_meInit);
+    if (res != null && res) {
+      return true;
+    }
+    return false;
+  }
 
   static Future<void> saveMeData(Map<String, dynamic> obj) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
