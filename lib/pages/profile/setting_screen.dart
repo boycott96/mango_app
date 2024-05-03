@@ -32,43 +32,34 @@ class _SettingScreenState extends State<SettingScreen>
   }
 
   void handleProfile() async {
-    bool flag = await PageData.getMeInit();
-    if (flag) {
-      Map<String, dynamic> map = await PageData.getMeData();
-      setState(() {
-        userInfo = map;
-        isLoading = false;
-      });
-    } else {
-      try {
-        String? token = await TokenManager.getToken();
-        if (token != null && token != '') {
-          // 访问用户数据
-          Response res = await UserService().getInfo();
-          await PageData.saveMeInit(true);
-          if (res.data['code'] == 0) {
-            setState(() {
-              isLoading = false;
-              userInfo = res.data['data'];
-              PageData.saveMeData(userInfo);
-            });
-          } else {
-            setState(() {
-              isLoading = false;
-              hasError = true;
-            });
-            TokenManager.saveToken("");
-            ToastManager.showToast(res.data['msg']);
-          }
+    try {
+      String? token = await TokenManager.getToken();
+      if (token != null && token != '') {
+        // 访问用户数据
+        Response res = await UserService().getInfo();
+        await PageData.saveMeInit(true);
+        if (res.data['code'] == 0) {
+          setState(() {
+            isLoading = false;
+            userInfo = res.data['data'];
+            PageData.saveMeData(userInfo);
+          });
         } else {
           setState(() {
             isLoading = false;
             hasError = true;
           });
+          TokenManager.saveToken("");
+          ToastManager.showToast(res.data['msg']);
         }
-        // ignore: empty_catches
-      } catch (e) {}
-    }
+      } else {
+        setState(() {
+          isLoading = false;
+          hasError = true;
+        });
+      }
+      // ignore: empty_catches
+    } catch (e) {}
   }
 
   @override

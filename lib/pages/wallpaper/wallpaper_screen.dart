@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'carousel_hot.dart';
+
 class WallpaperScreen extends StatefulWidget {
   const WallpaperScreen({super.key});
 
@@ -25,6 +27,11 @@ class _WallpaperScreenState extends State<WallpaperScreen>
 
   @override
   Widget build(BuildContext context) {
-    return const Text("wallpaper");
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      child: Column(
+        children: [CarouselHot()],
+      ),
+    );
   }
 }
