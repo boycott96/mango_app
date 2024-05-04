@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_test/pages/wallpaper/category_view.dart';
+import 'package:flutter_application_test/pages/wallpaper/wallpaper_top.dart';
 
 import 'carousel_hot.dart';
 
@@ -28,9 +30,13 @@ class _WallpaperScreenState extends State<WallpaperScreen>
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-      child: Column(
-        children: [CarouselHot()],
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      child: const Column(
+        children: [
+          CarouselHot(),
+          CategoryView(),
+          WallpaperTop()
+        ],
       ),
     );
   }

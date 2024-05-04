@@ -75,6 +75,12 @@ flutter:
     - assets/icon/album.svg
     - assets/icon/music.svg
     - assets/icon/inv_code.svg
+    - assets/icon/top_new.svg
+    - assets/icon/top_recent.svg
+    - assets/icon/top_trending.svg
+    - assets/icon/top_new_active.svg
+    - assets/icon/top_recent_active.svg
+    - assets/icon/top_trending_active.svg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

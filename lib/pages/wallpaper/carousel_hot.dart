@@ -28,7 +28,6 @@ class _CarouselHot extends State<CarouselHot>
     if (response.data['code'] == 0) {
       setState(() {
         _images = response.data['data'];
-        print(_images);
       });
     }
   }
