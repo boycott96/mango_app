@@ -31,12 +31,15 @@ class _WallpaperScreenState extends State<WallpaperScreen>
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-      child: const Column(
-        children: [
-          CarouselHot(),
-          CategoryView(),
-          WallpaperTop()
-        ],
+      child: const SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Column(
+          children: [
+            CarouselHot(),
+            CategoryView(),
+            WallpaperTop(),
+          ],
+        ),
       ),
     );
   }

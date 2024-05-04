@@ -27,7 +27,6 @@ class _CategoryViewState extends State<CategoryView>
     if (response.data['code'] == 0) {
       setState(() {
         _categoryList = response.data['data'];
-        print(_categoryList);
       });
     }
   }
@@ -44,11 +43,11 @@ class _CategoryViewState extends State<CategoryView>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.0),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
+              const Text(
                 "Category",
                 style: TextStyle(
                   color: Color.fromRGBO(41, 50, 59, 1),
@@ -58,7 +57,7 @@ class _CategoryViewState extends State<CategoryView>
               ),
               TextButton(
                 onPressed: () {},
-                child: Text(
+                child: const Text(
                   "View all",
                   style: TextStyle(
                     color: Color.fromRGBO(0, 113, 227, 1),
@@ -68,18 +67,17 @@ class _CategoryViewState extends State<CategoryView>
             ],
           ),
         ),
-        SizedBox(height: 10), // 添加行与行之间的间距
+        const SizedBox(height: 10), // 添加行与行之间的间距
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(
             children: _categoryList.asMap().entries.map((entry) {
-              final index = entry.key;
               final e = entry.value;
               return Container(
                 width: (MediaQuery.of(context).size.width - 32 - 40) *
                     0.25, // 设置容器宽度为屏幕宽度的20%
                 height: 70,
-                margin: EdgeInsets.only(right: 10), // 添加每个容器之间的间距
+                margin: const EdgeInsets.only(right: 10), // 添加每个容器之间的间距
                 decoration: BoxDecoration(
                   image: DecorationImage(
                     image: NetworkImage(e['categoryUrl']),
@@ -93,10 +91,10 @@ class _CategoryViewState extends State<CategoryView>
                 ),
                 child: Center(
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 8),
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
                     child: Text(
                       e['name'],
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Colors.white,
                       ),
                       overflow: TextOverflow.ellipsis, // 设置文本宽度缩写

@@ -8,4 +8,20 @@ class WallpaperService {
   static category(String limit) async {
     return await ApiService().get("/wallpaper/category?limit=$limit");
   }
+
+  static trending() async {
+    return await ApiService().get("/wallpaper/trending");
+  }
+
+  static recent() async {
+    return await ApiService().get("/wallpaper/recent");
+  }
+  
+  static topNew() async {
+    return await ApiService().get("/wallapper/new");
+  }
+
+  static info(String id) async {
+    return await ApiService().get("/wallpaper/detail?id=$id");
+  }
 }
