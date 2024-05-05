@@ -51,7 +51,20 @@ class _WallpaperTopState extends State<WallpaperTop>
       if (response.data['code'] == 0) {
         setState(() {
           _list = response.data['data'];
-          print(_list);
+        });
+      }
+    } else if (_activeType == 'Recent') {
+      Response response = await WallpaperService.recent();
+      if (response.data['code'] == 0) {
+        setState(() {
+          _list = response.data['data'];
+        });
+      }
+    } else if (_activeType == 'New') {
+      Response response = await WallpaperService.topNew();
+      if (response.data['code'] == 0) {
+        setState(() {
+          _list = response.data['data'];
         });
       }
     }
@@ -103,6 +116,7 @@ class _WallpaperTopState extends State<WallpaperTop>
                       onPressed: () {
                         setState(() {
                           _activeType = e['label'];
+                          getList();
                         });
                       },
                       style: ButtonStyle(

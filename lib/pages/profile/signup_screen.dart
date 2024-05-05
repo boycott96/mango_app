@@ -163,8 +163,6 @@ class _SignUpState extends State<Singup> with SingleTickerProviderStateMixin {
                   onChanged: (value) {
                     setState(() {
                       _errPwd = validatePassword(value);
-                      print("####");
-                      print(_errPwd);
                     });
                   },
                 ),

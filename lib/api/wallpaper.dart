@@ -18,7 +18,7 @@ class WallpaperService {
   }
   
   static topNew() async {
-    return await ApiService().get("/wallapper/new");
+    return await ApiService().get("/wallpaper/new");
   }
 
   static info(String id) async {

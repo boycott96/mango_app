@@ -2,6 +2,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_test/api/wallpaper.dart';
+import 'package:flutter_application_test/pages/wallpaper/wallpaper_detail.dart';
 
 class CarouselHot extends StatefulWidget {
   const CarouselHot({super.key});
@@ -32,6 +33,12 @@ class _CarouselHot extends State<CarouselHot>
     }
   }
 
+  void viewWallpaper(String id) {
+    // 跳转到壁纸的详情页面
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => WallpaperDetail(id: id)));
+  }
+
   @override
   void dispose() {
     _controller.dispose();
@@ -57,19 +64,24 @@ class _CarouselHot extends State<CarouselHot>
           items: _images.map((image) {
             return Builder(
               builder: (BuildContext context) {
-                return Container(
-                  width: MediaQuery.of(context).size.width,
-                  // margin: EdgeInsets.symmetric(horizontal: 5.0),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    color: Colors.grey,
-                  ),
-                  child: ClipRRect(
-                    // 使用ClipRRect进行剪裁以保证圆角效果
-                    borderRadius: BorderRadius.circular(20),
-                    child: Image.network(
-                      image['thumbnailLarge'],
-                      fit: BoxFit.cover,
+                return GestureDetector(
+                  onTap: () {
+                    viewWallpaper(image['id']);
+                  },
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    // margin: EdgeInsets.symmetric(horizontal: 5.0),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      color: Colors.grey,
+                    ),
+                    child: ClipRRect(
+                      // 使用ClipRRect进行剪裁以保证圆角效果
+                      borderRadius: BorderRadius.circular(20),
+                      child: Image.network(
+                        image['thumbnailLarge'],
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
                 );
@@ -84,13 +96,16 @@ class _CarouselHot extends State<CarouselHot>
             return Container(
               width: _currentIndex == index ? 22.0 : 8.0,
               height: 8.0,
-              margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
+              margin:
+                  const EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
               decoration: BoxDecoration(
                 // shape: _currentIndex == index ? BoxShape.rectangle :BoxShape.circle,
-                borderRadius: _currentIndex == index ? BorderRadius.circular(20) : BorderRadius.circular(20),
+                borderRadius: _currentIndex == index
+                    ? BorderRadius.circular(20)
+                    : BorderRadius.circular(20),
                 color: _currentIndex == index
-                    ? Color.fromRGBO(152, 152, 152, 1)
-                    : Color.fromRGBO(227, 227, 227, 1),
+                    ? const Color.fromRGBO(152, 152, 152, 1)
+                    : const Color.fromRGBO(227, 227, 227, 1),
               ),
             );
           }).toList(),

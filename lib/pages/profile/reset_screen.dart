@@ -1,6 +1,5 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class ResetPage extends StatefulWidget {
   const ResetPage({super.key});
@@ -66,7 +65,6 @@ class _RestPageState extends State<ResetPage>
                           setState(() {
                             _inputValue = value;
                           });
-                          print(_inputValue);
                         },
                       ),
                     ),
@@ -91,7 +89,6 @@ class _RestPageState extends State<ResetPage>
                             setState(() {
                               _inputValue = value;
                             });
-                            print(_inputValue);
                           },
                         ),
                       ),
@@ -127,7 +124,6 @@ class _RestPageState extends State<ResetPage>
                           setState(() {
                             _inputValue = value;
                           });
-                          print(_inputValue);
                         },
                       ),
                     ),
@@ -149,7 +145,6 @@ class _RestPageState extends State<ResetPage>
                           setState(() {
                             _inputValue = value;
                           });
-                          print(_inputValue);
                         },
                       ),
                     ),

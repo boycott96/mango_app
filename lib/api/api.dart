@@ -5,7 +5,7 @@ import 'package:flutter_application_test/store/store.dart';
 
 class ApiService {
   final Dio _dio = Dio();
-  final _prefix = "http://192.168.1.235:9000";
+  final _prefix = "https://www.larkdance.cn/api";
 
   Future<dynamic> get(String url) async {
     String? token = await TokenManager.getToken();
