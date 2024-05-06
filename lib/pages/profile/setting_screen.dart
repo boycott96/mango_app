@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class SettingScreen extends StatefulWidget {
   const SettingScreen({super.key});
@@ -23,7 +24,7 @@ class _SettingScreenState extends State<SettingScreen>
     super.dispose();
   }
 
-  final List<String> items = List.generate(20, (index) => 'Item $index');
+  final List<String> items = List.generate(5, (index) => 'Item $index');
 
   @override
   Widget build(BuildContext context) {
@@ -31,21 +32,145 @@ class _SettingScreenState extends State<SettingScreen>
       appBar: AppBar(
         title: const Text('Settings'),
       ),
-      body: ListView.separated(
-        itemCount: items.length,
-        separatorBuilder: (BuildContext context, int index) {
-          return const Divider();
-        },
-        itemBuilder: (BuildContext context, int index) {
-          return ListTile(
-            title: Text(items[index]),
-            trailing: const Icon(Icons.keyboard_arrow_right),
-            onTap: () {
-              // 点击列表项的事件处理
-              print('Item $index clicked');
-            },
-          );
-        },
+      body: Container(
+        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 13),
+        decoration: const BoxDecoration(
+          color: Color.fromRGBO(249, 249, 249, 1),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(30),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 22),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        "Email",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SvgPicture.asset(
+                        "assets/icon/arrow_right_thin.svg",
+                        width: 20,
+                        height: 20,
+                        theme: const SvgTheme(
+                          currentColor: Color.fromRGBO(211, 215, 222, 1),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const Divider(
+                    color: Color.fromRGBO(206, 212, 218, 0.2), // 可以设置颜色
+                    thickness: 1, // 设置厚度
+                    height: 44, // 设置高度
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        "Password",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SvgPicture.asset(
+                        "assets/icon/arrow_right_thin.svg",
+                        width: 20,
+                        height: 20,
+                        theme: const SvgTheme(
+                          currentColor: Color.fromRGBO(211, 215, 222, 1),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const Divider(
+                    color: Color.fromRGBO(206, 212, 218, 0.2), // 可以设置颜色
+                    thickness: 1, // 设置厚度
+                    height: 44, // 设置高度
+                  ),
+                  GestureDetector(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          "Contact us",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SvgPicture.asset(
+                          "assets/icon/arrow_right_thin.svg",
+                          width: 20,
+                          height: 20,
+                          theme: const SvgTheme(
+                            currentColor: Color.fromRGBO(211, 215, 222, 1),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Divider(
+                    color: Color.fromRGBO(206, 212, 218, 0.2), // 可以设置颜色
+                    thickness: 1, // 设置厚度
+                    height: 44, // 设置高度
+                  ),
+                  GestureDetector(
+                    onTap: () {},
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          "Privacy policy",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SvgPicture.asset(
+                          "assets/icon/arrow_right_thin.svg",
+                          width: 20,
+                          height: 20,
+                          theme: const SvgTheme(
+                            currentColor: Color.fromRGBO(211, 215, 222, 1),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(6, 8, 6, 12),
+              child: SizedBox(
+                width: double.infinity,
+                height: 46,
+                child: TextButton(
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all<Color?>(
+                        const Color.fromRGBO(255, 93, 151, 1)),
+                  ),
+                  onPressed: () {},
+                  child: const Text(
+                    "Sign out",
+                    style: TextStyle(color: Colors.white, fontSize: 16),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

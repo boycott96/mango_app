@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_application_test/pages/profile/edit_profile.dart';
 import 'package:flutter_application_test/pages/profile/me_screen.dart';
 import 'package:flutter_application_test/pages/profile/setting_screen.dart';
 import 'package:flutter_application_test/pages/profile/share_url.dart';
@@ -184,7 +185,12 @@ class _ProfileDataState extends State<ProfileData>
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 5),
                         child: GestureDetector(
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const EditProfile()));
+                          },
                           child: Container(
                             height:
                                 (MediaQuery.of(context).size.width - 60) * 0.33,
@@ -372,6 +378,7 @@ class _ProfileDataState extends State<ProfileData>
                               "assets/icon/arrow_right.svg",
                               width: 22,
                               height: 22,
+                              theme: const SvgTheme(currentColor: Colors.white),
                             ),
                           )
                         ],
