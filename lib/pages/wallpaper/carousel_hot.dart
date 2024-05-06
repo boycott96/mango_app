@@ -19,18 +19,18 @@ class _CarouselHot extends State<CarouselHot>
   @override
   void initState() {
     super.initState();
-    getHot();
+    getHot(context);
     _controller = AnimationController(vsync: this);
   }
 
   // 获取最流行的三张壁纸
-  void getHot() async {
-    Response response = await WallpaperService.hot();
+  void getHot(BuildContext context) async {
+    Response response = await WallpaperService(context).hot();
     if (response.data['code'] == 0) {
       setState(() {
         _images = response.data['data'];
       });
-    }
+    } else if (response.data['code'] == '401') {}
   }
 
   void viewWallpaper(String id) {

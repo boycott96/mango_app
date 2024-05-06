@@ -18,12 +18,12 @@ class _CategoryViewState extends State<CategoryView>
   @override
   void initState() {
     super.initState();
-    getCategory();
+    getCategory(context);
     _controller = AnimationController(vsync: this);
   }
 
-  void getCategory() async {
-    Response response = await WallpaperService.category("4");
+  void getCategory(BuildContext context) async {
+    Response response = await WallpaperService(context).category("4");
     if (response.data['code'] == 0) {
       setState(() {
         _categoryList = response.data['data'];

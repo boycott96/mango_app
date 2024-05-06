@@ -1,11 +1,16 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_application_test/api/api.dart';
 
 class ShareService {
-  static addAlbum(data) {
-    return ApiService().post("/share/album/add", data);
+  late BuildContext context;
+
+  ShareService(this.context);
+
+  addAlbum(data) {
+    return ApiService(context).post("/share/album/add", data);
   }
 
-  static addSong(data) {
-    return ApiService().post("/share/song/add", data);
+  addSong(data) {
+    return ApiService(context).post("/share/song/add", data);
   }
 }

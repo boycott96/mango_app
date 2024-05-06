@@ -47,21 +47,21 @@ class _WallpaperTopState extends State<WallpaperTop>
 
   void getList() async {
     if (_activeType == 'Trending') {
-      Response response = await WallpaperService.trending();
+      Response response = await WallpaperService(context).trending();
       if (response.data['code'] == 0) {
         setState(() {
           _list = response.data['data'];
         });
       }
     } else if (_activeType == 'Recent') {
-      Response response = await WallpaperService.recent();
+      Response response = await WallpaperService(context).recent();
       if (response.data['code'] == 0) {
         setState(() {
           _list = response.data['data'];
         });
       }
     } else if (_activeType == 'New') {
-      Response response = await WallpaperService.topNew();
+      Response response = await WallpaperService(context).topNew();
       if (response.data['code'] == 0) {
         setState(() {
           _list = response.data['data'];

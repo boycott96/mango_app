@@ -6,8 +6,6 @@ import 'package:flutter_application_test/pages/profile/profile_data.dart';
 import 'package:flutter_application_test/store/store.dart';
 import 'package:toast/toast.dart';
 
-import 'none_setting.dart';
-
 class SettingScreen extends StatefulWidget {
   const SettingScreen({super.key});
 
@@ -28,15 +26,15 @@ class _SettingScreenState extends State<SettingScreen>
     super.initState();
     _controller = AnimationController(vsync: this);
     // 在初始化时调用 handleProfile 方法
-    handleProfile();
+    handleProfile(context);
   }
 
-  void handleProfile() async {
+  void handleProfile(BuildContext context) async {
     try {
       String? token = await TokenManager.getToken();
       if (token != null && token != '') {
         // 访问用户数据
-        Response res = await UserService().getInfo();
+        Response res = await UserService(context).getInfo();
         await PageData.saveMeInit(true);
         if (res.data['code'] == 0) {
           setState(() {
@@ -71,15 +69,7 @@ class _SettingScreenState extends State<SettingScreen>
   @override
   Widget build(BuildContext context) {
     ToastContext().init(context);
-    // 根据 isLoading 和 hasError 状态渲染不同的内容
-    if (isLoading) {
-      return const Center(child: CircularProgressIndicator());
-    } else if (hasError) {
-      // 如果发生错误，可以显示一个错误页面或者提示信息
-      return const NoneSetting();
-    } else {
-      // 如果加载完成且没有错误，则显示用户信息页面
-      return ProfileData(profile: userInfo);
-    }
+    // 如果加载完成且没有错误，则显示用户信息页面
+    return ProfileData(profile: userInfo);
   }
 }

@@ -49,7 +49,7 @@ class _SignUpState extends State<Singup> with SingleTickerProviderStateMixin {
     if (_errCode == '' || _errEmail == '' || _errPwd == '' || _errCpwd == '') {
       return;
     }
-    Response res = await UserService().signUp({
+    Response res = await UserService(context).signUp({
       "code": invitationCode,
       "username": email,
       "password": hashPassword(password)
@@ -57,7 +57,7 @@ class _SignUpState extends State<Singup> with SingleTickerProviderStateMixin {
     if (res.data['code'] == 0) {
       ToastManager.showToast("Registration success");
       Navigator.push(
-          context, MaterialPageRoute(builder: (_context) => const SignIn()));
+          context, MaterialPageRoute(builder: (context) => const SignIn()));
     } else {
       ToastManager.showToast(res.data['msg']);
     }

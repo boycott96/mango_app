@@ -34,7 +34,7 @@ class _ShareUrlState extends State<ShareUrl>
     String url = _shareUrlController.text;
     if (url != '') {
       if (widget.type == 'album') {
-        Response res = await ShareService.addAlbum({"albumUrl": url});
+        Response res = await ShareService(context).addAlbum({"albumUrl": url});
         if (res.data['code'] == 0) {
           Navigator.pushReplacement(context,
               MaterialPageRoute(builder: (context) => const MainScreen()));
@@ -45,7 +45,7 @@ class _ShareUrlState extends State<ShareUrl>
               duration: 5);
         }
       } else if (widget.type == 'song') {
-        Response res = await ShareService.addSong({"linkUrl": url});
+        Response res = await ShareService(context).addSong({"linkUrl": url});
         if (res.data['code'] == 0) {
           Navigator.pushReplacement(context,
               MaterialPageRoute(builder: (context) => const MainScreen()));

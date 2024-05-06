@@ -1,27 +1,32 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_application_test/api/api.dart';
 
 class WallpaperService {
-  static hot() async {
-    return await ApiService().get("/wallpaper/hot");
+  late BuildContext context;
+
+  WallpaperService(this.context);
+
+  hot() async {
+    return await ApiService(context).get("/wallpaper/hot");
   }
 
-  static category(String limit) async {
-    return await ApiService().get("/wallpaper/category?limit=$limit");
+  category(String limit) async {
+    return await ApiService(context).get("/wallpaper/category?limit=$limit");
   }
 
-  static trending() async {
-    return await ApiService().get("/wallpaper/trending");
+  trending() async {
+    return await ApiService(context).get("/wallpaper/trending");
   }
 
-  static recent() async {
-    return await ApiService().get("/wallpaper/recent");
-  }
-  
-  static topNew() async {
-    return await ApiService().get("/wallpaper/new");
+  recent() async {
+    return await ApiService(context).get("/wallpaper/recent");
   }
 
-  static info(String id) async {
-    return await ApiService().get("/wallpaper/detail?id=$id");
+  topNew() async {
+    return await ApiService(context).get("/wallpaper/new");
+  }
+
+  info(String id) async {
+    return await ApiService(context).get("/wallpaper/detail?id=$id");
   }
 }

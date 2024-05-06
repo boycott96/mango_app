@@ -45,7 +45,7 @@ class _SigninState extends State<SignIn> with SingleTickerProviderStateMixin {
         "manufacturer": deviceInfo['manufacturer'],
         "model": deviceInfo['model']
       };
-      Response res = await UserService().signIn(form);
+      Response res = await UserService(context).signIn(form);
       if (res.data != null) {
         int code = res.data['code'];
         if (code == 0) {

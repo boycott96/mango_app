@@ -23,7 +23,7 @@ class _WallpaperDetailState extends State<WallpaperDetail>
   @override
   void initState() {
     super.initState();
-    getInfo();
+    getInfo(context);
     _controller = AnimationController(vsync: this);
   }
 
@@ -48,8 +48,8 @@ class _WallpaperDetailState extends State<WallpaperDetail>
     }
   }
 
-  void getInfo() async {
-    Response response = await WallpaperService.info(widget.id);
+  void getInfo(BuildContext context) async {
+    Response response = await WallpaperService(context).info(widget.id);
     if (response.data['code'] == 0) {
       setState(() {
         wallpaper = response.data['data'];
