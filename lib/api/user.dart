@@ -14,6 +14,10 @@ class UserService {
     return await ApiService(context).post("/user/sign/in", data);
   }
 
+  signOut() async {
+    return await ApiService(context).post("/user/sign/put", {});
+  }
+
   getInfo() async {
     return await ApiService(context).get("/user/info");
   }

@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_application_test/pages/music/music_screen.dart';
-import 'package:flutter_application_test/pages/profile/setting_screen.dart';
+import 'package:flutter_application_test/pages/profile/me_screen.dart';
 import 'package:flutter_application_test/pages/wallpaper/wallpaper_screen.dart';
 import 'package:flutter_application_test/store/store.dart';
 
@@ -23,7 +23,7 @@ class _MainScreenState extends State<MainScreen>
   List<Widget> tabViews = [
     const WallpaperScreen(),
     const MusicScreen(),
-    const SettingScreen()
+    const MeScreen()
   ];
 
   static final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
@@ -229,6 +229,7 @@ class _MainScreenState extends State<MainScreen>
     return Scaffold(
       appBar: AppBar(
         title: const Text("Mango"),
+        automaticallyImplyLeading: false,
       ),
       body: PageView(
         controller: _pageController,

@@ -68,14 +68,18 @@ flutter:
   assets:
     - assets/none_bg.png
     - assets/logo.png
+    - assets/inv_code.png
     - assets/logo_white.png
+
     - assets/default_avatar.jpg
+
     - assets/icon/crown.svg
     - assets/icon/location.svg
     - assets/icon/location_2.svg
     - assets/icon/album.svg
-    - assets/icon/music.svg
     - assets/icon/inv_code.svg
+    - assets/icon/profile.svg
+    - assets/icon/setting.svg
     - assets/icon/top_new.svg
     - assets/icon/top_recent.svg
     - assets/icon/top_trending.svg
@@ -86,6 +90,7 @@ flutter:
     - assets/icon/download.svg
     - assets/icon/heart.svg
     - assets/icon/share.svg
+    - assets/icon/arrow_right.svg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

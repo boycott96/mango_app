@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_application_test/pages/profile/me_screen.dart';
+import 'package:flutter_application_test/pages/profile/setting_screen.dart';
 import 'package:flutter_application_test/pages/profile/share_url.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -167,128 +170,216 @@ class _ProfileDataState extends State<ProfileData>
           ),
           Expanded(
             flex: 1,
-            child: Container(
-              color: const Color.fromRGBO(249, 249, 249, 1),
-              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 62),
-              constraints: const BoxConstraints.expand(), // 设置宽度充满
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 11),
-                    child: GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (contxt) =>
-                                  const ShareUrl(type: "album")),
-                        );
-                      },
-                      child: Container(
-                        height: 108,
-                        width: 108,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(30),
-                          color: Colors.white,
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SvgPicture.asset(
-                              "assets/icon/album.svg",
-                              width: 40,
-                              height: 40,
+            child: Stack(
+              clipBehavior: Clip.none, // 禁用Stack的裁剪行为
+              children: [
+                Container(
+                  color: const Color.fromRGBO(249, 249, 249, 1),
+                  padding: const EdgeInsets.fromLTRB(15, 62, 15, 0),
+                  constraints: const BoxConstraints.expand(), // 设置宽度充满
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 5),
+                        child: GestureDetector(
+                          onTap: () {},
+                          child: Container(
+                            height:
+                                (MediaQuery.of(context).size.width - 60) * 0.33,
+                            width:
+                                (MediaQuery.of(context).size.width - 60) * 0.33,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(30),
+                              color: Colors.white,
                             ),
-                            const Padding(
-                              padding: EdgeInsets.symmetric(vertical: 6),
-                              child: Text(
-                                "Album url",
-                                style: TextStyle(
-                                  color: Color.fromRGBO(34, 34, 34, 1),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    color:
+                                        const Color.fromRGBO(255, 228, 238, 1),
+                                    borderRadius: BorderRadius.circular(40),
+                                  ),
+                                  child: SvgPicture.asset(
+                                    "assets/icon/profile.svg",
+                                    width: 25,
+                                    height: 25,
+                                  ),
                                 ),
-                              ),
-                            )
-                          ],
+                                const Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 6),
+                                  child: Text(
+                                    "My profile",
+                                    style: TextStyle(
+                                      color: Color.fromRGBO(34, 34, 34, 1),
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 11),
-                    child: GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (contxt) =>
-                                  const ShareUrl(type: "song")),
-                        );
-                      },
-                      child: Container(
-                        height: 108,
-                        width: 108,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(30),
-                          color: Colors.white,
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SvgPicture.asset(
-                              "assets/icon/music.svg",
-                              width: 40,
-                              height: 40,
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 5),
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (contxt) =>
+                                      const ShareUrl(type: "album")),
+                            );
+                          },
+                          child: Container(
+                            height:
+                                (MediaQuery.of(context).size.width - 60) * 0.33,
+                            width:
+                                (MediaQuery.of(context).size.width - 60) * 0.33,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(30),
+                              color: Colors.white,
                             ),
-                            const Padding(
-                              padding: EdgeInsets.symmetric(vertical: 6),
-                              child: Text(
-                                "Song url",
-                                style: TextStyle(
-                                  color: Color.fromRGBO(34, 34, 34, 1),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    color:
+                                        const Color.fromRGBO(228, 250, 255, 1),
+                                    borderRadius: BorderRadius.circular(40),
+                                  ),
+                                  child: SvgPicture.asset(
+                                    "assets/icon/album.svg",
+                                    width: 25,
+                                    height: 25,
+                                  ),
                                 ),
-                              ),
-                            )
-                          ],
+                                const Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 6),
+                                  child: Text(
+                                    "Song list",
+                                    style: TextStyle(
+                                      color: Color.fromRGBO(34, 34, 34, 1),
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 11),
-                    child: GestureDetector(
-                      onTap: () {},
-                      child: Container(
-                        height: 108,
-                        width: 108,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(30),
-                          color: Colors.white,
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 5),
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const SettingScreen()));
+                          },
+                          child: Container(
+                            height:
+                                (MediaQuery.of(context).size.width - 60) * 0.33,
+                            width:
+                                (MediaQuery.of(context).size.width - 60) * 0.33,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(30),
+                              color: Colors.white,
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    color:
+                                        const Color.fromRGBO(237, 228, 255, 1),
+                                    borderRadius: BorderRadius.circular(40),
+                                  ),
+                                  child: SvgPicture.asset(
+                                    "assets/icon/setting.svg",
+                                    width: 25,
+                                    height: 25,
+                                  ),
+                                ),
+                                const Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 6),
+                                  child: Text(
+                                    "Settings",
+                                    style: TextStyle(
+                                      color: Color.fromRGBO(34, 34, 34, 1),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SvgPicture.asset(
+                      ),
+                    ],
+                  ),
+                ),
+                Positioned(
+                  top: -30,
+                  left: 20,
+                  child: Center(
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      height: 60,
+                      width: MediaQuery.of(context).size.width - 40,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(30),
+                        image: const DecorationImage(
+                          image: AssetImage("assets/inv_code.png"),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            child: SvgPicture.asset(
                               "assets/icon/inv_code.svg",
-                              width: 40,
-                              height: 40,
+                              width: 25,
+                              height: 25,
                             ),
-                            const Padding(
-                              padding: EdgeInsets.symmetric(vertical: 6),
-                              child: Text(
-                                "Inv code",
-                                style: TextStyle(
-                                  color: Color.fromRGBO(34, 34, 34, 1),
-                                ),
+                          ),
+                          Container(
+                            margin: const EdgeInsets.only(left: 9),
+                            child: const Text(
+                              "Inv. Code",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
                               ),
                             ),
-                          ],
-                        ),
+                          ),
+                          Expanded(child: Container()),
+                          Container(
+                            margin: const EdgeInsets.only(right: 15),
+                            child: SvgPicture.asset(
+                              "assets/icon/arrow_right.svg",
+                              width: 22,
+                              height: 22,
+                            ),
+                          )
+                        ],
                       ),
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ],
