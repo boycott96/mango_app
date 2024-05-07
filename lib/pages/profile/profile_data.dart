@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_application_test/pages/profile/edit_profile.dart';
-import 'package:flutter_application_test/pages/profile/me_screen.dart';
 import 'package:flutter_application_test/pages/profile/setting_screen.dart';
 import 'package:flutter_application_test/pages/profile/share_url.dart';
 import 'package:flutter_svg/svg.dart';
@@ -51,8 +49,8 @@ class _ProfileDataState extends State<ProfileData>
                         )),
                     ClipRRect(
                       borderRadius: BorderRadius.circular(40),
-                      child: Image.asset(
-                        "assets/default_avatar.jpg",
+                      child: Image.network(
+                        widget.profile['avatarUrl'],
                         width: 110,
                         height: 110,
                         fit: BoxFit.contain,
@@ -189,7 +187,8 @@ class _ProfileDataState extends State<ProfileData>
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => const EditProfile()));
+                                    builder: (context) =>
+                                        EditProfile(profile: widget.profile)));
                           },
                           child: Container(
                             height:

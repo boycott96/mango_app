@@ -71,6 +71,7 @@ flutter:
     - assets/logo.png
     - assets/inv_code.png
     - assets/logo_white.png
+    - assets/none_avatar.png
 
     - assets/default_avatar.jpg
 
