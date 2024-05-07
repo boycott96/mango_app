@@ -42,18 +42,20 @@ class _EditProfileState extends State<EditProfile>
     PermissionStatus status = await Permission.storage.request();
     if (status.isGranted) {
       final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-      setState(() async {
+      setState(() {
         if (pickedFile != null) {
-          FormData formData = FormData.fromMap({
-            'file': await MultipartFile.fromFile(pickedFile.path,
-                filename: pickedFile.path.split('/').last)
-          });
-          Response response = await FileService(context).uploadFile(formData);
-          if (response.data['code'] == 0) {
-            setState(() {
-              newAvatarUrl = response.data['data'];
+          MultipartFile.fromFile(pickedFile.path,
+                  filename: pickedFile.path.split('/').last)
+              .then((file) {
+            FormData formData = FormData.fromMap({'file': file});
+            FileService(context).uploadFile(formData).then((response) {
+              if (response.data['code'] == 0) {
+                setState(() {
+                  newAvatarUrl = response.data['data'];
+                });
+              }
             });
-          }
+          });
         }
       });
     } else {
