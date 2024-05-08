@@ -21,6 +21,10 @@ class UserService {
   getInfo() async {
     return await ApiService(context).get("/user/info");
   }
+
+  updateInfo(data) async {
+    return await ApiService(context).post("/user/update", data);
+  }
 }
 
 class Token {

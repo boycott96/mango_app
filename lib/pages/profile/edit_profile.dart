@@ -1,10 +1,13 @@
-
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_test/api/file.dart';
+import 'package:flutter_application_test/api/user.dart';
+import 'package:flutter_application_test/components/toast_manager.dart';
+import 'package:flutter_application_test/pages/main_screen.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:toast/toast.dart';
 
 class EditProfile extends StatefulWidget {
   final Map<String, dynamic> profile;
@@ -17,12 +20,17 @@ class EditProfile extends StatefulWidget {
 class _EditProfileState extends State<EditProfile>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
+  final TextEditingController _nameController = TextEditingController();
 
   bool _editAvatar = false;
+  bool _editName = false;
 
   @override
   void initState() {
     super.initState();
+    setState(() {
+      _nameController.text = widget.profile['name'];
+    });
     _controller = AnimationController(vsync: this);
   }
 
@@ -30,6 +38,19 @@ class _EditProfileState extends State<EditProfile>
   void dispose() {
     _controller.dispose();
     super.dispose();
+  }
+
+  void _submitEdit() async {
+    Map<String, dynamic> params = {
+      "avatarUrl": newAvatarUrl,
+      "name": _nameController.text
+    };
+    Response response = await UserService(context).updateInfo(params);
+    if (response.data['code'] == 0) {
+      ToastManager.showToast("Update success!");
+          Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (context) => const MainScreen()));
+    }
   }
 
   final picker = ImagePicker();
@@ -66,6 +87,7 @@ class _EditProfileState extends State<EditProfile>
 
   @override
   Widget build(BuildContext context) {
+    ToastContext().init(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Edit Profile'),
@@ -84,14 +106,18 @@ class _EditProfileState extends State<EditProfile>
                   onTap: () {
                     setState(() {
                       _editAvatar = !_editAvatar;
+                      _editName = false;
                     });
                   },
                   child: Container(
+                    margin: _editAvatar
+                        ? const EdgeInsets.only(bottom: 20)
+                        : EdgeInsets.zero,
                     padding: const EdgeInsets.symmetric(
                         horizontal: 20, vertical: 22),
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: _editAvatar
+                      borderRadius: _editAvatar || _editName
                           ? BorderRadius.circular(30)
                           : const BorderRadius.only(
                               topLeft: Radius.circular(30),
@@ -200,6 +226,67 @@ class _EditProfileState extends State<EditProfile>
                       ],
                     ),
                   ),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _editName = !_editName;
+                      _editAvatar = false;
+                    });
+                  },
+                  child: Container(
+                    margin: _editName
+                        ? const EdgeInsets.only(top: 20)
+                        : EdgeInsets.zero,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 22),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: _editName
+                          ? BorderRadius.circular(30)
+                          : const BorderRadius.only(
+                              bottomLeft: Radius.circular(30),
+                              bottomRight: Radius.circular(30),
+                            ),
+                    ),
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              "My name",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            if (!_editName)
+                              SvgPicture.asset(
+                                "assets/icon/arrow_right_thin.svg",
+                                width: 20,
+                                height: 20,
+                                theme: const SvgTheme(
+                                  currentColor:
+                                      Color.fromRGBO(211, 215, 222, 1),
+                                ),
+                              ),
+                          ],
+                        ),
+                        if (_editName)
+                          TextField(
+                            decoration: const InputDecoration(
+                              contentPadding:
+                                  EdgeInsets.symmetric(vertical: 20),
+                              hintText: 'Name',
+                              hintStyle: TextStyle(
+                                  color: Color.fromRGBO(173, 181, 189, 1)),
+                            ),
+                            controller: _nameController,
+                          ),
+                      ],
+                    ),
+                  ),
                 )
               ],
             ),
@@ -213,7 +300,9 @@ class _EditProfileState extends State<EditProfile>
                     backgroundColor: MaterialStateProperty.all<Color?>(
                         const Color.fromRGBO(255, 93, 151, 1)),
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    _submitEdit();
+                  },
                   child: const Text(
                     "Done",
                     style: TextStyle(color: Colors.white, fontSize: 16),

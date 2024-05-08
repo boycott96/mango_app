@@ -53,13 +53,13 @@ class _ProfileDataState extends State<ProfileData>
                         widget.profile['avatarUrl'],
                         width: 110,
                         height: 110,
-                        fit: BoxFit.contain,
+                        fit: BoxFit.cover,
                       ),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 8, bottom: 4),
                       child: Text(
-                        widget.profile['username'],
+                        widget.profile['name'],
                         style: const TextStyle(
                           fontSize: 25,
                           fontWeight: FontWeight.bold,
