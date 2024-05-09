@@ -29,4 +29,8 @@ class WallpaperService {
   info(String id) async {
     return await ApiService(context).get("/wallpaper/detail?id=$id");
   }
+
+  wallpaperForCategory(int categoryId, int page) async {
+    return await ApiService(context).get("/wallpaper/category/wallpaper?categoryId=$categoryId&page=$page");
+  }
 }

@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_test/api/wallpaper.dart';
+import 'package:flutter_application_test/pages/wallpaper/category_list.dart';
 
 class CategoryView extends StatefulWidget {
   const CategoryView({super.key});
@@ -56,7 +57,12 @@ class _CategoryViewState extends State<CategoryView>
                 ),
               ),
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const CategoryList()));
+                },
                 child: const Text(
                   "View all",
                   style: TextStyle(
