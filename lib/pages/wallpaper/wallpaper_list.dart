@@ -5,7 +5,9 @@ import 'package:flutter_application_test/pages/wallpaper/wallpaper_detail.dart';
 
 class WallpaperList extends StatefulWidget {
   final int categoryId;
-  const WallpaperList({super.key, required this.categoryId});
+  final String name;
+  const WallpaperList(
+      {super.key, required this.categoryId, required this.name});
 
   @override
   State<WallpaperList> createState() => _WallpaperListState();
@@ -61,56 +63,55 @@ class _WallpaperListState extends State<WallpaperList>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Wallpaper"),
+        title: Text(widget.name),
       ),
-      body: SingleChildScrollView(
+      body: CustomScrollView(
         controller: _scrollController,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Row(
-            children: [
-              Expanded(
-                child: Wrap(
-                  spacing: 10.0, // 调整子组件之间的间距
-                  runSpacing: 10.0, // 调整行之间的间距
-                  children: _wallpaperList
-                      .map(
-                        (e) => GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        WallpaperDetail(id: e['id'])));
-                          },
-                          child: Container(
-                            alignment: Alignment.bottomCenter,
-                            height: 200,
-                            width:
-                                (MediaQuery.of(context).size.width - 32 - 25) *
-                                    0.33,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(16),
-                              image: DecorationImage(
-                                image: NetworkImage(e['thumbnailLarge']),
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                            child: Text(
-                              e['resolution'],
-                              style: const TextStyle(
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
+        slivers: [
+          SliverPadding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            sliver: SliverGrid(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3, // 每行显示的列数
+                crossAxisSpacing: 10.0, // 列之间的间距
+                mainAxisSpacing: 10.0, // 行之间的间距
+                childAspectRatio: 0.6, // 子组件的宽高比例
+              ),
+              delegate: SliverChildBuilderDelegate(
+                (BuildContext context, int index) {
+                  var e = _wallpaperList[index];
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => WallpaperDetail(id: e['id']),
                         ),
-                      )
-                      .toList(),
-                ),
-              )
-            ],
+                      );
+                    },
+                    child: Container(
+                      alignment: Alignment.bottomCenter,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                        image: DecorationImage(
+                          image: NetworkImage(e['thumbnailLarge']),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      child: Text(
+                        e['resolution'],
+                        style: const TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  );
+                },
+                childCount: _wallpaperList.length,
+              ),
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

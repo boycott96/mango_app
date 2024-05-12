@@ -87,7 +87,7 @@ class _CategoryViewState extends State<CategoryView>
                       context,
                       MaterialPageRoute(
                           builder: (context) =>
-                              WallpaperList(categoryId: e['id'])));
+                              WallpaperList(categoryId: e['id'], name: e['name'],)));
                 },
                 child: Container(
                   width: (MediaQuery.of(context).size.width - 32 - 40) *

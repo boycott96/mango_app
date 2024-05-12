@@ -29,18 +29,30 @@ class _WallpaperScreenState extends State<WallpaperScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-      child: const SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        child: Column(
-          children: [
-            CarouselHot(),
-            CategoryView(),
-            WallpaperTop(),
-          ],
+    return CustomScrollView(
+      slivers: [
+        const SliverPadding(
+          padding: EdgeInsets.fromLTRB(20, 16, 20, 0),
+          sliver: SliverToBoxAdapter(
+            child: Column(
+              children: [
+                CarouselHot(),
+                CategoryView(),
+              ],
+            ),
+          ),
         ),
-      ),
+        SliverPadding(
+          padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
+          sliver: SliverList(
+            delegate: SliverChildListDelegate(
+              [
+                const WallpaperTop(),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

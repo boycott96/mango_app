@@ -40,58 +40,66 @@ class _CategoryListState extends State<CategoryList>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text("Category"),
-        ),
-        body: SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-          child: Container(
+      appBar: AppBar(
+        title: const Text("Category"),
+      ),
+      body: CustomScrollView(
+        slivers: [
+          SliverPadding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Wrap(
-              spacing: 12.0, // 水平方向子部件之间的间距
-              runSpacing: 12.0, // 垂直方向的间距
-              children: _categoryList.asMap().entries.map((entry) {
-                final e = entry.value;
-                return GestureDetector(
-                  onTap: () {
-                    Navigator.push(
+            sliver: SliverGrid(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3, // 每行显示的列数
+                crossAxisSpacing: 12.0, // 列之间的间距
+                mainAxisSpacing: 12.0, // 行之间的间距
+                childAspectRatio: 3 / 2, // 子组件的宽高比例
+              ),
+              delegate: SliverChildBuilderDelegate(
+                (BuildContext context, int index) {
+                  final e = _categoryList[index];
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) =>
-                                WallpaperList(categoryId: e['id'])));
-                  },
-                  child: Container(
-                    width: (MediaQuery.of(context).size.width - 64) *
-                        0.33, // 设置容器宽度为屏幕宽度的20%
-                    height: 90,
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: NetworkImage(e['categoryUrl']),
-                        fit: BoxFit.cover,
-                        colorFilter: ColorFilter.mode(
-                          Colors.black.withOpacity(0.5), // 黑色层的颜色和透明度
-                          BlendMode.srcOver, // 混合模式，此处表示黑色层在顶部
+                          builder: (context) =>
+                              WallpaperList(categoryId: e['id'], name: e['name'],),
                         ),
-                      ),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Center(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        child: Text(
-                          e['name'],
-                          style: const TextStyle(
-                            color: Colors.white,
+                      );
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: NetworkImage(e['categoryUrl']),
+                          fit: BoxFit.cover,
+                          colorFilter: ColorFilter.mode(
+                            Colors.black.withOpacity(0.5), // 黑色层的颜色和透明度
+                            BlendMode.srcOver, // 混合模式，此处表示黑色层在顶部
                           ),
-                          overflow: TextOverflow.ellipsis, // 设置文本宽度缩写
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Center(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          child: Text(
+                            e['name'],
+                            style: const TextStyle(
+                              color: Colors.white,
+                            ),
+                            overflow: TextOverflow.ellipsis, // 设置文本宽度缩写
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                );
-              }).toList(),
+                  );
+                },
+                childCount: _categoryList.length,
+              ),
             ),
           ),
-        ));
+        ],
+      ),
+    );
   }
 }

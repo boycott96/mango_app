@@ -28,7 +28,7 @@ class _MainScreenState extends State<MainScreen>
 
   static final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
   Map<String, dynamic> _deviceData = <String, dynamic>{};
-
+  
   @override
   void initState() {
     super.initState();
@@ -77,6 +77,7 @@ class _MainScreenState extends State<MainScreen>
 
   Map<String, dynamic> _readAndroidBuildData(AndroidDeviceInfo build) {
     return <String, dynamic>{
+      'os': 'android',
       'version.securityPatch': build.version.securityPatch,
       'version.sdkInt': build.version.sdkInt,
       'version.release': build.version.release,
@@ -110,6 +111,7 @@ class _MainScreenState extends State<MainScreen>
 
   Map<String, dynamic> _readIosDeviceInfo(IosDeviceInfo data) {
     return <String, dynamic>{
+      'os': 'ios',
       'name': data.name,
       'systemName': data.systemName,
       'systemVersion': data.systemVersion,
@@ -249,7 +251,7 @@ class _MainScreenState extends State<MainScreen>
           BottomNavigationBarItem(
             icon: Icon(Icons.insert_photo_outlined),
             activeIcon: Icon(Icons.insert_photo),
-            label: 'Music',
+            label: 'Wallpaper',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.music_note_outlined),
