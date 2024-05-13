@@ -25,6 +25,6 @@ class _MusicScreenState extends State<MusicScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Center(child: const Text("music"));
+    return const Center(child: Text("music"));
   }
 }

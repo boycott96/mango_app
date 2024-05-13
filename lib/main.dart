@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'pages/main_screen.dart';
-import 'package:flutter_downloader/flutter_downloader.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await FlutterDownloader.initialize(debug: true, ignoreSsl: true);
   runApp(const MyApp());
 }
 

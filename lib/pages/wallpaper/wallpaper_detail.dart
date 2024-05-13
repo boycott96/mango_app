@@ -3,14 +3,17 @@ import 'dart:ui';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_application_test/api/wallpaper.dart';
+import 'package:flutter_application_test/components/toast_manager.dart';
 import 'package:flutter_application_test/store/store.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_wallpaper_manager/flutter_wallpaper_manager.dart';
 import 'package:image_cropper/image_cropper.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:toast/toast.dart';
 
 class WallpaperDetail extends StatefulWidget {
   final String id;
@@ -23,7 +26,9 @@ class WallpaperDetail extends StatefulWidget {
 class _WallpaperDetailState extends State<WallpaperDetail>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
+  // ignore: unused_field
   String _platformVersion = 'Unknown';
+  // ignore: unused_field
   String __heightWidth = "Unknown";
 
   dynamic wallpaper;
@@ -43,22 +48,98 @@ class _WallpaperDetailState extends State<WallpaperDetail>
     _controller.dispose(); //super.dispose();
   }
 
-  Future<void> downloadFile(url) async {
-    Dio dio = Dio();
+  void downloadAndSaveImage(String imageUrl) async {
+    // 弹出确认对话框
+    bool? downloadConfirmed = await showModalBottomSheet<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(28),
+              topRight: Radius.circular(28),
+            ),
+          ),
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              GestureDetector(
+                child: Container(
+                  height: 5,
+                  width: 98,
+                  decoration: BoxDecoration(
+                    color: const Color.fromRGBO(179, 179, 179, 1),
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.only(top: 18, left: 20, right: 20),
+                child: const Center(
+                  child: Text(
+                    "Do you want to download this image to your phone? ",
+                    style: TextStyle(
+                      color: Color.fromRGBO(41, 50, 59, 1),
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 48, 20, 0),
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                  child: TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop(true); // 关闭底部对话框
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(
+                        const Color.fromRGBO(255, 93, 151, 1),
+                      ),
+                    ),
+                    child: const Text(
+                      "Confirm",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(false); // 关闭底部对话框
+                },
+                child: const Text(
+                  "Cancel",
+                  style: TextStyle(color: Color.fromRGBO(255, 93, 151, 1)),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
 
-    try {
-      var dir = await getApplicationDocumentsDirectory();
+    if (downloadConfirmed == true) {
+      try {
+        // 使用Dio下载图片
+        Response response = await Dio()
+            .get(imageUrl, options: Options(responseType: ResponseType.bytes));
+        Uint8List imageData = Uint8List.fromList(response.data);
 
-      print(dir);
-      print("####");
-      await dio.download(url, "${dir.path}/file.torrent",
-          onReceiveProgress: (rec, total) {
-        print("Rec: $rec , Total: $total");
-      });
-    } catch (e) {
-      print(e);
+        // 保存图片到相册
+        final result = await ImageGallerySaver.saveImage(imageData);
+        if (result['isSuccess']) {
+          ToastManager.showToast("Image saved to gallery!");
+        } else {
+          ToastManager.showToast(
+              "Failed to save image to gallery: ${result['error']}");
+        }
+        // ignore: empty_catches
+      } catch (e) {}
     }
-    print("Download completed");
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.
@@ -67,10 +148,10 @@ class _WallpaperDetailState extends State<WallpaperDetail>
 
     setState(() {
       _os = operation;
-      print(_os);
     });
     if (operation == 'android') {
       String platformVersion;
+      // ignore: no_leading_underscores_for_local_identifiers
       String _heightWidth;
       // Platform messages may fail, so we use a try/catch PlatformException.
       // We also handle the message potentially returning null.
@@ -98,7 +179,6 @@ class _WallpaperDetailState extends State<WallpaperDetail>
       setState(() {
         __heightWidth = _heightWidth;
         _platformVersion = platformVersion;
-        print(_platformVersion);
       });
     }
   }
@@ -358,6 +438,7 @@ class _WallpaperDetailState extends State<WallpaperDetail>
 
   @override
   Widget build(BuildContext context) {
+    ToastContext().init(context);
     // 检查数据是否加载完成，若未加载完成，则显示一个加载中的指示器
     return Scaffold(
       appBar: AppBar(),
@@ -398,169 +479,32 @@ class _WallpaperDetailState extends State<WallpaperDetail>
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Expanded(
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        _onShareWithResult(context);
-                                      },
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 16),
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment
-                                              .center, // 设置子组件在纵轴方向居中对齐
-                                          children: [
-                                            Container(
-                                              width: 48, // 设置按钮宽度
-                                              height: 48, // 设置按钮高度
-                                              decoration: const BoxDecoration(
-                                                shape: BoxShape
-                                                    .circle, // 将 Container 设置为圆形
-                                                color: Color.fromRGBO(
-                                                    25, 30, 49, 0.53), // 设置按钮颜色
-                                              ),
-                                              child: Center(
-                                                child: SvgPicture.asset(
-                                                  "assets/icon/share.svg",
-                                                  width: 24,
-                                                  theme: const SvgTheme(
-                                                      currentColor:
-                                                          Colors.white),
-                                                ),
-                                              ),
-                                            ),
-                                            Container(
-                                              margin:
-                                                  const EdgeInsets.only(top: 8),
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 16,
-                                                      vertical: 2),
-                                              decoration: BoxDecoration(
-                                                color: const Color.fromRGBO(
-                                                    25, 30, 49, 0.7),
-                                                borderRadius:
-                                                    BorderRadius.circular(12),
-                                              ),
-                                              child: const Text(
-                                                "Sha.",
-                                                style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 12),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        print("##########1");
-                                        // if (_os == 'android') {
-                                        //   print("####");
-                                        // } else {
-                                        //   setWallpaper(wallpaper['path']);
-                                        // }
-                                      },
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 8, vertical: 16),
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment
-                                              .center, // 设置子组件在纵轴方向居中对齐
-                                          children: [
-                                            Container(
-                                              width: 48, // 设置按钮宽度
-                                              height: 48, // 设置按钮高度
-                                              decoration: const BoxDecoration(
-                                                shape: BoxShape
-                                                    .circle, // 将 Container 设置为圆形
-                                                color: Color.fromRGBO(
-                                                    25, 30, 49, 0.53), // 设置按钮颜色
-                                              ),
-                                              child: Center(
-                                                child: _os == "ios"
-                                                    ? SvgPicture.asset(
-                                                        "assets/icon/brush.svg",
-                                                        width: 24,
-                                                        theme: const SvgTheme(
-                                                            currentColor:
-                                                                Colors.white),
-                                                      )
-                                                    : SvgPicture.asset(
-                                                        "assets/icon/download.svg",
-                                                        width: 24,
-                                                        theme: const SvgTheme(
-                                                            currentColor:
-                                                                Colors.white),
-                                                      ),
-                                              ),
-                                            ),
-                                            Container(
-                                              margin:
-                                                  const EdgeInsets.only(top: 8),
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 16,
-                                                      vertical: 2),
-                                              decoration: BoxDecoration(
-                                                color: const Color.fromRGBO(
-                                                    25, 30, 49, 0.7),
-                                                borderRadius:
-                                                    BorderRadius.circular(12),
-                                              ),
-                                              child: _os == "ios"
-                                                  ? const Text(
-                                                      "Set.",
-                                                      style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize: 12,
-                                                      ),
-                                                    )
-                                                  : const Text(
-                                                      "Dow.",
-                                                      style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize: 12,
-                                                      ),
-                                                    ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Padding(
+                                  GestureDetector(
+                                    onTap: () {
+                                      _onShareWithResult(context);
+                                    },
+                                    child: Container(
                                       padding: const EdgeInsets.symmetric(
                                           vertical: 16),
                                       child: Column(
                                         crossAxisAlignment: CrossAxisAlignment
                                             .center, // 设置子组件在纵轴方向居中对齐
                                         children: [
-                                          InkWell(
-                                            onTap: () {
-                                              // 按钮点击事件
-                                            },
-                                            child: Container(
-                                              width: 48, // 设置按钮宽度
-                                              height: 48, // 设置按钮高度
-                                              decoration: const BoxDecoration(
-                                                shape: BoxShape
-                                                    .circle, // 将 Container 设置为圆形
-                                                color: Color.fromRGBO(
-                                                    25, 30, 49, 0.53), // 设置按钮颜色
-                                              ),
-                                              child: Center(
-                                                child: SvgPicture.asset(
-                                                  "assets/icon/heart.svg",
-                                                  width: 24,
-                                                  theme: const SvgTheme(
-                                                      currentColor:
-                                                          Colors.white),
-                                                ),
+                                          Container(
+                                            width: 48, // 设置按钮宽度
+                                            height: 48, // 设置按钮高度
+                                            decoration: const BoxDecoration(
+                                              shape: BoxShape
+                                                  .circle, // 将 Container 设置为圆形
+                                              color: Color.fromRGBO(
+                                                  25, 30, 49, 0.53), // 设置按钮颜色
+                                            ),
+                                            child: Center(
+                                              child: SvgPicture.asset(
+                                                "assets/icon/share.svg",
+                                                width: 24,
+                                                theme: const SvgTheme(
+                                                    currentColor: Colors.white),
                                               ),
                                             ),
                                           ),
@@ -576,12 +520,84 @@ class _WallpaperDetailState extends State<WallpaperDetail>
                                                   BorderRadius.circular(12),
                                             ),
                                             child: const Text(
-                                              "Fav.",
+                                              "Sha.",
                                               style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 12,
-                                              ),
+                                                  color: Colors.white,
+                                                  fontSize: 12),
                                             ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  GestureDetector(
+                                    onTap: () {
+                                      if (_os == 'ios') {
+                                        downloadAndSaveImage(wallpaper['path']);
+                                      } else {
+                                        setWallpaper(wallpaper['path']);
+                                      }
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8, vertical: 16),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment
+                                            .center, // 设置子组件在纵轴方向居中对齐
+                                        children: [
+                                          Container(
+                                            width: 48, // 设置按钮宽度
+                                            height: 48, // 设置按钮高度
+                                            decoration: const BoxDecoration(
+                                              shape: BoxShape
+                                                  .circle, // 将 Container 设置为圆形
+                                              color: Color.fromRGBO(
+                                                  25, 30, 49, 0.53), // 设置按钮颜色
+                                            ),
+                                            child: Center(
+                                              child: _os == "android"
+                                                  ? SvgPicture.asset(
+                                                      "assets/icon/brush.svg",
+                                                      width: 24,
+                                                      theme: const SvgTheme(
+                                                          currentColor:
+                                                              Colors.white),
+                                                    )
+                                                  : SvgPicture.asset(
+                                                      "assets/icon/download.svg",
+                                                      width: 24,
+                                                      theme: const SvgTheme(
+                                                          currentColor:
+                                                              Colors.white),
+                                                    ),
+                                            ),
+                                          ),
+                                          Container(
+                                            margin:
+                                                const EdgeInsets.only(top: 8),
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 16, vertical: 2),
+                                            decoration: BoxDecoration(
+                                              color: const Color.fromRGBO(
+                                                  25, 30, 49, 0.7),
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                            ),
+                                            child: _os == "android"
+                                                ? const Text(
+                                                    "Set.",
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 12,
+                                                    ),
+                                                  )
+                                                : const Text(
+                                                    "Dow.",
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 12,
+                                                    ),
+                                                  ),
                                           ),
                                         ],
                                       ),
