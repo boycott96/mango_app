@@ -12,6 +12,7 @@ class _RestPageState extends State<ResetPage>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   final TextEditingController _textController = TextEditingController();
+  // ignore: unused_field
   String _inputValue = '';
   @override
   void initState() {
