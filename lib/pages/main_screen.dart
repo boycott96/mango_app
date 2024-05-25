@@ -28,7 +28,7 @@ class _MainScreenState extends State<MainScreen>
 
   static final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
   Map<String, dynamic> _deviceData = <String, dynamic>{};
-  
+
   @override
   void initState() {
     super.initState();
@@ -233,14 +233,8 @@ class _MainScreenState extends State<MainScreen>
         title: const Text("Mango"),
         automaticallyImplyLeading: false,
       ),
-      body: PageView(
-        controller: _pageController,
-        onPageChanged: (index) {
-          setState(() {
-            _selectedIndex = index;
-            _tabController.index = index;
-          });
-        },
+      body: IndexedStack(
+        index: _selectedIndex,
         children: tabViews,
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -269,7 +263,7 @@ class _MainScreenState extends State<MainScreen>
           setState(() {
             _selectedIndex = index;
             _tabController.index = index;
-            _pageController.jumpToPage(index);
+            // _pageController.jumpToPage(index);
           });
         },
       ),

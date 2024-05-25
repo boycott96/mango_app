@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -34,11 +35,13 @@ class _WallpaperDetailState extends State<WallpaperDetail>
   dynamic wallpaper;
   late String _os;
 
+  var _file;
+
   @override
   void initState() {
+    getInfo(context);
     super.initState();
     initAppState();
-    getInfo(context);
     _controller = AnimationController(vsync: this);
   }
 
@@ -335,12 +338,10 @@ class _WallpaperDetailState extends State<WallpaperDetail>
   }
 
   Future<void> _setWallpaper(String url, int location) async {
-    var file = await DefaultCacheManager().getSingleFile(url);
-
     // 获取屏幕尺寸
     final Size screenSize = MediaQuery.of(context).size;
     final croppedFile = await ImageCropper().cropImage(
-      sourcePath: file.path,
+      sourcePath: _file.path,
       compressFormat: ImageCompressFormat.jpg,
       compressQuality: 100,
       aspectRatio:
@@ -397,7 +398,10 @@ class _WallpaperDetailState extends State<WallpaperDetail>
   void getInfo(BuildContext context) async {
     Response response = await WallpaperService(context).info(widget.id);
     if (response.data['code'] == 0) {
+      var file = await DefaultCacheManager()
+          .getSingleFile(response.data['data']['path']);
       setState(() {
+        _file = file;
         wallpaper = response.data['data'];
       });
     }
@@ -442,7 +446,7 @@ class _WallpaperDetailState extends State<WallpaperDetail>
     // 检查数据是否加载完成，若未加载完成，则显示一个加载中的指示器
     return Scaffold(
       appBar: AppBar(),
-      body: wallpaper == null
+      body: wallpaper == null || _file == null
           ? const Center(
               child: SizedBox(
                 width: 40, // 设置加载圈的宽度
@@ -454,7 +458,7 @@ class _WallpaperDetailState extends State<WallpaperDetail>
               height: MediaQuery.of(context).size.height,
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: NetworkImage(wallpaper['path']),
+                  image: FileImage(_file),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -469,7 +473,7 @@ class _WallpaperDetailState extends State<WallpaperDetail>
                         child: Container(
                           decoration: BoxDecoration(
                               image: DecorationImage(
-                                image: NetworkImage(wallpaper['path']),
+                                image: FileImage(_file),
                                 fit: BoxFit.cover,
                               ),
                               borderRadius: BorderRadius.circular(16)),

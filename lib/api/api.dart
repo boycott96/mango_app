@@ -7,7 +7,8 @@ import 'package:flutter_application_test/store/store.dart';
 
 class ApiService {
   final Dio _dio = Dio();
-  final _prefix = "https://th.larkdance.cn";
+  // final _prefix = "https://th.larkdance.cn";
+  final _prefix = "http://192.168.110.11:9000";
 
   ApiService(BuildContext context) {
     // 添加拦截器

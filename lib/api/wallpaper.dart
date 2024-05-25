@@ -14,16 +14,16 @@ class WallpaperService {
     return await ApiService(context).get("/wallpaper/category?limit=$limit");
   }
 
-  trending() async {
-    return await ApiService(context).get("/wallpaper/trending");
+  trending(int pageNum) async {
+    return await ApiService(context).get("/wallpaper/trending?page=$pageNum");
   }
 
-  recent() async {
-    return await ApiService(context).get("/wallpaper/recent");
+  recent(int pageNum) async {
+    return await ApiService(context).get("/wallpaper/recent?page=$pageNum");
   }
 
-  topNew() async {
-    return await ApiService(context).get("/wallpaper/new");
+  topNew(int pageNum) async {
+    return await ApiService(context).get("/wallpaper/new?page=$pageNum");
   }
 
   info(String id) async {
@@ -31,6 +31,7 @@ class WallpaperService {
   }
 
   wallpaperForCategory(int categoryId, int page) async {
-    return await ApiService(context).get("/wallpaper/category/wallpaper?categoryId=$categoryId&page=$page");
+    return await ApiService(context)
+        .get("/wallpaper/category/wallpaper?categoryId=$categoryId&page=$page");
   }
 }
