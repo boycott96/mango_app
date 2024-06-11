@@ -237,11 +237,12 @@ class _MainScreenState extends State<MainScreen>
       ),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: const Color.fromRGBO(255, 255, 255, 1),
+        selectedItemColor: const Color.fromRGBO(0, 123, 254, 1),
         unselectedItemColor: const Color.fromRGBO(168, 168, 168, 1),
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: SvgPicture.asset("assets/icon/library.svg"),
-            activeIcon: SvgPicture.asset("assets/icon/library.svg"),
+            activeIcon: SvgPicture.asset("assets/icon/library_selected.svg"),
             label: '图库',
           ),
           BottomNavigationBarItem(
@@ -256,7 +257,6 @@ class _MainScreenState extends State<MainScreen>
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.amber[800],
         onTap: (index) {
           setState(() {
             _selectedIndex = index;
