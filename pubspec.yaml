@@ -102,6 +102,7 @@ flutter:
     - assets/icon/set_home.svg
     - assets/icon/set_lock.svg
     - assets/icon/set_both.svg
+    - assets/icon/library.svg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

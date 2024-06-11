@@ -203,8 +203,8 @@ class _WallpaperScreenState extends State<WallpaperScreen>
                       children: [
                         Expanded(
                           child: Wrap(
-                            spacing: 10.0, // 调整子组件之间的间距
-                            runSpacing: 10.0, // 调整行之间的间距
+                            spacing: 1.0, // 调整子组件之间的间距
+                            runSpacing: 1.0, // 调整行之间的间距
                             children: _list
                                 .map(
                                   (e) => GestureDetector(
@@ -213,14 +213,17 @@ class _WallpaperScreenState extends State<WallpaperScreen>
                                     },
                                     child: Container(
                                       alignment: Alignment.bottomCenter,
-                                      height: 200,
+                                      height:
+                                          (MediaQuery.of(context).size.width -
+                                                  32 -
+                                                  8) *
+                                              0.33,
                                       width:
                                           (MediaQuery.of(context).size.width -
                                                   32 -
-                                                  25) *
+                                                  8) *
                                               0.33,
                                       decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(16),
                                         image: DecorationImage(
                                           image:
                                               NetworkImage(e['thumbnailLarge']),

@@ -6,6 +6,7 @@ import 'package:flutter_application_test/pages/music/music_screen.dart';
 import 'package:flutter_application_test/pages/profile/me_screen.dart';
 import 'package:flutter_application_test/pages/wallpaper/wallpaper_screen.dart';
 import 'package:flutter_application_test/store/store.dart';
+import 'package:flutter_svg/svg.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -229,36 +230,33 @@ class _MainScreenState extends State<MainScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Mango"),
-        automaticallyImplyLeading: false,
-      ),
+      appBar: null,
       body: IndexedStack(
         index: _selectedIndex,
         children: tabViews,
       ),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: const Color.fromRGBO(255, 255, 255, 1),
-        fixedColor: const Color.fromRGBO(41, 45, 50, 1),
         unselectedItemColor: const Color.fromRGBO(168, 168, 168, 1),
-        items: const <BottomNavigationBarItem>[
+        items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.insert_photo_outlined),
-            activeIcon: Icon(Icons.insert_photo),
-            label: 'Wallpaper',
+            icon: SvgPicture.asset("assets/icon/library.svg"),
+            activeIcon: SvgPicture.asset("assets/icon/library.svg"),
+            label: '图库',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.music_note_outlined),
             activeIcon: Icon(Icons.music_note),
-            label: 'Music',
+            label: '音乐',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person_outline),
             activeIcon: Icon(Icons.person),
-            label: 'Me',
+            label: '我的',
           ),
         ],
         currentIndex: _selectedIndex,
+        selectedItemColor: Colors.amber[800],
         onTap: (index) {
           setState(() {
             _selectedIndex = index;
