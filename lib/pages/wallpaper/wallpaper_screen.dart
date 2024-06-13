@@ -1,11 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_test/api/wallpaper.dart';
-import 'package:flutter_application_test/pages/wallpaper/category_view.dart';
 import 'package:flutter_application_test/pages/wallpaper/wallpaper_detail.dart';
 import 'package:flutter_svg/svg.dart';
-
-import 'carousel_hot.dart';
 
 class WallpaperScreen extends StatefulWidget {
   const WallpaperScreen({super.key});
@@ -19,24 +16,24 @@ class _WallpaperScreenState extends State<WallpaperScreen>
   late AnimationController _controller;
   final ScrollController _scrollController = ScrollController();
 
-  String _activeType = "Trending";
+  String _activeType = "最新";
   final List<dynamic> _btn = [
+    {
+      "icon": "assets/icon/top_new.svg",
+      "active_icon": "assets/icon/top_new_active.svg",
+      "label": "最新",
+      "width": "25",
+    },
     {
       "icon": "assets/icon/top_trending.svg",
       "active_icon": "assets/icon/top_trending_active.svg",
-      "label": "Trending",
+      "label": "热门",
       "width": "22",
     },
     {
       "icon": "assets/icon/top_recent.svg",
       "active_icon": "assets/icon/top_recent_active.svg",
-      "label": "Recent",
-      "width": "25",
-    },
-    {
-      "icon": "assets/icon/top_new.svg",
-      "active_icon": "assets/icon/top_new_active.svg",
-      "label": "New",
+      "label": "历史记录",
       "width": "25",
     },
   ];
@@ -71,21 +68,21 @@ class _WallpaperScreenState extends State<WallpaperScreen>
   }
 
   void getList(int pageNum) async {
-    if (_activeType == 'Trending') {
+    if (_activeType == '热门') {
       Response response = await WallpaperService(context).trending(pageNum);
       if (response.data['code'] == 0) {
         setState(() {
           _list = [..._list, ...response.data['data']];
         });
       }
-    } else if (_activeType == 'Recent') {
+    } else if (_activeType == '历史记录') {
       Response response = await WallpaperService(context).recent(pageNum);
       if (response.data['code'] == 0) {
         setState(() {
           _list = [..._list, ...response.data['data']];
         });
       }
-    } else if (_activeType == 'New') {
+    } else if (_activeType == '最新') {
       Response response = await WallpaperService(context).topNew(pageNum);
       if (response.data['code'] == 0) {
         setState(() {
@@ -103,102 +100,16 @@ class _WallpaperScreenState extends State<WallpaperScreen>
 
   @override
   Widget build(BuildContext context) {
-    return CustomScrollView(
-      controller: _scrollController,
-      slivers: [
-        const SliverPadding(
-          padding: EdgeInsets.fromLTRB(20, 16, 20, 0),
-          sliver: SliverToBoxAdapter(
-            child: Column(
-              children: [
-                CarouselHot(),
-                CategoryView(),
-              ],
-            ),
-          ),
-        ),
-        SliverPadding(
-          padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
-          sliver: SliverList(
-            delegate: SliverChildListDelegate(
-              [
-                Column(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 4),
-                      margin: const EdgeInsets.symmetric(
-                          vertical: 12, horizontal: 12),
-                      decoration: BoxDecoration(
-                        color: const Color.fromRGBO(225, 244, 255, 1),
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      child: Row(
-                        children: _btn
-                            .map(
-                              (e) => Container(
-                                width: (MediaQuery.of(context).size.width -
-                                        32 -
-                                        45) *
-                                    0.33,
-                                height: 50,
-                                decoration: BoxDecoration(
-                                  gradient: _activeType == e['label']
-                                      ? const LinearGradient(
-                                          begin: Alignment.topLeft,
-                                          end: Alignment.bottomRight,
-                                          colors: [
-                                            Color.fromRGBO(103, 71, 231, 1),
-                                            Color.fromRGBO(0, 255, 240, 1),
-                                          ],
-                                        )
-                                      : null,
-                                  borderRadius: BorderRadius.circular(50),
-                                ),
-                                child: TextButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      _activeType = e['label'];
-                                      page = 1;
-                                      _list = [];
-                                      getList(page);
-                                    });
-                                  },
-                                  style: ButtonStyle(
-                                    backgroundColor: MaterialStateProperty.all(
-                                        Colors.transparent),
-                                    overlayColor: MaterialStateProperty.all(
-                                        Colors.transparent),
-                                    padding: MaterialStateProperty.all(
-                                        const EdgeInsets.only(
-                                            top: 3, bottom: 0)),
-                                  ),
-                                  child: Column(
-                                    children: [
-                                      SvgPicture.asset(
-                                        _activeType == e['label']
-                                            ? e['active_icon']
-                                            : e['icon'],
-                                        width: double.parse(e['width']),
-                                      ),
-                                      Text(
-                                        e['label'],
-                                        style: TextStyle(
-                                          color: _activeType == e['label']
-                                              ? Colors.white
-                                              : const Color.fromRGBO(
-                                                  71, 71, 227, 1),
-                                          fontSize: 12,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            )
-                            .toList(),
-                      ),
-                    ),
+    return Stack(
+      children: [
+        CustomScrollView(
+          controller: _scrollController,
+          slivers: [
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(0, 0, 0, 16),
+              sliver: SliverList(
+                delegate: SliverChildListDelegate(
+                  [
                     Row(
                       children: [
                         Expanded(
@@ -214,14 +125,10 @@ class _WallpaperScreenState extends State<WallpaperScreen>
                                     child: Container(
                                       alignment: Alignment.bottomCenter,
                                       height:
-                                          (MediaQuery.of(context).size.width -
-                                                  32 -
-                                                  8) *
+                                          (MediaQuery.of(context).size.width) *
                                               0.33,
                                       width:
-                                          (MediaQuery.of(context).size.width -
-                                                  32 -
-                                                  8) *
+                                          (MediaQuery.of(context).size.width) *
                                               0.33,
                                       decoration: BoxDecoration(
                                         image: DecorationImage(
@@ -243,13 +150,85 @@ class _WallpaperScreenState extends State<WallpaperScreen>
                           ),
                         )
                       ],
-                    )
+                    ),
                   ],
                 ),
-              ],
+              ),
+            ),
+          ],
+        ),
+        Positioned(
+          bottom: 0,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+            decoration: BoxDecoration(
+              color: const Color.fromRGBO(225, 244, 255, 1),
+              borderRadius: BorderRadius.circular(30),
+            ),
+            child: Row(
+              children: _btn
+                  .map(
+                    (e) => Container(
+                      width:
+                          (MediaQuery.of(context).size.width - 32 - 45) * 0.33,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        gradient: _activeType == e['label']
+                            ? const LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [
+                                  Color.fromRGBO(103, 71, 231, 1),
+                                  Color.fromRGBO(0, 255, 240, 1),
+                                ],
+                              )
+                            : null,
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                      child: TextButton(
+                        onPressed: () {
+                          setState(() {
+                            _activeType = e['label'];
+                            page = 1;
+                            _list = [];
+                            getList(page);
+                          });
+                        },
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all(Colors.transparent),
+                          overlayColor:
+                              MaterialStateProperty.all(Colors.transparent),
+                          padding: MaterialStateProperty.all(
+                              const EdgeInsets.only(top: 3, bottom: 0)),
+                        ),
+                        child: Column(
+                          children: [
+                            SvgPicture.asset(
+                              _activeType == e['label']
+                                  ? e['active_icon']
+                                  : e['icon'],
+                              width: double.parse(e['width']),
+                            ),
+                            Text(
+                              e['label'],
+                              style: TextStyle(
+                                color: _activeType == e['label']
+                                    ? Colors.white
+                                    : const Color.fromRGBO(71, 71, 227, 1),
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  )
+                  .toList(),
             ),
           ),
-        ),
+        )
       ],
     );
   }
