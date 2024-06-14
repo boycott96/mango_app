@@ -465,7 +465,6 @@ class _WallpaperDetailState extends State<WallpaperDetail>
               child: BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0), // 设置模糊半径
                 child: Container(
-                  padding: const EdgeInsets.fromLTRB(50, 20, 50, 10),
                   color: Colors.white.withOpacity(0.4), // 设置模糊层的颜色和透明度
                   child: Column(
                     children: [
@@ -474,7 +473,7 @@ class _WallpaperDetailState extends State<WallpaperDetail>
                           decoration: BoxDecoration(
                               image: DecorationImage(
                                 image: FileImage(_file),
-                                fit: BoxFit.cover,
+                                fit: BoxFit.contain,
                               ),
                               borderRadius: BorderRadius.circular(16)),
                           child: Column(
@@ -524,7 +523,7 @@ class _WallpaperDetailState extends State<WallpaperDetail>
                                                   BorderRadius.circular(12),
                                             ),
                                             child: const Text(
-                                              "Sha.",
+                                              "分享",
                                               style: TextStyle(
                                                   color: Colors.white,
                                                   fontSize: 12),
@@ -589,7 +588,7 @@ class _WallpaperDetailState extends State<WallpaperDetail>
                                             ),
                                             child: _os == "android"
                                                 ? const Text(
-                                                    "Set.",
+                                                    "设定",
                                                     style: TextStyle(
                                                       color: Colors.white,
                                                       fontSize: 12,
@@ -614,16 +613,16 @@ class _WallpaperDetailState extends State<WallpaperDetail>
                         ),
                       ),
                       Container(
-                        margin: const EdgeInsets.only(top: 30),
+                        padding: const EdgeInsets.fromLTRB(20, 30, 20, 0),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              "R:${wallpaper['resolution']}",
+                              "尺寸:${wallpaper['resolution']}",
                               style: const TextStyle(color: Colors.white),
                             ),
                             Text(
-                              "Size:${formatBytes(wallpaper['fileSize'])}",
+                              "大小:${formatBytes(wallpaper['fileSize'])}",
                               style: const TextStyle(color: Colors.white),
                             ),
                           ],
