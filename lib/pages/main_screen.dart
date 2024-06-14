@@ -245,12 +245,12 @@ class _MainScreenState extends State<MainScreen>
             activeIcon: SvgPicture.asset("assets/icon/library_selected.svg"),
             label: '图库',
           ),
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: Icon(Icons.music_note_outlined),
             activeIcon: Icon(Icons.music_note),
             label: '音乐',
           ),
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: Icon(Icons.person_outline),
             activeIcon: Icon(Icons.person),
             label: '我的',

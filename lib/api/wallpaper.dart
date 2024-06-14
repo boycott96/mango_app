@@ -6,10 +6,6 @@ class WallpaperService {
 
   WallpaperService(this.context);
 
-  hot() async {
-    return await ApiService(context).get("/wallpaper/hot");
-  }
-
   category(String limit) async {
     return await ApiService(context).get("/wallpaper/category?limit=$limit");
   }

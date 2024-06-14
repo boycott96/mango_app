@@ -1,8 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_test/api/wallpaper.dart';
+import 'package:flutter_application_test/pages/wallpaper/category_list.dart';
 import 'package:flutter_application_test/pages/wallpaper/wallpaper_detail.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_application_test/pages/wallpaper/wallpaper_new.dart';
+import 'package:flutter_application_test/pages/wallpaper/wallpaper_recent.dart';
+import 'package:flutter_application_test/pages/wallpaper/wallpaper_trending.dart';
 
 class WallpaperScreen extends StatefulWidget {
   const WallpaperScreen({super.key});
@@ -19,23 +22,17 @@ class _WallpaperScreenState extends State<WallpaperScreen>
   String _activeType = "最新";
   final List<dynamic> _btn = [
     {
-      "icon": "assets/icon/top_new.svg",
-      "active_icon": "assets/icon/top_new_active.svg",
       "label": "最新",
-      "width": "25",
     },
     {
-      "icon": "assets/icon/top_trending.svg",
-      "active_icon": "assets/icon/top_trending_active.svg",
       "label": "热门",
-      "width": "22",
     },
     {
-      "icon": "assets/icon/top_recent.svg",
-      "active_icon": "assets/icon/top_recent_active.svg",
       "label": "历史记录",
-      "width": "25",
     },
+    {
+      "label": "分类",
+    }
   ];
 
   List<dynamic> _list = [];
@@ -98,101 +95,60 @@ class _WallpaperScreenState extends State<WallpaperScreen>
     super.dispose();
   }
 
+  int _getIndexFromActiveType(String activeType) {
+    switch (activeType) {
+      case '热门':
+        return 1;
+      case '最新':
+        return 0;
+      case '历史记录':
+        return 2;
+      case '分类':
+        return 3;
+      default:
+        return 0; // Default to the first widget or handle as needed
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        CustomScrollView(
-          controller: _scrollController,
-          slivers: [
-            SliverPadding(
-              padding: const EdgeInsets.fromLTRB(0, 0, 0, 16),
-              sliver: SliverList(
-                delegate: SliverChildListDelegate(
-                  [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Wrap(
-                            spacing: 1.0, // 调整子组件之间的间距
-                            runSpacing: 1.0, // 调整行之间的间距
-                            children: _list
-                                .map(
-                                  (e) => GestureDetector(
-                                    onTap: () {
-                                      viewWallpaper(e['id']);
-                                    },
-                                    child: Container(
-                                      alignment: Alignment.bottomCenter,
-                                      height:
-                                          (MediaQuery.of(context).size.width) *
-                                              0.33,
-                                      width:
-                                          (MediaQuery.of(context).size.width) *
-                                              0.33,
-                                      decoration: BoxDecoration(
-                                        image: DecorationImage(
-                                          image:
-                                              NetworkImage(e['thumbnailLarge']),
-                                          fit: BoxFit.cover,
-                                        ),
-                                      ),
-                                      child: Text(
-                                        e['resolution'],
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                )
-                                .toList(),
-                          ),
-                        )
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
+        IndexedStack(
+          index: _getIndexFromActiveType(
+              _activeType), // Determine the index based on _activeType
+          children: const [
+            WallpaperNew(),
+            WallpaperTrending(),
+            WallpaperRecent(),
+            CategoryList(),
           ],
         ),
         Positioned(
           bottom: 0,
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+            margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 6),
             decoration: BoxDecoration(
-              color: const Color.fromRGBO(225, 244, 255, 1),
+              color: const Color.fromRGBO(246, 246, 246, 0.8),
               borderRadius: BorderRadius.circular(30),
             ),
             child: Row(
               children: _btn
                   .map(
                     (e) => Container(
-                      width:
-                          (MediaQuery.of(context).size.width - 32 - 45) * 0.33,
-                      height: 50,
+                      width: (MediaQuery.of(context).size.width - 24) * 0.25,
+                      height: 35,
                       decoration: BoxDecoration(
-                        gradient: _activeType == e['label']
-                            ? const LinearGradient(
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                                colors: [
-                                  Color.fromRGBO(103, 71, 231, 1),
-                                  Color.fromRGBO(0, 255, 240, 1),
-                                ],
-                              )
+                        color: _activeType == e['label']
+                            ? const Color.fromRGBO(183, 183, 183, 1)
                             : null,
-                        borderRadius: BorderRadius.circular(50),
+                        borderRadius: BorderRadius.circular(30),
                       ),
                       child: TextButton(
                         onPressed: () {
                           setState(() {
                             _activeType = e['label'];
-                            page = 1;
-                            _list = [];
-                            getList(page);
                           });
                         },
                         style: ButtonStyle(
@@ -201,23 +157,17 @@ class _WallpaperScreenState extends State<WallpaperScreen>
                           overlayColor:
                               MaterialStateProperty.all(Colors.transparent),
                           padding: MaterialStateProperty.all(
-                              const EdgeInsets.only(top: 3, bottom: 0)),
+                              const EdgeInsets.only(top: 5, bottom: 0)),
                         ),
                         child: Column(
                           children: [
-                            SvgPicture.asset(
-                              _activeType == e['label']
-                                  ? e['active_icon']
-                                  : e['icon'],
-                              width: double.parse(e['width']),
-                            ),
                             Text(
                               e['label'],
                               style: TextStyle(
                                 color: _activeType == e['label']
                                     ? Colors.white
-                                    : const Color.fromRGBO(71, 71, 227, 1),
-                                fontSize: 12,
+                                    : const Color.fromRGBO(140, 140, 140, 1),
+                                fontSize: 16,
                               ),
                             ),
                           ],
