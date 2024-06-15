@@ -37,8 +37,17 @@ class _WallpaperTrendingState extends State<WallpaperTrending>
 
   void viewWallpaper(String id) {
     // 跳转到壁纸的详情页面
-    Navigator.push(context,
-        MaterialPageRoute(builder: (context) => WallpaperDetail(id: id)));
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => WallpaperDetail(
+          id: id,
+          list: _list,
+          currentPage: page,
+          type: "trending",
+        ),
+      ),
+    );
   }
 
   void getList(int pageNum) async {

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_test/pages/wallpaper/category_list.dart';
-import 'package:flutter_application_test/pages/wallpaper/wallpaper_detail.dart';
 import 'package:flutter_application_test/pages/wallpaper/wallpaper_new.dart';
 import 'package:flutter_application_test/pages/wallpaper/wallpaper_recent.dart';
 import 'package:flutter_application_test/pages/wallpaper/wallpaper_trending.dart';
@@ -38,12 +37,6 @@ class _WallpaperScreenState extends State<WallpaperScreen>
   void initState() {
     super.initState();
     _controller = AnimationController(vsync: this);
-  }
-
-  void viewWallpaper(String id) {
-    // 跳转到壁纸的详情页面
-    Navigator.push(context,
-        MaterialPageRoute(builder: (context) => WallpaperDetail(id: id)));
   }
 
   @override

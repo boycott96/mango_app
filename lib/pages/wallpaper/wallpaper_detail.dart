@@ -16,7 +16,15 @@ import 'package:toast/toast.dart';
 
 class WallpaperDetail extends StatefulWidget {
   final String id;
-  const WallpaperDetail({super.key, required this.id});
+  final List<dynamic> list;
+  final int currentPage;
+  final String type;
+  const WallpaperDetail(
+      {super.key,
+      required this.id,
+      required this.list,
+      required this.currentPage,
+      required this.type});
 
   @override
   State<WallpaperDetail> createState() => _WallpaperDetailState();
@@ -433,6 +441,24 @@ class _WallpaperDetailState extends State<WallpaperDetail>
     );
   }
 
+  final PageController _pageController = PageController();
+  final ScrollController _listViewController = ScrollController();
+  int _currentIndex = 0;
+
+  void scrollToCenter(BuildContext context, int index) {
+    // Calculate offset to center the current image
+    double screenWidth = MediaQuery.of(context).size.width;
+    double itemWidth = 100.0; // Width of each thumbnail
+    double offset = index * itemWidth - (screenWidth - itemWidth) / 2.0;
+
+    // Scroll ListView to the calculated position
+    _listViewController.animateTo(
+      offset,
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.easeInOut,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     ToastContext().init(context);
@@ -461,148 +487,189 @@ class _WallpaperDetailState extends State<WallpaperDetail>
                   color: Colors.white.withOpacity(0.4), // 设置模糊层的颜色和透明度
                   child: Column(
                     children: [
+                      // Expanded(
+                      //   child: Container(
+                      //     decoration: BoxDecoration(
+                      //         image: DecorationImage(
+                      //           image: FileImage(_file),
+                      //           fit: BoxFit.contain,
+                      //         ),
+                      //         borderRadius: BorderRadius.circular(16)),
+                      //     child: Column(
+                      //       children: [
+                      //         Expanded(child: Container()),
+                      //         Row(
+                      //           mainAxisAlignment: MainAxisAlignment.center,
+                      //           children: [
+                      //             GestureDetector(
+                      //               onTap: () {
+                      //                 _onShareWithResult(context);
+                      //               },
+                      //               child: Container(
+                      //                 padding: const EdgeInsets.symmetric(
+                      //                     vertical: 16),
+                      //                 child: Column(
+                      //                   crossAxisAlignment: CrossAxisAlignment
+                      //                       .center, // 设置子组件在纵轴方向居中对齐
+                      //                   children: [
+                      //                     Container(
+                      //                       width: 48, // 设置按钮宽度
+                      //                       height: 48, // 设置按钮高度
+                      //                       decoration: const BoxDecoration(
+                      //                         shape: BoxShape
+                      //                             .circle, // 将 Container 设置为圆形
+                      //                         color: Color.fromRGBO(
+                      //                             25, 30, 49, 0.53), // 设置按钮颜色
+                      //                       ),
+                      //                       child: Center(
+                      //                         child: SvgPicture.asset(
+                      //                           "assets/icon/share.svg",
+                      //                           width: 24,
+                      //                           theme: const SvgTheme(
+                      //                               currentColor: Colors.white),
+                      //                         ),
+                      //                       ),
+                      //                     ),
+                      //                     Container(
+                      //                       margin:
+                      //                           const EdgeInsets.only(top: 8),
+                      //                       padding: const EdgeInsets.symmetric(
+                      //                           horizontal: 16, vertical: 2),
+                      //                       decoration: BoxDecoration(
+                      //                         color: const Color.fromRGBO(
+                      //                             25, 30, 49, 0.7),
+                      //                         borderRadius:
+                      //                             BorderRadius.circular(12),
+                      //                       ),
+                      //                       child: const Text(
+                      //                         "分享",
+                      //                         style: TextStyle(
+                      //                             color: Colors.white,
+                      //                             fontSize: 12),
+                      //                       ),
+                      //                     ),
+                      //                   ],
+                      //                 ),
+                      //               ),
+                      //             ),
+                      //             GestureDetector(
+                      //               onTap: () {
+                      //                 if (Platform.isIOS) {
+                      //                   downloadAndSaveImage(wallpaper['path']);
+                      //                 } else {
+                      //                   setWallpaper(wallpaper['path']);
+                      //                 }
+                      //               },
+                      //               child: Container(
+                      //                 padding: const EdgeInsets.symmetric(
+                      //                     horizontal: 8, vertical: 16),
+                      //                 child: Column(
+                      //                   crossAxisAlignment: CrossAxisAlignment
+                      //                       .center, // 设置子组件在纵轴方向居中对齐
+                      //                   children: [
+                      //                     Container(
+                      //                       width: 48, // 设置按钮宽度
+                      //                       height: 48, // 设置按钮高度
+                      //                       decoration: const BoxDecoration(
+                      //                         shape: BoxShape
+                      //                             .circle, // 将 Container 设置为圆形
+                      //                         color: Color.fromRGBO(
+                      //                             25, 30, 49, 0.53), // 设置按钮颜色
+                      //                       ),
+                      //                       child: Center(
+                      //                         child: Platform.isAndroid
+                      //                             ? SvgPicture.asset(
+                      //                                 "assets/icon/brush.svg",
+                      //                                 width: 24,
+                      //                                 theme: const SvgTheme(
+                      //                                     currentColor:
+                      //                                         Colors.white),
+                      //                               )
+                      //                             : SvgPicture.asset(
+                      //                                 "assets/icon/download.svg",
+                      //                                 width: 24,
+                      //                                 theme: const SvgTheme(
+                      //                                     currentColor:
+                      //                                         Colors.white),
+                      //                               ),
+                      //                       ),
+                      //                     ),
+                      //                     Container(
+                      //                       margin:
+                      //                           const EdgeInsets.only(top: 8),
+                      //                       padding: const EdgeInsets.symmetric(
+                      //                           horizontal: 16, vertical: 2),
+                      //                       decoration: BoxDecoration(
+                      //                         color: const Color.fromRGBO(
+                      //                             25, 30, 49, 0.7),
+                      //                         borderRadius:
+                      //                             BorderRadius.circular(12),
+                      //                       ),
+                      //                       child: Platform.isAndroid
+                      //                           ? const Text(
+                      //                               "设定",
+                      //                               style: TextStyle(
+                      //                                 color: Colors.white,
+                      //                                 fontSize: 12,
+                      //                               ),
+                      //                             )
+                      //                           : const Text(
+                      //                               "Dow.",
+                      //                               style: TextStyle(
+                      //                                 color: Colors.white,
+                      //                                 fontSize: 12,
+                      //                               ),
+                      //                             ),
+                      //                     ),
+                      //                   ],
+                      //                 ),
+                      //               ),
+                      //             ),
+                      //           ],
+                      //         ),
+                      //       ],
+                      //     ),
+                      //   ),
+                      // ),
                       Expanded(
-                        child: Container(
-                          decoration: BoxDecoration(
-                              image: DecorationImage(
-                                image: FileImage(_file),
-                                fit: BoxFit.contain,
+                        child: PageView.builder(
+                          controller: _pageController,
+                          itemCount: widget.list.length,
+                          itemBuilder: (context, index) {
+                            return Image.network(
+                              widget.list[index]['thumbnailLarge'],
+                              fit: BoxFit.cover,
+                            );
+                          },
+                          onPageChanged: (int index) {
+                            // Scroll ListView to center the current image
+                            scrollToCenter(context, index);
+                          },
+                        ),
+                      ),
+                      SizedBox(
+                        height: 50,
+                        child: ListView.builder(
+                          controller: _listViewController,
+                          scrollDirection: Axis.horizontal,
+                          itemCount: widget.list.length,
+                          itemBuilder: (context, index) {
+                            return GestureDetector(
+                              onTap: () {
+                                _currentIndex = index;
+                              },
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 1.0),
+                                child: Image.network(
+                                  widget.list[index]['thumbnailSmall'],
+                                  width: 20,
+                                  height: 50,
+                                  fit: BoxFit.cover,
+                                ),
                               ),
-                              borderRadius: BorderRadius.circular(16)),
-                          child: Column(
-                            children: [
-                              Expanded(child: Container()),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  GestureDetector(
-                                    onTap: () {
-                                      _onShareWithResult(context);
-                                    },
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 16),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment
-                                            .center, // 设置子组件在纵轴方向居中对齐
-                                        children: [
-                                          Container(
-                                            width: 48, // 设置按钮宽度
-                                            height: 48, // 设置按钮高度
-                                            decoration: const BoxDecoration(
-                                              shape: BoxShape
-                                                  .circle, // 将 Container 设置为圆形
-                                              color: Color.fromRGBO(
-                                                  25, 30, 49, 0.53), // 设置按钮颜色
-                                            ),
-                                            child: Center(
-                                              child: SvgPicture.asset(
-                                                "assets/icon/share.svg",
-                                                width: 24,
-                                                theme: const SvgTheme(
-                                                    currentColor: Colors.white),
-                                              ),
-                                            ),
-                                          ),
-                                          Container(
-                                            margin:
-                                                const EdgeInsets.only(top: 8),
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 16, vertical: 2),
-                                            decoration: BoxDecoration(
-                                              color: const Color.fromRGBO(
-                                                  25, 30, 49, 0.7),
-                                              borderRadius:
-                                                  BorderRadius.circular(12),
-                                            ),
-                                            child: const Text(
-                                              "分享",
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 12),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  GestureDetector(
-                                    onTap: () {
-                                      if (Platform.isIOS) {
-                                        downloadAndSaveImage(wallpaper['path']);
-                                      } else {
-                                        setWallpaper(wallpaper['path']);
-                                      }
-                                    },
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 8, vertical: 16),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment
-                                            .center, // 设置子组件在纵轴方向居中对齐
-                                        children: [
-                                          Container(
-                                            width: 48, // 设置按钮宽度
-                                            height: 48, // 设置按钮高度
-                                            decoration: const BoxDecoration(
-                                              shape: BoxShape
-                                                  .circle, // 将 Container 设置为圆形
-                                              color: Color.fromRGBO(
-                                                  25, 30, 49, 0.53), // 设置按钮颜色
-                                            ),
-                                            child: Center(
-                                              child: Platform.isAndroid
-                                                  ? SvgPicture.asset(
-                                                      "assets/icon/brush.svg",
-                                                      width: 24,
-                                                      theme: const SvgTheme(
-                                                          currentColor:
-                                                              Colors.white),
-                                                    )
-                                                  : SvgPicture.asset(
-                                                      "assets/icon/download.svg",
-                                                      width: 24,
-                                                      theme: const SvgTheme(
-                                                          currentColor:
-                                                              Colors.white),
-                                                    ),
-                                            ),
-                                          ),
-                                          Container(
-                                            margin:
-                                                const EdgeInsets.only(top: 8),
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 16, vertical: 2),
-                                            decoration: BoxDecoration(
-                                              color: const Color.fromRGBO(
-                                                  25, 30, 49, 0.7),
-                                              borderRadius:
-                                                  BorderRadius.circular(12),
-                                            ),
-                                            child: Platform.isAndroid
-                                                ? const Text(
-                                                    "设定",
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 12,
-                                                    ),
-                                                  )
-                                                : const Text(
-                                                    "Dow.",
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 12,
-                                                    ),
-                                                  ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
+                            );
+                          },
                         ),
                       ),
                       Container(
@@ -620,7 +687,7 @@ class _WallpaperDetailState extends State<WallpaperDetail>
                             ),
                           ],
                         ),
-                      )
+                      ),
                     ],
                   ),
                 ),

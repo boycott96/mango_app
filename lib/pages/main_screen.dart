@@ -38,7 +38,7 @@ class _MainScreenState extends State<MainScreen>
   }
 
   Future<void> initDeviceIdentifier() async {
-    String deviceIdentifier;
+    String deviceIdentifier = "";
 
     try {
       var deviceInfo = DeviceInfoPlugin();
@@ -48,12 +48,9 @@ class _MainScreenState extends State<MainScreen>
       } else if (Platform.isIOS) {
         var iosInfo = await deviceInfo.iosInfo;
         deviceIdentifier = iosInfo.identifierForVendor!;
-      } else {
-        deviceIdentifier = 'Unsupported platform';
       }
-    } catch (e) {
-      deviceIdentifier = 'Failed to get device identifier: $e';
-    }
+      // ignore: empty_catches
+    } catch (e) {}
 
     if (!mounted) return;
 

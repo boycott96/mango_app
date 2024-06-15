@@ -85,7 +85,12 @@ class _WallpaperListState extends State<WallpaperList>
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => WallpaperDetail(id: e['id']),
+                          builder: (context) => WallpaperDetail(
+                            id: e['id'],
+                            list: _wallpaperList,
+                            currentPage: page,
+                            type: widget.categoryId.toString(),
+                          ),
                         ),
                       );
                     },
