@@ -1,6 +1,4 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_test/api/wallpaper.dart';
 import 'package:flutter_application_test/pages/wallpaper/category_list.dart';
 import 'package:flutter_application_test/pages/wallpaper/wallpaper_detail.dart';
 import 'package:flutter_application_test/pages/wallpaper/wallpaper_new.dart';
@@ -17,7 +15,6 @@ class WallpaperScreen extends StatefulWidget {
 class _WallpaperScreenState extends State<WallpaperScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
-  final ScrollController _scrollController = ScrollController();
 
   String _activeType = "最新";
   final List<dynamic> _btn = [
@@ -35,26 +32,11 @@ class _WallpaperScreenState extends State<WallpaperScreen>
     }
   ];
 
-  List<dynamic> _list = [];
-
   int page = 1;
-
-  void _scrollListener() {
-    if (_scrollController.position.pixels ==
-        _scrollController.position.maxScrollExtent) {
-      // Reach the bottom
-      setState(() {
-        page = page + 1;
-        getList(page);
-      });
-    }
-  }
 
   @override
   void initState() {
     super.initState();
-    getList(1);
-    _scrollController.addListener(_scrollListener);
     _controller = AnimationController(vsync: this);
   }
 
@@ -62,31 +44,6 @@ class _WallpaperScreenState extends State<WallpaperScreen>
     // 跳转到壁纸的详情页面
     Navigator.push(context,
         MaterialPageRoute(builder: (context) => WallpaperDetail(id: id)));
-  }
-
-  void getList(int pageNum) async {
-    if (_activeType == '热门') {
-      Response response = await WallpaperService(context).trending(pageNum);
-      if (response.data['code'] == 0) {
-        setState(() {
-          _list = [..._list, ...response.data['data']];
-        });
-      }
-    } else if (_activeType == '历史记录') {
-      Response response = await WallpaperService(context).recent(pageNum);
-      if (response.data['code'] == 0) {
-        setState(() {
-          _list = [..._list, ...response.data['data']];
-        });
-      }
-    } else if (_activeType == '最新') {
-      Response response = await WallpaperService(context).topNew(pageNum);
-      if (response.data['code'] == 0) {
-        setState(() {
-          _list = [..._list, ...response.data['data']];
-        });
-      }
-    }
   }
 
   @override

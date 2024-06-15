@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_test/pages/profile/edit_profile.dart';
 import 'package:flutter_application_test/pages/profile/setting_screen.dart';
 import 'package:flutter_application_test/pages/profile/share_url.dart';
+import 'package:flutter_application_test/store/store.dart';
 import 'package:flutter_svg/svg.dart';
 
 class ProfileData extends StatefulWidget {
-  final Map<String, dynamic> profile;
-
-  const ProfileData({super.key, required this.profile});
+  const ProfileData({super.key});
 
   @override
   State<ProfileData> createState() => _ProfileDataState();
@@ -16,11 +15,24 @@ class ProfileData extends StatefulWidget {
 class _ProfileDataState extends State<ProfileData>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
+  late Map<String, dynamic> _profile = {
+    'avatarUrl': 'https://wp.larkdance.cn/file/image/default_avatar.jpg',
+    'name': 'Hello World',
+    'location': 'hefei'
+  };
 
   @override
   void initState() {
     super.initState();
+    initInfo();
     _controller = AnimationController(vsync: this);
+  }
+
+  void initInfo() async {
+    var profile = (await PageData.getMeData());
+    setState(() {
+      _profile = profile;
+    });
   }
 
   @override
@@ -50,7 +62,7 @@ class _ProfileDataState extends State<ProfileData>
                     ClipRRect(
                       borderRadius: BorderRadius.circular(40),
                       child: Image.network(
-                        widget.profile['avatarUrl'],
+                        _profile['avatarUrl'],
                         width: 110,
                         height: 110,
                         fit: BoxFit.cover,
@@ -59,7 +71,7 @@ class _ProfileDataState extends State<ProfileData>
                     Padding(
                       padding: const EdgeInsets.only(top: 8, bottom: 4),
                       child: Text(
-                        widget.profile['name'],
+                        _profile['name'],
                         style: const TextStyle(
                           fontSize: 25,
                           fontWeight: FontWeight.bold,
@@ -82,7 +94,7 @@ class _ProfileDataState extends State<ProfileData>
                               left: 30, right: 30, bottom: 30),
                           child: Column(
                             children: [
-                              Text(widget.profile['location']),
+                              Text(_profile['location']),
                             ],
                           ),
                         )
@@ -188,7 +200,7 @@ class _ProfileDataState extends State<ProfileData>
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>
-                                        EditProfile(profile: widget.profile)));
+                                        EditProfile(profile: _profile)));
                           },
                           child: Container(
                             height:

@@ -1,13 +1,11 @@
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_application_test/api/wallpaper.dart';
 import 'package:flutter_application_test/components/toast_manager.dart';
-import 'package:flutter_application_test/store/store.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_wallpaper_manager/flutter_wallpaper_manager.dart';
@@ -33,8 +31,8 @@ class _WallpaperDetailState extends State<WallpaperDetail>
   String __heightWidth = "Unknown";
 
   dynamic wallpaper;
-  late String _os;
 
+  // ignore: prefer_typing_uninitialized_variables
   var _file;
 
   @override
@@ -147,12 +145,7 @@ class _WallpaperDetailState extends State<WallpaperDetail>
 
   // Platform messages are asynchronous, so we initialize in an async method.
   Future<void> initAppState() async {
-    final operation = (await DeviceInfo.getInfo())['os'];
-
-    setState(() {
-      _os = operation;
-    });
-    if (operation == 'android') {
+    if (Platform.isAndroid) {
       String platformVersion;
       // ignore: no_leading_underscores_for_local_identifiers
       String _heightWidth;
@@ -535,7 +528,7 @@ class _WallpaperDetailState extends State<WallpaperDetail>
                                   ),
                                   GestureDetector(
                                     onTap: () {
-                                      if (_os == 'ios') {
+                                      if (Platform.isIOS) {
                                         downloadAndSaveImage(wallpaper['path']);
                                       } else {
                                         setWallpaper(wallpaper['path']);
@@ -558,7 +551,7 @@ class _WallpaperDetailState extends State<WallpaperDetail>
                                                   25, 30, 49, 0.53), // 设置按钮颜色
                                             ),
                                             child: Center(
-                                              child: _os == "android"
+                                              child: Platform.isAndroid
                                                   ? SvgPicture.asset(
                                                       "assets/icon/brush.svg",
                                                       width: 24,
@@ -586,7 +579,7 @@ class _WallpaperDetailState extends State<WallpaperDetail>
                                               borderRadius:
                                                   BorderRadius.circular(12),
                                             ),
-                                            child: _os == "android"
+                                            child: Platform.isAndroid
                                                 ? const Text(
                                                     "设定",
                                                     style: TextStyle(

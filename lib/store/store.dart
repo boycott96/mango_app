@@ -18,17 +18,17 @@ class TokenManager {
 }
 
 class DeviceInfo {
-  static const String _deviceInfo = 'device';
+  static const String _deviceId = 'device';
 
-  static Future<void> saveInfo(Map<String, dynamic> obj) async {
+  static Future<void> saveInfo(String id) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_deviceInfo, jsonEncode(obj));
+    await prefs.setString(_deviceId, id);
   }
 
-  static Future<Map<String, dynamic>> getInfo() async {
+  static Future<String?> getDevcieId() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? deviceInfo = prefs.getString(_deviceInfo);
-    return jsonDecode(deviceInfo!);
+    String? deviceId = prefs.getString(_deviceId);
+    return deviceId;
   }
 }
 
@@ -36,12 +36,12 @@ class PageData {
   static const String _me = 'me';
   static const String _meInit = 'me_init';
 
-  static Future<void> saveMeInit(bool flag) async {
+  static Future<void> saveInit(bool flag) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_meInit, flag);
   }
 
-  static Future<bool> getMeInit() async {
+  static Future<bool> getInit() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     bool? res = prefs.getBool(_meInit);
     if (res != null && res) {
@@ -58,6 +58,13 @@ class PageData {
   static Future<Map<String, dynamic>> getMeData() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     String? data = prefs.getString(_me);
-    return jsonDecode(data!);
+    if (data == null) {
+      return {
+        'avatarUrl': 'https://wp.larkdance.cn/file/image/default_avatar.jpg',
+        'name': 'Hello World',
+        'location': 'hefei'
+      };
+    }
+    return jsonDecode(data);
   }
 }

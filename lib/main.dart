@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'pages/main_screen.dart';
+import 'package:flutter_application_test/pages/main_screen.dart';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());

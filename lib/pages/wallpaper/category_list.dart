@@ -26,7 +26,6 @@ class _CategoryListState extends State<CategoryList>
     if (response.data['code'] == 0) {
       setState(() {
         _categoryList = response.data['data'];
-        print(_categoryList);
       });
     }
   }

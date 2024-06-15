@@ -37,13 +37,9 @@ class _SigninState extends State<SignIn> with SingleTickerProviderStateMixin {
       return;
     }
     if (mounted) {
-      Map<String, dynamic> deviceInfo = await DeviceInfo.getInfo();
       var form = {
         "username": email,
         "password": hashPassword(password),
-        "brand": deviceInfo['brand'],
-        "manufacturer": deviceInfo['manufacturer'],
-        "model": deviceInfo['model']
       };
       Response res = await UserService(context).signIn(form);
       if (res.data != null) {
