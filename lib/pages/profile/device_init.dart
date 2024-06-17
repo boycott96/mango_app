@@ -22,6 +22,7 @@ class _DeviceInitState extends State<DeviceInit> {
     Response response = await UserService(context).getInfo();
     if (response.data['code'] == 0) {
       var data = response.data['data'];
+      print("data: $data");
       if (data['accessToken'] != null) {
         TokenManager.saveToken(data['accessToken']);
       }

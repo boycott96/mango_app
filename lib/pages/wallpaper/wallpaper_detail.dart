@@ -42,6 +42,7 @@ class _WallpaperDetailState extends State<WallpaperDetail>
 
   // ignore: prefer_typing_uninitialized_variables
   var _file;
+  late final List<dynamic> _list = [];
 
   @override
   void initState() {
@@ -443,25 +444,18 @@ class _WallpaperDetailState extends State<WallpaperDetail>
 
   final PageController _pageController = PageController();
   final ScrollController _listViewController = ScrollController();
-  int _currentIndex = 0;
 
   void scrollToCenter(BuildContext context, int index) {
-    // 获取屏幕宽度
-    double screenWidth = MediaQuery.of(context).size.width;
-
     // 每个缩略图的宽度和它的Padding
     double itemWidth = 30.0; // 宽度
     double padding = 1.0; // 左右两侧的Padding
 
     // 计算滚动到中心位置的偏移量
     double offset = (index * (itemWidth + 2 * padding)) + (itemWidth / 2);
-
-    print("offset: $offset");
-
     // 滚动到计算出的偏移位置
     _listViewController.animateTo(
       offset,
-      duration: const Duration(milliseconds: 500),
+      duration: const Duration(milliseconds: 300),
       curve: Curves.easeInOut,
     );
   }
@@ -635,13 +629,19 @@ class _WallpaperDetailState extends State<WallpaperDetail>
                         controller: _pageController,
                         itemCount: widget.list.length,
                         itemBuilder: (context, index) {
-                          return Image.network(
-                            widget.list[index]['thumbnailSmall'],
-                            fit: BoxFit.contain,
+                          return InteractiveViewer(
+                            panEnabled: true,
+                            boundaryMargin: const EdgeInsets.all(20),
+                            minScale: 1,
+                            maxScale: 10,
+                            child: Image.network(
+                              widget.list[index]['thumbnailSmall']!,
+                              // "https://wp.larkdance.cn/file/private/${index + 1}.jpg",
+                              fit: BoxFit.contain,
+                            ),
                           );
                         },
                         onPageChanged: (int index) {
-                          // Scroll ListView to center the current image
                           scrollToCenter(context, index);
                         },
                       ),
@@ -661,7 +661,12 @@ class _WallpaperDetailState extends State<WallpaperDetail>
                               return GestureDetector(
                                 onTap: () {
                                   setState(() {
-                                    _currentIndex = index;
+                                    _pageController.animateToPage(
+                                      index,
+                                      duration:
+                                          const Duration(milliseconds: 300),
+                                      curve: Curves.easeInOut,
+                                    );
                                   });
                                 },
                                 child: Padding(
