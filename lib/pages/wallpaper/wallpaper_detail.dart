@@ -42,7 +42,7 @@ class _WallpaperDetailState extends State<WallpaperDetail>
 
   // ignore: prefer_typing_uninitialized_variables
   var _file;
-  late final List<dynamic> _list = [];
+  bool isZooming = false;
 
   @override
   void initState() {
@@ -409,6 +409,17 @@ class _WallpaperDetailState extends State<WallpaperDetail>
     }
   }
 
+  Future<File> _getLocalFile(String url) async {
+    var cacheManager = DefaultCacheManager();
+    var fileInfo = await cacheManager.getFileFromCache(url);
+    if (fileInfo != null) {
+      return fileInfo.file;
+    } else {
+      var file = await cacheManager.getSingleFile(url);
+      return file;
+    }
+  }
+
   void _onShareWithResult(BuildContext context) async {
     // A builder is used to retrieve the context immediately
     // surrounding the ElevatedButton.
@@ -627,18 +638,47 @@ class _WallpaperDetailState extends State<WallpaperDetail>
                     Expanded(
                       child: PageView.builder(
                         controller: _pageController,
+                        physics:
+                            isZooming ? NeverScrollableScrollPhysics() : null,
                         itemCount: widget.list.length,
                         itemBuilder: (context, index) {
-                          return InteractiveViewer(
-                            panEnabled: true,
-                            boundaryMargin: const EdgeInsets.all(20),
-                            minScale: 1,
-                            maxScale: 10,
-                            child: Image.network(
-                              widget.list[index]['thumbnailSmall']!,
-                              // "https://wp.larkdance.cn/file/private/${index + 1}.jpg",
-                              fit: BoxFit.contain,
-                            ),
+                          return FutureBuilder<File>(
+                            future: _getLocalFile(
+                                widget.list[index]['path']!),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return Center(
+                                    child: CircularProgressIndicator());
+                              } else if (snapshot.hasError) {
+                                return Center(child: Icon(Icons.error));
+                              } else if (snapshot.hasData) {
+                                return GestureDetector(
+                                  onScaleStart: (_) {
+                                    setState(() {
+                                      isZooming = true;
+                                    });
+                                  },
+                                  onScaleEnd: (_) {
+                                    setState(() {
+                                      isZooming = false;
+                                    });
+                                  },
+                                  child: InteractiveViewer(
+                                    panEnabled: true,
+                                    boundaryMargin: EdgeInsets.all(20),
+                                    minScale: 0.5,
+                                    maxScale: 4,
+                                    child: Image.file(
+                                      snapshot.data!,
+                                      fit: BoxFit.contain,
+                                    ),
+                                  ),
+                                );
+                              } else {
+                                return Center(child: Icon(Icons.error));
+                              }
+                            },
                           );
                         },
                         onPageChanged: (int index) {
