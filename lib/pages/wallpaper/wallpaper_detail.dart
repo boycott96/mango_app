@@ -39,23 +39,61 @@ class _WallpaperDetailState extends State<WallpaperDetail>
   String _platformVersion = 'Unknown';
   // ignore: unused_field
   String __heightWidth = "Unknown";
-
+  final Debouncer _debouncer = Debouncer(milliseconds: 500);
+  final PageController _pageController = PageController();
+  final ScrollController _listViewController = ScrollController();
   dynamic wallpaper;
-
+  late int _selectedIndex;
   // ignore: prefer_typing_uninitialized_variables
   bool isZooming = false;
 
   @override
   void initState() {
-    locateWallpaper(context, widget.id);
     super.initState();
     initAppState();
+    locateWallpaper(context, widget.id); // 指定滚动位置
     _controller = AnimationController(vsync: this);
+  }
+
+  void locateWallpaper(BuildContext context, String id) {
+    for (int i = 0; i < widget.list.length; i++) {
+      var wall = widget.list[i];
+      if (wall['id'] == id) {
+        setState(() {
+          _selectedIndex = i;
+          getInfo(context, id);
+        });
+      }
+    }
+  }
+
+  void locateIndex(BuildContext context, int i) {
+    setState(() {
+      var wall = widget.list[_selectedIndex + i];
+      _selectedIndex = _selectedIndex + i;
+      getInfo(context, wall['id']);
+    });
+  }
+
+  void scrollToCenter(BuildContext context, int index) {
+    // 每个缩略图的宽度和它的Padding
+    double itemWidth = 30.0; // 宽度
+    double padding = 1.0; // 左右两侧的Padding
+
+    // 计算滚动到中心位置的偏移量
+    double offset = (index * (itemWidth + 2 * padding)) + (itemWidth / 2);
+    // 滚动到计算出的偏移位置
+    _listViewController.animateTo(
+      offset,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
   }
 
   @override
   void dispose() {
     super.dispose();
+    _listViewController.dispose();
     _controller.dispose(); //super.dispose();
   }
 
@@ -403,6 +441,11 @@ class _WallpaperDetailState extends State<WallpaperDetail>
     if (response.data['code'] == 0) {
       setState(() {
         wallpaper = response.data['data'];
+        Future.delayed(Duration(milliseconds: 500), () {
+          if (_listViewController.hasClients) {
+            scrollToCenter(context, _selectedIndex);
+          }
+        });
       });
     }
   }
@@ -448,35 +491,6 @@ class _WallpaperDetailState extends State<WallpaperDetail>
             Text("Shared to: ${result.raw}")
         ],
       ),
-    );
-  }
-
-  final Debouncer _debouncer = Debouncer(milliseconds: 500);
-  final PageController _pageController = PageController();
-  final ScrollController _listViewController = ScrollController();
-
-  void locateWallpaper(BuildContext context, String id) {
-    for (int i = 0; i < widget.list.length; i++) {
-      var wall = widget.list[i];
-      if (wall['id'] == id) {
-        getInfo(context, id);
-        scrollToCenter(context, i);
-      }
-    }
-  }
-
-  void scrollToCenter(BuildContext context, int index) {
-    // 每个缩略图的宽度和它的Padding
-    double itemWidth = 30.0; // 宽度
-    double padding = 1.0; // 左右两侧的Padding
-
-    // 计算滚动到中心位置的偏移量
-    double offset = (index * (itemWidth + 2 * padding)) + (itemWidth / 2);
-    // 滚动到计算出的偏移位置
-    _listViewController.animateTo(
-      offset,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
     );
   }
 
@@ -649,11 +663,13 @@ class _WallpaperDetailState extends State<WallpaperDetail>
                         onPointerMove: (details) {
                           if (details.delta.dx > 0) {
                             _debouncer.run(() {
-                              print('向右滑动');
+                              if (_selectedIndex > 0) {
+                                locateIndex(context, -1);
+                              }
                             });
                           } else if (details.delta.dx < 0) {
                             _debouncer.run(() {
-                              print('向左滑动');
+                              locateIndex(context, 1);
                             });
                           }
                         },
