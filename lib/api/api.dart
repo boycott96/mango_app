@@ -10,8 +10,8 @@ class ApiService {
   // final _prefix = "https://wp.larkdance.cn";
   // final _prefix = "http://47.111.178.168:9001";
   // final _prefix = "http://114.100.144.66:9002";
-  // final _prefix = "http://192.168.110.11:9000";
-  final _prefix = "http://192.168.1.235:9000";
+  final _prefix = "http://192.168.110.11:9000";
+  // final _prefix = "http://192.168.1.235:9000";
   ApiService(BuildContext context) {
     // 添加拦截器
     _dio.interceptors

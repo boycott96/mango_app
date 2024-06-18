@@ -2,10 +2,12 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_application_test/api/wallpaper.dart';
 import 'package:flutter_application_test/components/toast_manager.dart';
+import 'package:flutter_application_test/utils/debouncer.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_wallpaper_manager/flutter_wallpaper_manager.dart';
@@ -41,12 +43,11 @@ class _WallpaperDetailState extends State<WallpaperDetail>
   dynamic wallpaper;
 
   // ignore: prefer_typing_uninitialized_variables
-  var _file;
   bool isZooming = false;
 
   @override
   void initState() {
-    getInfo(context);
+    locateWallpaper(context, widget.id);
     super.initState();
     initAppState();
     _controller = AnimationController(vsync: this);
@@ -343,7 +344,7 @@ class _WallpaperDetailState extends State<WallpaperDetail>
     // 获取屏幕尺寸
     final Size screenSize = MediaQuery.of(context).size;
     final croppedFile = await ImageCropper().cropImage(
-      sourcePath: _file.path,
+      sourcePath: (await _getLocalFile(url)).path,
       compressFormat: ImageCompressFormat.jpg,
       compressQuality: 100,
       aspectRatio:
@@ -397,13 +398,10 @@ class _WallpaperDetailState extends State<WallpaperDetail>
     }
   }
 
-  void getInfo(BuildContext context) async {
-    Response response = await WallpaperService(context).info(widget.id);
+  void getInfo(BuildContext context, String id) async {
+    Response response = await WallpaperService(context).info(id);
     if (response.data['code'] == 0) {
-      var file = await DefaultCacheManager()
-          .getSingleFile(response.data['data']['path']);
       setState(() {
-        _file = file;
         wallpaper = response.data['data'];
       });
     }
@@ -453,8 +451,19 @@ class _WallpaperDetailState extends State<WallpaperDetail>
     );
   }
 
+  final Debouncer _debouncer = Debouncer(milliseconds: 500);
   final PageController _pageController = PageController();
   final ScrollController _listViewController = ScrollController();
+
+  void locateWallpaper(BuildContext context, String id) {
+    for (int i = 0; i < widget.list.length; i++) {
+      var wall = widget.list[i];
+      if (wall['id'] == id) {
+        getInfo(context, id);
+        scrollToCenter(context, i);
+      }
+    }
+  }
 
   void scrollToCenter(BuildContext context, int index) {
     // 每个缩略图的宽度和它的Padding
@@ -477,7 +486,7 @@ class _WallpaperDetailState extends State<WallpaperDetail>
     // 检查数据是否加载完成，若未加载完成，则显示一个加载中的指示器
     return Scaffold(
       appBar: AppBar(),
-      body: wallpaper == null || _file == null
+      body: wallpaper == null
           ? const Center(
               child: SizedBox(
                 width: 40, // 设置加载圈的宽度
@@ -636,54 +645,42 @@ class _WallpaperDetailState extends State<WallpaperDetail>
                     //   ),
                     // ),
                     Expanded(
-                      child: PageView.builder(
-                        controller: _pageController,
-                        physics:
-                            isZooming ? NeverScrollableScrollPhysics() : null,
-                        itemCount: widget.list.length,
-                        itemBuilder: (context, index) {
-                          return FutureBuilder<File>(
-                            future: _getLocalFile(
-                                widget.list[index]['path']!),
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return Center(
-                                    child: CircularProgressIndicator());
-                              } else if (snapshot.hasError) {
-                                return Center(child: Icon(Icons.error));
-                              } else if (snapshot.hasData) {
-                                return GestureDetector(
-                                  onScaleStart: (_) {
-                                    setState(() {
-                                      isZooming = true;
-                                    });
-                                  },
-                                  onScaleEnd: (_) {
-                                    setState(() {
-                                      isZooming = false;
-                                    });
-                                  },
-                                  child: InteractiveViewer(
-                                    panEnabled: true,
-                                    boundaryMargin: EdgeInsets.all(20),
-                                    minScale: 0.5,
-                                    maxScale: 4,
-                                    child: Image.file(
-                                      snapshot.data!,
-                                      fit: BoxFit.contain,
-                                    ),
-                                  ),
-                                );
-                              } else {
-                                return Center(child: Icon(Icons.error));
-                              }
-                            },
-                          );
+                      child: Listener(
+                        onPointerMove: (details) {
+                          if (details.delta.dx > 0) {
+                            _debouncer.run(() {
+                              print('向右滑动');
+                            });
+                          } else if (details.delta.dx < 0) {
+                            _debouncer.run(() {
+                              print('向左滑动');
+                            });
+                          }
                         },
-                        onPageChanged: (int index) {
-                          scrollToCenter(context, index);
-                        },
+                        child: FutureBuilder<File>(
+                          future: _getLocalFile(wallpaper['path']!),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Center(
+                                  child: CircularProgressIndicator());
+                            } else if (snapshot.hasError) {
+                              return const Center(child: Icon(Icons.error));
+                            } else if (snapshot.hasData) {
+                              return InteractiveViewer(
+                                panEnabled: true,
+                                minScale: 1,
+                                maxScale: 4,
+                                child: Image.file(
+                                  snapshot.data!,
+                                  fit: BoxFit.contain,
+                                ),
+                              );
+                            } else {
+                              return const Center(child: Icon(Icons.error));
+                            }
+                          },
+                        ),
                       ),
                     ),
                     SizedBox(
@@ -700,13 +697,9 @@ class _WallpaperDetailState extends State<WallpaperDetail>
                             (index) {
                               return GestureDetector(
                                 onTap: () {
+                                  scrollToCenter(context, index);
                                   setState(() {
-                                    _pageController.animateToPage(
-                                      index,
-                                      duration:
-                                          const Duration(milliseconds: 300),
-                                      curve: Curves.easeInOut,
-                                    );
+                                    wallpaper = widget.list[index];
                                   });
                                 },
                                 child: Padding(
