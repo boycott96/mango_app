@@ -40,16 +40,31 @@ class _WallpaperDetailState extends State<WallpaperDetail>
   // ignore: unused_field
   String __heightWidth = "Unknown";
   final Debouncer _debouncer = Debouncer(milliseconds: 500);
-  final PageController _pageController = PageController();
-  final ScrollController _listViewController = ScrollController();
+  late PageController _pageController;
+  late ScrollController _listViewController;
   dynamic wallpaper;
   late int _selectedIndex;
   // ignore: prefer_typing_uninitialized_variables
   bool isZooming = false;
+  int _pointerCount = 0;
+
+  void _onPointerDown(PointerEvent event) {
+    setState(() {
+      _pointerCount++;
+    });
+  }
+
+  void _onPointerUp(PointerEvent event) {
+    setState(() {
+      _pointerCount--;
+    });
+  }
 
   @override
   void initState() {
     super.initState();
+    _pageController = PageController();
+    _listViewController = ScrollController();
     initAppState();
     locateWallpaper(context, widget.id); // 指定滚动位置
     _controller = AnimationController(vsync: this);
@@ -59,6 +74,11 @@ class _WallpaperDetailState extends State<WallpaperDetail>
     for (int i = 0; i < widget.list.length; i++) {
       var wall = widget.list[i];
       if (wall['id'] == id) {
+        _pageController.animateToPage(
+          i,
+          duration: Duration(milliseconds: 500),
+          curve: Curves.ease,
+        );
         setState(() {
           _selectedIndex = i;
           getInfo(context, id);
@@ -660,42 +680,30 @@ class _WallpaperDetailState extends State<WallpaperDetail>
                     // ),
                     Expanded(
                       child: Listener(
-                        onPointerMove: (details) {
-                          if (details.delta.dx > 0) {
-                            _debouncer.run(() {
-                              if (_selectedIndex > 0) {
-                                locateIndex(context, -1);
-                              }
-                            });
-                          } else if (details.delta.dx < 0) {
-                            _debouncer.run(() {
-                              locateIndex(context, 1);
-                            });
-                          }
-                        },
-                        child: FutureBuilder<File>(
-                          future: _getLocalFile(wallpaper['path']!),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return const Center(
-                                  child: CircularProgressIndicator());
-                            } else if (snapshot.hasError) {
-                              return const Center(child: Icon(Icons.error));
-                            } else if (snapshot.hasData) {
+                        onPointerDown: _onPointerDown,
+                        onPointerUp: _onPointerUp,
+                        child: GestureDetector(
+                          child: PageView.builder(
+                            controller: _pageController,
+                            itemCount: widget.list.length,
+                            itemBuilder: (context, index) {
                               return InteractiveViewer(
                                 panEnabled: true,
                                 minScale: 1,
-                                maxScale: 4,
-                                child: Image.file(
-                                  snapshot.data!,
+                                maxScale: 10,
+                                child: Image.network(
+                                  widget.list[index]['path']!,
                                   fit: BoxFit.contain,
                                 ),
                               );
-                            } else {
-                              return const Center(child: Icon(Icons.error));
-                            }
-                          },
+                            },
+                            onPageChanged: (int index) {
+                              scrollToCenter(context, index);
+                            },
+                            physics: _pointerCount >= 2
+                                ? const NeverScrollableScrollPhysics()
+                                : null,
+                          ),
                         ),
                       ),
                     ),
@@ -714,6 +722,7 @@ class _WallpaperDetailState extends State<WallpaperDetail>
                               return GestureDetector(
                                 onTap: () {
                                   scrollToCenter(context, index);
+                                  print(index);
                                   setState(() {
                                     wallpaper = widget.list[index];
                                   });
