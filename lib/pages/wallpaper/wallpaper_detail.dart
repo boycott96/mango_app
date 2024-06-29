@@ -1,13 +1,9 @@
 import 'dart:io';
-import 'dart:ui';
 
 import 'package:dio/dio.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_application_test/api/wallpaper.dart';
 import 'package:flutter_application_test/components/toast_manager.dart';
-import 'package:flutter_application_test/utils/debouncer.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_wallpaper_manager/flutter_wallpaper_manager.dart';
@@ -39,14 +35,14 @@ class _WallpaperDetailState extends State<WallpaperDetail>
   String _platformVersion = 'Unknown';
   // ignore: unused_field
   String __heightWidth = "Unknown";
-  final Debouncer _debouncer = Debouncer(milliseconds: 500);
-  late PageController _pageController;
-  late ScrollController _listViewController;
+  late final PageController _pageController = PageController();
+  late ScrollController _listViewController = ScrollController();
   dynamic wallpaper;
   late int _selectedIndex;
-  // ignore: prefer_typing_uninitialized_variables
+  final Map<String, File> _imageCache = {}; // 内存缓存
   bool isZooming = false;
   int _pointerCount = 0;
+  bool isNormalSlide = true;
 
   void _onPointerDown(PointerEvent event) {
     setState(() {
@@ -63,36 +59,35 @@ class _WallpaperDetailState extends State<WallpaperDetail>
   @override
   void initState() {
     super.initState();
-    _pageController = PageController();
     _listViewController = ScrollController();
     initAppState();
-    locateWallpaper(context, widget.id); // 指定滚动位置
+    locateWallpaper(context, widget.id);
     _controller = AnimationController(vsync: this);
   }
 
-  void locateWallpaper(BuildContext context, String id) {
+  void locateWallpaper(BuildContext context, String id) async {
     for (int i = 0; i < widget.list.length; i++) {
       var wall = widget.list[i];
       if (wall['id'] == id) {
-        _pageController.animateToPage(
-          i,
-          duration: Duration(milliseconds: 500),
-          curve: Curves.ease,
-        );
         setState(() {
           _selectedIndex = i;
-          getInfo(context, id);
+          wallpaper = widget.list[_selectedIndex];
         });
+        // Use addPostFrameCallback to ensure the controller is attached
+        WidgetsBinding.instance.addPostFrameCallback((_) async {
+          scrollToCenter(context, _selectedIndex);
+          isNormalSlide = false;
+          await _pageController.animateToPage(
+            i,
+            duration: const Duration(milliseconds: 500),
+            curve: Curves.ease,
+          );
+          isNormalSlide = true;
+        });
+
+        break;
       }
     }
-  }
-
-  void locateIndex(BuildContext context, int i) {
-    setState(() {
-      var wall = widget.list[_selectedIndex + i];
-      _selectedIndex = _selectedIndex + i;
-      getInfo(context, wall['id']);
-    });
   }
 
   void scrollToCenter(BuildContext context, int index) {
@@ -456,27 +451,19 @@ class _WallpaperDetailState extends State<WallpaperDetail>
     }
   }
 
-  void getInfo(BuildContext context, String id) async {
-    Response response = await WallpaperService(context).info(id);
-    if (response.data['code'] == 0) {
-      setState(() {
-        wallpaper = response.data['data'];
-        Future.delayed(Duration(milliseconds: 500), () {
-          if (_listViewController.hasClients) {
-            scrollToCenter(context, _selectedIndex);
-          }
-        });
-      });
-    }
-  }
-
   Future<File> _getLocalFile(String url) async {
+    if (_imageCache.containsKey(url)) {
+      return _imageCache[url]!;
+    }
+
     var cacheManager = DefaultCacheManager();
     var fileInfo = await cacheManager.getFileFromCache(url);
     if (fileInfo != null) {
+      _imageCache[url] = fileInfo.file;
       return fileInfo.file;
     } else {
       var file = await cacheManager.getSingleFile(url);
+      _imageCache[url] = file;
       return file;
     }
   }
@@ -687,18 +674,56 @@ class _WallpaperDetailState extends State<WallpaperDetail>
                             controller: _pageController,
                             itemCount: widget.list.length,
                             itemBuilder: (context, index) {
-                              return InteractiveViewer(
-                                panEnabled: true,
-                                minScale: 1,
-                                maxScale: 10,
-                                child: Image.network(
-                                  widget.list[index]['path']!,
-                                  fit: BoxFit.contain,
-                                ),
-                              );
+                              if (index == _selectedIndex) {
+                                return InteractiveViewer(
+                                  panEnabled: true,
+                                  minScale: 1,
+                                  maxScale: 10,
+                                  child: FutureBuilder<File>(
+                                    future: _getLocalFile(
+                                        widget.list[index]['path']!),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
+                                        if (_imageCache.containsKey(
+                                            widget.list[index]['path']!)) {
+                                          return Image.file(
+                                            _imageCache[widget.list[index]
+                                                ['path']!]!,
+                                            fit: BoxFit.contain,
+                                          );
+                                        } else {
+                                          return const Center(
+                                            child: CircularProgressIndicator(),
+                                          );
+                                        }
+                                      } else if (snapshot.hasError) {
+                                        return const Center(
+                                          child: Icon(Icons.error),
+                                        );
+                                      } else if (snapshot.hasData) {
+                                        return Image.file(
+                                          snapshot.data!,
+                                          fit: BoxFit.contain,
+                                        );
+                                      } else {
+                                        return Container();
+                                      }
+                                    },
+                                  ),
+                                );
+                              } else {
+                                return Container();
+                              }
                             },
                             onPageChanged: (int index) {
-                              scrollToCenter(context, index);
+                              if (isNormalSlide) {
+                                setState(() {
+                                  wallpaper = widget.list[index];
+                                  _selectedIndex = index;
+                                });
+                                scrollToCenter(context, index);
+                              }
                             },
                             physics: _pointerCount >= 2
                                 ? const NeverScrollableScrollPhysics()
@@ -720,12 +745,19 @@ class _WallpaperDetailState extends State<WallpaperDetail>
                             widget.list.length,
                             (index) {
                               return GestureDetector(
-                                onTap: () {
-                                  scrollToCenter(context, index);
-                                  print(index);
+                                onTap: () async {
                                   setState(() {
                                     wallpaper = widget.list[index];
+                                    _selectedIndex = index;
                                   });
+                                  scrollToCenter(context, index);
+                                  isNormalSlide = false;
+                                  await _pageController.animateToPage(
+                                    index,
+                                    duration: const Duration(milliseconds: 500),
+                                    curve: Curves.ease,
+                                  );
+                                  isNormalSlide = true;
                                 },
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(

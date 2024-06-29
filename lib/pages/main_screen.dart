@@ -25,7 +25,7 @@ class _MainScreenState extends State<MainScreen>
 
   List<Widget> tabViews = [
     const WallpaperScreen(),
-    const MusicScreen(),
+    // const MusicScreen(),
     const ProfileData()
   ];
 
@@ -109,11 +109,11 @@ class _MainScreenState extends State<MainScreen>
             activeIcon: SvgPicture.asset("assets/icon/library_selected.svg"),
             label: '图库',
           ),
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.music_note_outlined),
-            activeIcon: Icon(Icons.music_note),
-            label: '音乐',
-          ),
+          // const BottomNavigationBarItem(
+          //   icon: Icon(Icons.music_note_outlined),
+          //   activeIcon: Icon(Icons.music_note),
+          //   label: '音乐',
+          // ),
           const BottomNavigationBarItem(
             icon: Icon(Icons.person_outline),
             activeIcon: Icon(Icons.person),
