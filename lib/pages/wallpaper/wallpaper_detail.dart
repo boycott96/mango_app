@@ -518,285 +518,313 @@ class _WallpaperDetailState extends State<WallpaperDetail>
           : SizedBox(
               height: MediaQuery.of(context).size.height,
               child: Container(
-                color: Colors.white.withOpacity(0.4), // 设置模糊层的颜色和透明度
-                child: Column(
-                  children: [
-                    // Expanded(
-                    //   child: Container(
-                    //     decoration: BoxDecoration(
-                    //         image: DecorationImage(
-                    //           image: FileImage(_file),
-                    //           fit: BoxFit.contain,
-                    //         ),
-                    //         borderRadius: BorderRadius.circular(16)),
-                    //     child: Column(
-                    //       children: [
-                    //         Expanded(child: Container()),
-                    //         Row(
-                    //           mainAxisAlignment: MainAxisAlignment.center,
-                    //           children: [
-                    //             GestureDetector(
-                    //               onTap: () {
-                    //                 _onShareWithResult(context);
-                    //               },
-                    //               child: Container(
-                    //                 padding: const EdgeInsets.symmetric(
-                    //                     vertical: 16),
-                    //                 child: Column(
-                    //                   crossAxisAlignment: CrossAxisAlignment
-                    //                       .center, // 设置子组件在纵轴方向居中对齐
-                    //                   children: [
-                    //                     Container(
-                    //                       width: 48, // 设置按钮宽度
-                    //                       height: 48, // 设置按钮高度
-                    //                       decoration: const BoxDecoration(
-                    //                         shape: BoxShape
-                    //                             .circle, // 将 Container 设置为圆形
-                    //                         color: Color.fromRGBO(
-                    //                             25, 30, 49, 0.53), // 设置按钮颜色
-                    //                       ),
-                    //                       child: Center(
-                    //                         child: SvgPicture.asset(
-                    //                           "assets/icon/share.svg",
-                    //                           width: 24,
-                    //                           theme: const SvgTheme(
-                    //                               currentColor: Colors.white),
-                    //                         ),
-                    //                       ),
-                    //                     ),
-                    //                     Container(
-                    //                       margin:
-                    //                           const EdgeInsets.only(top: 8),
-                    //                       padding: const EdgeInsets.symmetric(
-                    //                           horizontal: 16, vertical: 2),
-                    //                       decoration: BoxDecoration(
-                    //                         color: const Color.fromRGBO(
-                    //                             25, 30, 49, 0.7),
-                    //                         borderRadius:
-                    //                             BorderRadius.circular(12),
-                    //                       ),
-                    //                       child: const Text(
-                    //                         "分享",
-                    //                         style: TextStyle(
-                    //                             color: Colors.white,
-                    //                             fontSize: 12),
-                    //                       ),
-                    //                     ),
-                    //                   ],
-                    //                 ),
-                    //               ),
-                    //             ),
-                    //             GestureDetector(
-                    //               onTap: () {
-                    //                 if (Platform.isIOS) {
-                    //                   downloadAndSaveImage(wallpaper['path']);
-                    //                 } else {
-                    //                   setWallpaper(wallpaper['path']);
-                    //                 }
-                    //               },
-                    //               child: Container(
-                    //                 padding: const EdgeInsets.symmetric(
-                    //                     horizontal: 8, vertical: 16),
-                    //                 child: Column(
-                    //                   crossAxisAlignment: CrossAxisAlignment
-                    //                       .center, // 设置子组件在纵轴方向居中对齐
-                    //                   children: [
-                    //                     Container(
-                    //                       width: 48, // 设置按钮宽度
-                    //                       height: 48, // 设置按钮高度
-                    //                       decoration: const BoxDecoration(
-                    //                         shape: BoxShape
-                    //                             .circle, // 将 Container 设置为圆形
-                    //                         color: Color.fromRGBO(
-                    //                             25, 30, 49, 0.53), // 设置按钮颜色
-                    //                       ),
-                    //                       child: Center(
-                    //                         child: Platform.isAndroid
-                    //                             ? SvgPicture.asset(
-                    //                                 "assets/icon/brush.svg",
-                    //                                 width: 24,
-                    //                                 theme: const SvgTheme(
-                    //                                     currentColor:
-                    //                                         Colors.white),
-                    //                               )
-                    //                             : SvgPicture.asset(
-                    //                                 "assets/icon/download.svg",
-                    //                                 width: 24,
-                    //                                 theme: const SvgTheme(
-                    //                                     currentColor:
-                    //                                         Colors.white),
-                    //                               ),
-                    //                       ),
-                    //                     ),
-                    //                     Container(
-                    //                       margin:
-                    //                           const EdgeInsets.only(top: 8),
-                    //                       padding: const EdgeInsets.symmetric(
-                    //                           horizontal: 16, vertical: 2),
-                    //                       decoration: BoxDecoration(
-                    //                         color: const Color.fromRGBO(
-                    //                             25, 30, 49, 0.7),
-                    //                         borderRadius:
-                    //                             BorderRadius.circular(12),
-                    //                       ),
-                    //                       child: Platform.isAndroid
-                    //                           ? const Text(
-                    //                               "设定",
-                    //                               style: TextStyle(
-                    //                                 color: Colors.white,
-                    //                                 fontSize: 12,
-                    //                               ),
-                    //                             )
-                    //                           : const Text(
-                    //                               "Dow.",
-                    //                               style: TextStyle(
-                    //                                 color: Colors.white,
-                    //                                 fontSize: 12,
-                    //                               ),
-                    //                             ),
-                    //                     ),
-                    //                   ],
-                    //                 ),
-                    //               ),
-                    //             ),
-                    //           ],
-                    //         ),
-                    //       ],
-                    //     ),
-                    //   ),
-                    // ),
-                    Expanded(
-                      child: Listener(
-                        onPointerDown: _onPointerDown,
-                        onPointerUp: _onPointerUp,
-                        child: GestureDetector(
-                          child: PageView.builder(
-                            controller: _pageController,
-                            itemCount: widget.list.length,
-                            itemBuilder: (context, index) {
-                              if (index == _selectedIndex) {
-                                return InteractiveViewer(
-                                  panEnabled: true,
-                                  minScale: 1,
-                                  maxScale: 10,
-                                  child: FutureBuilder<File>(
-                                    future: _getLocalFile(
-                                        widget.list[index]['path']!),
-                                    builder: (context, snapshot) {
-                                      if (snapshot.connectionState ==
-                                          ConnectionState.waiting) {
-                                        if (_imageCache.containsKey(
-                                            widget.list[index]['path']!)) {
-                                          return Image.file(
-                                            _imageCache[widget.list[index]
-                                                ['path']!]!,
-                                            fit: BoxFit.contain,
-                                          );
-                                        } else {
-                                          return const Center(
-                                            child: CircularProgressIndicator(),
-                                          );
-                                        }
-                                      } else if (snapshot.hasError) {
-                                        return const Center(
-                                          child: Icon(Icons.error),
-                                        );
-                                      } else if (snapshot.hasData) {
-                                        return Image.file(
-                                          snapshot.data!,
-                                          fit: BoxFit.contain,
-                                        );
-                                      } else {
-                                        return Container();
-                                      }
-                                    },
-                                  ),
-                                );
-                              } else {
-                                return Container();
-                              }
-                            },
-                            onPageChanged: (int index) {
-                              if (isNormalSlide) {
-                                setState(() {
-                                  wallpaper = widget.list[index];
-                                  _selectedIndex = index;
-                                });
-                                scrollToCenter(context, index);
-                              }
-                            },
-                            physics: _pointerCount >= 2
-                                ? const NeverScrollableScrollPhysics()
-                                : null,
+                  color: Colors.white.withOpacity(0.4), // 设置模糊层的颜色和透明度
+                  child: Stack(
+                    children: [
+                      Column(
+                        children: [
+                          // Expanded(
+                          //   child: Container(
+                          //     decoration: BoxDecoration(
+                          //         image: DecorationImage(
+                          //           image: FileImage(_file),
+                          //           fit: BoxFit.contain,
+                          //         ),
+                          //         borderRadius: BorderRadius.circular(16)),
+                          //     child: Column(
+                          //       children: [
+                          //         Expanded(child: Container()),
+                          //         Row(
+                          //           mainAxisAlignment: MainAxisAlignment.center,
+                          //           children: [
+                          //             GestureDetector(
+                          //               onTap: () {
+                          //                 _onShareWithResult(context);
+                          //               },
+                          //               child: Container(
+                          //                 padding: const EdgeInsets.symmetric(
+                          //                     vertical: 16),
+                          //                 child: Column(
+                          //                   crossAxisAlignment: CrossAxisAlignment
+                          //                       .center, // 设置子组件在纵轴方向居中对齐
+                          //                   children: [
+                          //                     Container(
+                          //                       width: 48, // 设置按钮宽度
+                          //                       height: 48, // 设置按钮高度
+                          //                       decoration: const BoxDecoration(
+                          //                         shape: BoxShape
+                          //                             .circle, // 将 Container 设置为圆形
+                          //                         color: Color.fromRGBO(
+                          //                             25, 30, 49, 0.53), // 设置按钮颜色
+                          //                       ),
+                          //                       child: Center(
+                          //                         child: SvgPicture.asset(
+                          //                           "assets/icon/share.svg",
+                          //                           width: 24,
+                          //                           theme: const SvgTheme(
+                          //                               currentColor: Colors.white),
+                          //                         ),
+                          //                       ),
+                          //                     ),
+                          //                     Container(
+                          //                       margin:
+                          //                           const EdgeInsets.only(top: 8),
+                          //                       padding: const EdgeInsets.symmetric(
+                          //                           horizontal: 16, vertical: 2),
+                          //                       decoration: BoxDecoration(
+                          //                         color: const Color.fromRGBO(
+                          //                             25, 30, 49, 0.7),
+                          //                         borderRadius:
+                          //                             BorderRadius.circular(12),
+                          //                       ),
+                          //                       child: const Text(
+                          //                         "分享",
+                          //                         style: TextStyle(
+                          //                             color: Colors.white,
+                          //                             fontSize: 12),
+                          //                       ),
+                          //                     ),
+                          //                   ],
+                          //                 ),
+                          //               ),
+                          //             ),
+                          //             GestureDetector(
+                          //               onTap: () {
+                          //                 if (Platform.isIOS) {
+                          //                   downloadAndSaveImage(wallpaper['path']);
+                          //                 } else {
+                          //                   setWallpaper(wallpaper['path']);
+                          //                 }
+                          //               },
+                          //               child: Container(
+                          //                 padding: const EdgeInsets.symmetric(
+                          //                     horizontal: 8, vertical: 16),
+                          //                 child: Column(
+                          //                   crossAxisAlignment: CrossAxisAlignment
+                          //                       .center, // 设置子组件在纵轴方向居中对齐
+                          //                   children: [
+                          //                     Container(
+                          //                       width: 48, // 设置按钮宽度
+                          //                       height: 48, // 设置按钮高度
+                          //                       decoration: const BoxDecoration(
+                          //                         shape: BoxShape
+                          //                             .circle, // 将 Container 设置为圆形
+                          //                         color: Color.fromRGBO(
+                          //                             25, 30, 49, 0.53), // 设置按钮颜色
+                          //                       ),
+                          //                       child: Center(
+                          //                         child: Platform.isAndroid
+                          //                             ? SvgPicture.asset(
+                          //                                 "assets/icon/brush.svg",
+                          //                                 width: 24,
+                          //                                 theme: const SvgTheme(
+                          //                                     currentColor:
+                          //                                         Colors.white),
+                          //                               )
+                          //                             : SvgPicture.asset(
+                          //                                 "assets/icon/download.svg",
+                          //                                 width: 24,
+                          //                                 theme: const SvgTheme(
+                          //                                     currentColor:
+                          //                                         Colors.white),
+                          //                               ),
+                          //                       ),
+                          //                     ),
+                          //                     Container(
+                          //                       margin:
+                          //                           const EdgeInsets.only(top: 8),
+                          //                       padding: const EdgeInsets.symmetric(
+                          //                           horizontal: 16, vertical: 2),
+                          //                       decoration: BoxDecoration(
+                          //                         color: const Color.fromRGBO(
+                          //                             25, 30, 49, 0.7),
+                          //                         borderRadius:
+                          //                             BorderRadius.circular(12),
+                          //                       ),
+                          //                       child: Platform.isAndroid
+                          //                           ? const Text(
+                          //                               "设定",
+                          //                               style: TextStyle(
+                          //                                 color: Colors.white,
+                          //                                 fontSize: 12,
+                          //                               ),
+                          //                             )
+                          //                           : const Text(
+                          //                               "Dow.",
+                          //                               style: TextStyle(
+                          //                                 color: Colors.white,
+                          //                                 fontSize: 12,
+                          //                               ),
+                          //                             ),
+                          //                     ),
+                          //                   ],
+                          //                 ),
+                          //               ),
+                          //             ),
+                          //           ],
+                          //         ),
+                          //       ],
+                          //     ),
+                          //   ),
+                          // ),
+                          Expanded(
+                            child: Listener(
+                              onPointerDown: _onPointerDown,
+                              onPointerUp: _onPointerUp,
+                              child: GestureDetector(
+                                child: PageView.builder(
+                                  controller: _pageController,
+                                  itemCount: widget.list.length,
+                                  itemBuilder: (context, index) {
+                                    if (index == _selectedIndex) {
+                                      return InteractiveViewer(
+                                        panEnabled: true,
+                                        minScale: 1,
+                                        maxScale: 10,
+                                        child: FutureBuilder<File>(
+                                          future: _getLocalFile(
+                                              widget.list[index]['path']!),
+                                          builder: (context, snapshot) {
+                                            if (snapshot.connectionState ==
+                                                ConnectionState.waiting) {
+                                              if (_imageCache.containsKey(widget
+                                                  .list[index]['path']!)) {
+                                                return Image.file(
+                                                  _imageCache[widget.list[index]
+                                                      ['path']!]!,
+                                                  fit: BoxFit.contain,
+                                                );
+                                              } else {
+                                                return const Center(
+                                                  child:
+                                                      CircularProgressIndicator(),
+                                                );
+                                              }
+                                            } else if (snapshot.hasError) {
+                                              return const Center(
+                                                child: Icon(Icons.error),
+                                              );
+                                            } else if (snapshot.hasData) {
+                                              return Image.file(
+                                                snapshot.data!,
+                                                fit: BoxFit.contain,
+                                              );
+                                            } else {
+                                              return Container();
+                                            }
+                                          },
+                                        ),
+                                      );
+                                    } else {
+                                      return Container();
+                                    }
+                                  },
+                                  onPageChanged: (int index) {
+                                    if (isNormalSlide) {
+                                      setState(() {
+                                        wallpaper = widget.list[index];
+                                        _selectedIndex = index;
+                                      });
+                                      scrollToCenter(context, index);
+                                    }
+                                  },
+                                  physics: _pointerCount >= 2
+                                      ? const NeverScrollableScrollPhysics()
+                                      : null,
+                                ),
+                              ),
+                            ),
                           ),
+                          SizedBox(
+                            height: 60,
+                            child: ListView(
+                              controller: _listViewController,
+                              scrollDirection: Axis.horizontal,
+                              children: [
+                                SizedBox(
+                                    width: MediaQuery.of(context).size.width /
+                                        2), // 手动添加的第一个项
+                                ...List.generate(
+                                  widget.list.length,
+                                  (index) {
+                                    return GestureDetector(
+                                      onTap: () async {
+                                        setState(() {
+                                          wallpaper = widget.list[index];
+                                          _selectedIndex = index;
+                                        });
+                                        scrollToCenter(context, index);
+                                        isNormalSlide = false;
+                                        await _pageController.animateToPage(
+                                          index,
+                                          duration:
+                                              const Duration(milliseconds: 500),
+                                          curve: Curves.ease,
+                                        );
+                                        isNormalSlide = true;
+                                      },
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 1.0),
+                                        child: Image.network(
+                                          widget.list[index]['thumbnailSmall'],
+                                          width: 30,
+                                          height: 60,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                                SizedBox(
+                                    width: MediaQuery.of(context).size.width /
+                                        2), // 手动添加的最后一个项
+                              ],
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.fromLTRB(20, 30, 20, 0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "尺寸:${wallpaper['resolution']}",
+                                  style: const TextStyle(color: Colors.black),
+                                ),
+                                Text(
+                                  "大小:${formatBytes(wallpaper['fileSize'])}",
+                                  style: const TextStyle(color: Colors.black),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      Positioned(
+                        right: 16.0,
+                        bottom: 120.0,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: <Widget>[
+                            RawMaterialButton(
+                              onPressed: () {
+                                // Add your onPressed code here!
+                              },
+                              child: SvgPicture.asset(
+                                "assets/icon/like.svg",
+                                height: 35,
+                                width: 35,
+                              ),
+                              elevation: 0.0,
+                              fillColor: Colors.transparent,
+                              shape: CircleBorder(),
+                            ),
+                            SizedBox(height: 16.0),
+                          ],
                         ),
                       ),
-                    ),
-                    SizedBox(
-                      height: 60,
-                      child: ListView(
-                        controller: _listViewController,
-                        scrollDirection: Axis.horizontal,
-                        children: [
-                          SizedBox(
-                              width: MediaQuery.of(context).size.width /
-                                  2), // 手动添加的第一个项
-                          ...List.generate(
-                            widget.list.length,
-                            (index) {
-                              return GestureDetector(
-                                onTap: () async {
-                                  setState(() {
-                                    wallpaper = widget.list[index];
-                                    _selectedIndex = index;
-                                  });
-                                  scrollToCenter(context, index);
-                                  isNormalSlide = false;
-                                  await _pageController.animateToPage(
-                                    index,
-                                    duration: const Duration(milliseconds: 500),
-                                    curve: Curves.ease,
-                                  );
-                                  isNormalSlide = true;
-                                },
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 1.0),
-                                  child: Image.network(
-                                    widget.list[index]['thumbnailSmall'],
-                                    width: 30,
-                                    height: 60,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                          SizedBox(
-                              width: MediaQuery.of(context).size.width /
-                                  2), // 手动添加的最后一个项
-                        ],
-                      ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.fromLTRB(20, 30, 20, 0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "尺寸:${wallpaper['resolution']}",
-                            style: const TextStyle(color: Colors.black),
-                          ),
-                          Text(
-                            "大小:${formatBytes(wallpaper['fileSize'])}",
-                            style: const TextStyle(color: Colors.black),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+                    ],
+                  )),
             ),
     );
   }
