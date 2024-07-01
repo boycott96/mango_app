@@ -801,7 +801,7 @@ class _WallpaperDetailState extends State<WallpaperDetail>
                         ],
                       ),
                       Positioned(
-                        right: 16.0,
+                        right: 0.0,
                         bottom: 120.0,
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.end,
@@ -812,14 +812,38 @@ class _WallpaperDetailState extends State<WallpaperDetail>
                               },
                               child: SvgPicture.asset(
                                 "assets/icon/like.svg",
-                                height: 35,
-                                width: 35,
+                                height: 32,
+                                width: 32,
+                                theme: const SvgTheme(
+                                    currentColor:
+                                        Color.fromRGBO(128, 134, 139, 1)),
                               ),
                               elevation: 0.0,
                               fillColor: Colors.transparent,
                               shape: CircleBorder(),
                             ),
+                            Text("2"),
                             SizedBox(height: 16.0),
+                            RawMaterialButton(
+                              onPressed: () {},
+                              child: SvgPicture.asset(
+                                "assets/icon/brush.svg",
+                                width: 32,
+                                height: 32,
+                              ),
+                            ),
+                            Text("2"),
+                            SizedBox(height: 16.0),
+                            RawMaterialButton(
+                              onPressed: () {},
+                              child: SvgPicture.asset(
+                                "assets/icon/share.svg",
+                                width: 32,
+                                height: 32,
+                              ),
+                            ),
+                            Text("2"),
+                            SizedBox(height: 20.0),
                           ],
                         ),
                       ),
