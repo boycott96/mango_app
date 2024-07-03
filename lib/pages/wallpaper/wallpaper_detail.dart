@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_application_test/components/toast_manager.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -242,6 +243,7 @@ class _WallpaperDetailState extends State<WallpaperDetail>
     }
   }
 
+  // 弹出设置壁纸的弹窗
   Future<void> setWallpaper(String url) async {
     try {
       showModalBottomSheet(
@@ -273,7 +275,7 @@ class _WallpaperDetailState extends State<WallpaperDetail>
                   padding: const EdgeInsets.only(top: 18),
                   child: const Center(
                     child: Text(
-                      "What would you like to do?",
+                      "请选择?",
                       style: TextStyle(
                         color: Color.fromRGBO(41, 50, 59, 1),
                         fontSize: 16,
@@ -310,7 +312,7 @@ class _WallpaperDetailState extends State<WallpaperDetail>
                                   width: 20,
                                 ),
                               ),
-                              const Text('Set on home screen')
+                              const Text('设置为主页')
                             ],
                           ),
                         ),
@@ -335,7 +337,7 @@ class _WallpaperDetailState extends State<WallpaperDetail>
                                   width: 20,
                                 ),
                               ),
-                              const Text('Set on lock screen')
+                              const Text('设置为锁屏')
                             ],
                           ),
                         ),
@@ -360,7 +362,7 @@ class _WallpaperDetailState extends State<WallpaperDetail>
                                   width: 20,
                                 ),
                               ),
-                              const Text('Set on both screen')
+                              const Text('同时设置主页和锁屏')
                             ],
                           ),
                         ),
@@ -380,7 +382,7 @@ class _WallpaperDetailState extends State<WallpaperDetail>
                       ),
                     ),
                     child: const Text(
-                      "Cancel",
+                      "取消",
                       style: TextStyle(color: Colors.white),
                     ),
                   ),
@@ -468,23 +470,14 @@ class _WallpaperDetailState extends State<WallpaperDetail>
     }
   }
 
+  /// 分享的事件点击效果
   void _onShareWithResult(BuildContext context) async {
-    // A builder is used to retrieve the context immediately
-    // surrounding the ElevatedButton.
-    //
-    // The context's `findRenderObject` returns the first
-    // RenderObject in its descendent tree when it's not
-    // a RenderObjectWidget. The ElevatedButton's RenderObject
-    // has its position and size after it's built.
     final box = context.findRenderObject() as RenderBox?;
-
-    final scaffoldMessenger = ScaffoldMessenger.of(context);
-    ShareResult shareResult;
-    shareResult = await Share.share(
+    ScaffoldMessenger.of(context);
+    await Share.share(
       wallpaper['path'],
       sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size,
     );
-    scaffoldMessenger.showSnackBar(getResultSnackBar(shareResult));
   }
 
   SnackBar getResultSnackBar(ShareResult result) {
@@ -801,13 +794,13 @@ class _WallpaperDetailState extends State<WallpaperDetail>
                         ],
                       ),
                       Positioned(
-                        right: 0.0,
+                        right: 20.0,
                         bottom: 120.0,
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: <Widget>[
-                            RawMaterialButton(
-                              onPressed: () {
+                            GestureDetector(
+                              onTap: () {
                                 // Add your onPressed code here!
                               },
                               child: SvgPicture.asset(
@@ -818,32 +811,43 @@ class _WallpaperDetailState extends State<WallpaperDetail>
                                     currentColor:
                                         Color.fromRGBO(128, 134, 139, 1)),
                               ),
-                              elevation: 0.0,
-                              fillColor: Colors.transparent,
-                              shape: CircleBorder(),
                             ),
-                            Text("2"),
-                            SizedBox(height: 16.0),
-                            RawMaterialButton(
-                              onPressed: () {},
+                            const Text("2"),
+                            const SizedBox(height: 32.0),
+                            GestureDetector(
+                              onTap: () {
+                                if (Platform.isIOS) {
+                                  downloadAndSaveImage(wallpaper['path']);
+                                } else {
+                                  setWallpaper(wallpaper['path']);
+                                }
+                              },
                               child: SvgPicture.asset(
                                 "assets/icon/brush.svg",
                                 width: 32,
                                 height: 32,
+                                theme: const SvgTheme(
+                                    currentColor:
+                                        Color.fromRGBO(128, 134, 139, 1)),
                               ),
                             ),
-                            Text("2"),
-                            SizedBox(height: 16.0),
-                            RawMaterialButton(
-                              onPressed: () {},
+                            const Text("2"),
+                            const SizedBox(height: 32.0),
+                            GestureDetector(
+                              onTap: () {
+                                _onShareWithResult(context);
+                              },
                               child: SvgPicture.asset(
                                 "assets/icon/share.svg",
                                 width: 32,
+                                theme: const SvgTheme(
+                                    currentColor:
+                                        Color.fromRGBO(128, 134, 139, 1)),
                                 height: 32,
                               ),
                             ),
-                            Text("2"),
-                            SizedBox(height: 20.0),
+                            const Text("2"),
+                            const SizedBox(height: 32.0),
                           ],
                         ),
                       ),
