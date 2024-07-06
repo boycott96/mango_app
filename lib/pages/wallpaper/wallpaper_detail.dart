@@ -520,9 +520,9 @@ class _WallpaperDetailState extends State<WallpaperDetail>
               }
             },
             itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-              const PopupMenuItem<String>(
+              PopupMenuItem<String>(
                 value: '1',
-                child: Text('设置壁纸'),
+                child: Text(Platform.isIOS ? '下载壁纸' : '设置壁纸'),
               ),
             ],
           ),
