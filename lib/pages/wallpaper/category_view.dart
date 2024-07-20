@@ -1,11 +1,13 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_test/api/wallpaper.dart';
-import 'package:flutter_application_test/pages/wallpaper/category_list.dart';
-import 'package:flutter_application_test/pages/wallpaper/wallpaper_list.dart';
+
+import 'wallpaper_detail.dart';
 
 class CategoryView extends StatefulWidget {
-  const CategoryView({super.key});
+  final int categoryId;
+  final String name;
+  const CategoryView({super.key, required this.categoryId, required this.name});
 
   @override
   State<CategoryView> createState() => _CategoryViewState();
@@ -14,21 +16,35 @@ class CategoryView extends StatefulWidget {
 class _CategoryViewState extends State<CategoryView>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
-
-  List<dynamic> _categoryList = [];
+  final ScrollController _scrollController = ScrollController();
+  int page = 1;
+  List<dynamic> _list = [];
 
   @override
   void initState() {
     super.initState();
-    getCategory(context);
+    getCategory(page);
+    _scrollController.addListener(_scrollListener);
     _controller = AnimationController(vsync: this);
   }
 
-  void getCategory(BuildContext context) async {
-    Response response = await WallpaperService(context).category("4");
+  void _scrollListener() {
+    if (_scrollController.position.pixels ==
+        _scrollController.position.maxScrollExtent) {
+      // Reach the bottom
+      setState(() {
+        page = page + 1;
+        getCategory(page);
+      });
+    }
+  }
+
+  void getCategory(int pageNum) async {
+    Response response = await WallpaperService(context)
+        .wallpaperForCategory(widget.categoryId, pageNum);
     if (response.data['code'] == 0) {
       setState(() {
-        _categoryList = response.data['data'];
+        _list = [..._list, ...response.data['data']];
       });
     }
   }
@@ -39,89 +55,73 @@ class _CategoryViewState extends State<CategoryView>
     super.dispose();
   }
 
+  void viewWallpaper(String id) {
+    // 跳转到壁纸的详情页面
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => WallpaperDetail(
+          id: id,
+          list: _list,
+          currentPage: page,
+          type: "category",
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                "Category",
-                style: TextStyle(
-                  color: Color.fromRGBO(41, 50, 59, 1),
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
-                ),
-              ),
-              TextButton(
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const CategoryList()));
-                },
-                child: const Text(
-                  "View all",
-                  style: TextStyle(
-                    color: Color.fromRGBO(0, 113, 227, 1),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 10), // 添加行与行之间的间距
-        Row(children: [
-          Wrap(
-            spacing: 10.0, // 调整子组件之间的间距
-            runSpacing: 10.0, // 调整行之间的间距
-            children: _categoryList.asMap().entries.map((entry) {
-              final e = entry.value;
-              return GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              WallpaperList(categoryId: e['id'], name: e['name'],)));
-                },
-                child: Container(
-                  width: (MediaQuery.of(context).size.width - 32 - 40) *
-                      0.25, // 设置容器宽度为屏幕宽度的20%
-                  height: 70,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: NetworkImage(e['categoryUrl']),
-                      fit: BoxFit.cover,
-                      colorFilter: ColorFilter.mode(
-                        Colors.black.withOpacity(0.5), // 黑色层的颜色和透明度
-                        BlendMode.srcOver, // 混合模式，此处表示黑色层在顶部
-                      ),
-                    ),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Center(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                      child: Text(
-                        e['name'],
-                        style: const TextStyle(
-                          color: Colors.white,
+    return Scaffold(
+      appBar: AppBar(),
+      body: CustomScrollView(
+        controller: _scrollController,
+        slivers: [
+          SliverPadding(
+            padding: const EdgeInsets.fromLTRB(0, 0, 0, 16),
+            sliver: SliverList(
+              delegate: SliverChildListDelegate(
+                [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Wrap(
+                          spacing: 1.0, // 调整子组件之间的间距
+                          runSpacing: 1.0, // 调整行之间的间距
+                          children: _list
+                              .map(
+                                (e) => GestureDetector(
+                                  onTap: () {
+                                    viewWallpaper(e['id']);
+                                  },
+                                  child: Container(
+                                    alignment: Alignment.bottomCenter,
+                                    height:
+                                        (MediaQuery.of(context).size.width) *
+                                            0.33,
+                                    width: (MediaQuery.of(context).size.width) *
+                                        0.33,
+                                    decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                        image:
+                                            NetworkImage(e['thumbnailSmall']),
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              )
+                              .toList(),
                         ),
-                        overflow: TextOverflow.ellipsis, // 设置文本宽度缩写
-                      ),
-                    ),
+                      )
+                    ],
                   ),
-                ),
-              );
-            }).toList(),
-          )
-        ]),
-      ],
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

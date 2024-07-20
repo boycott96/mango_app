@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_test/api/wallpaper.dart';
-import 'package:flutter_application_test/pages/wallpaper/wallpaper_list.dart';
+import 'package:flutter_application_test/pages/wallpaper/category_view.dart';
 
 class CategoryList extends StatefulWidget {
   const CategoryList({super.key});
@@ -57,7 +57,7 @@ class _CategoryListState extends State<CategoryList>
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => WallpaperList(
+                        builder: (context) => CategoryView(
                           categoryId: e['id'],
                           name: e['zhName'],
                         ),
